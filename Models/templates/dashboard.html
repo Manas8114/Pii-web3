@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureDoc Dashboard - Document Protection & Fraud Detection</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --error: #f56565;
+            --dark: #2d3748;
+            --light: #f7fafc;
+            --white: #ffffff;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-300: #d4d4d4;
+            --gray-400: #a3a3a3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-700: #404040;
+            --gray-800: #262626;
+            --gray-900: #171717;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--gray-100);
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--white);
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+            background: var(--gray-100);
+        }
+
+        .upload-btn {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--gray-500);
+            font-size: 1.1rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--white);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        /* Fraud Detection Process */
+        .fraud-detection-section {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fraud-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .fraud-step {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .fraud-step:hover {
+            background: var(--white);
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--white);
+            font-size: 1.1rem;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.2rem;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-description {
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-details {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        /* Recent Activity */
+        .activity-section {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-type {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-file {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        .activity-time {
+            color: var(--gray-400);
+            font-size: 0.85rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(72, 187, 120, 0.1);
+            color: var(--success);
+        }
+
+        .status-warning {
+            background: rgba(237, 137, 54, 0.1);
+            color: var(--warning);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-btn {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .action-btn i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .fraud-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Color assignments for different elements */
+        .stat-card:nth-child(1) .stat-icon { background: var(--primary); }
+        .stat-card:nth-child(2) .stat-icon { background: var(--warning); }
+        .stat-card:nth-child(3) .stat-icon { background: var(--success); }
+        .stat-card:nth-child(4) .stat-icon { background: var(--secondary); }
+
+        .activity-icon.success { background: var(--success); }
+        .activity-icon.warning { background: var(--warning); }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SecureDoc
+            </a>
+            <ul class="nav-links">
+                <li><a href="/" class="active">Dashboard</a></li>
+                <li><a href="/upload">Upload</a></li>
+                <li><a href="/api/fraud-analysis">Fraud Analysis</a></li>
+                <li><a href="#blockchain">Blockchain</a></li>
+                <li><a href="#settings">Settings</a></li>
+            </ul>
+            <a href="/upload" class="upload-btn">
+                <i class="fas fa-upload"></i> Upload Document
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Monitor document security, fraud detection, and system performance</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">{{ stats.total_documents }}</div>
+                        <div class="stat-label">Total Documents</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">{{ stats.fraud_detected }}</div>
+                        <div class="stat-label">Fraud Detected</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">{{ stats.pii_protected }}</div>
+                        <div class="stat-label">PII Protected</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-number">{{ stats.blockchain_records }}</div>
+                        <div class="stat-label">Blockchain Records</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fraud Detection Process -->
+        <div class="fraud-detection-section">
+            <h2 class="section-title">
+                <i class="fas fa-microscope"></i>
+                5-Step Fraud Detection Process
+            </h2>
+            <div class="fraud-steps">
+                {% for step in fraud_steps %}
+                <div class="fraud-step">
+                    <div class="step-header">
+                        <div class="step-number" style="background: {{ step.color }};">
+                            {{ step.step }}
+                        </div>
+                        <div class="step-icon" style="background: {{ step.color }};">
+                            <i class="{{ step.icon }}"></i>
+                        </div>
+                    </div>
+                    <div class="step-title">{{ step.title }}</div>
+                    <div class="step-description">{{ step.description }}</div>
+                    <div class="step-details">{{ step.details }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+            <h2 class="section-title">
+                <i class="fas fa-clock"></i>
+                Recent Activity
+            </h2>
+            <ul class="activity-list">
+                {% for activity in recent_activity %}
+                <li class="activity-item">
+                    <div class="activity-icon {{ activity.status }}">
+                        {% if activity.type == "Document Processed" %}
+                            <i class="fas fa-file-check"></i>
+                        {% elif activity.type == "Fraud Detected" %}
+                            <i class="fas fa-exclamation-triangle"></i>
+                        {% elif activity.type == "PII Redacted" %}
+                            <i class="fas fa-user-shield"></i>
+                        {% elif activity.type == "Blockchain Record" %}
+                            <i class="fas fa-link"></i>
+                        {% endif %}
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-type">{{ activity.type }}</div>
+                        <div class="activity-file">{{ activity.file }}</div>
+                        <div class="activity-time">{{ activity.time }}</div>
+                    </div>
+                    <span class="status-badge status-{{ activity.status }}">
+                        {{ activity.status.title() }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="/upload" class="action-btn">
+                <i class="fas fa-upload"></i>
+                Upload Document
+            </a>
+            <a href="/api/fraud-analysis" class="action-btn">
+                <i class="fas fa-search"></i>
+                Analyze Document
+            </a>
+            <a href="#blockchain" class="action-btn">
+                <i class="fas fa-link"></i>
+                Blockchain Audit
+            </a>
+            <a href="#settings" class="action-btn">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate stat numbers
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const finalValue = parseInt(stat.textContent);
+                let currentValue = 0;
+                const increment = Math.ceil(finalValue / 50);
+                
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        currentValue = finalValue;
+                        clearInterval(timer);
+                    }
+                    stat.textContent = currentValue;
+                }, 30);
+            });
+
+            // Add hover effects to fraud steps
+            const fraudSteps = document.querySelectorAll('.fraud-step');
+            fraudSteps.forEach((step, index) => {
+                step.addEventListener('mouseenter', () => {
+                    step.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                step.addEventListener('mouseleave', () => {
+                    step.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Refresh stats every 30 seconds
+            setInterval(() => {
+                fetch('/api/dashboard/stats')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update stats if needed
+                            console.log('Stats refreshed:', data.stats);
+                        }
+                    })
+                    .catch(error => console.log('Stats refresh failed:', error));
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

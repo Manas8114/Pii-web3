@@ -1,0 +1,6 @@
+Name,Email,Phone,Address,Age,CustomerID,PurchaseAmount
+Alice Johnson,alice.johnson@example.com,123-456-7890,"123 Main St, NY",29,CUST001,250.75
+Bob Smith,bob.smith@example.com,987-654-3210,"456 Elm St, CA",34,CUST002,180.5
+Charlie Davis,charlie.davis@example.com,555-666-7777,"789 Pine St, TX",42,CUST003,300.0
+David Lee,david.lee@example.com,222-333-4444,"321 Oak St, FL",23,CUST004,95.25
+Eve Adams,eve.adams@example.com,999-888-7777,"654 Maple St, WA",31,CUST005,400.4

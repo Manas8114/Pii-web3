@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecuredDoc - Blockchain Document Security & Fraud Detection</title>
+    
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .stats-number {
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .problem-highlight {
+            background: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="gradient-bg shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-white text-2xl mr-3"></i>
+                    <h1 class="text-white text-xl font-bold">SecuredDoc</h1>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#problem" class="text-white hover:text-blue-200 transition duration-200">Problem</a>
+                    <a href="#solution" class="text-white hover:text-blue-200 transition duration-200">Solution</a>
+                    <a href="#features" class="text-white hover:text-blue-200 transition duration-200">Features</a>
+                    <a href="/dashboard" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition duration-200 font-medium">
+                        Get Started
+                    </a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobileMenuBtn" class="text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg pt-20 pb-16 min-h-screen flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-white">
+                    <h1 class="text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        Secure Document Processing with 
+                        <span class="text-yellow-300">Blockchain Audit</span>
+                    </h1>
+                    <p class="text-xl mb-8 text-blue-100 leading-relaxed">
+                        Advanced AI-powered PII detection, fraud analysis, and immutable blockchain verification 
+                        for enterprise document security.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="/dashboard" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition duration-200 text-center">
+                            <i class="fas fa-rocket mr-2"></i>Start Processing
+                        </a>
+                        <a href="#problem" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-200 text-center">
+                            <i class="fas fa-play mr-2"></i>Learn More
+                        </a>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="hero-animation">
+                        <div class="glass-card p-8 text-white">
+                            <div class="flex items-center mb-6">
+                                <i class="fas fa-file-alt text-3xl text-yellow-300 mr-4"></i>
+                                <div>
+                                    <h3 class="text-xl font-semibold">Document Upload</h3>
+                                    <p class="text-blue-100">PDF, Images, CSV</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center mb-6">
+                                <i class="fas fa-brain text-3xl text-green-300 mr-4"></i>
+                                <div>
+                                    <h3 class="text-xl font-semibold">AI Analysis</h3>
+                                    <p class="text-blue-100">PII Detection + Fraud Check</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-cube text-3xl text-purple-300 mr-4"></i>
+                                <div>
+                                    <h3 class="text-xl font-semibold">Blockchain Audit</h3>
+                                    <p class="text-blue-100">Immutable Verification</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Statement Section -->
+    <section id="problem" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6">
+                    The <span class="problem-highlight">Critical Problem</span> We're Solving
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    In today's digital world, document fraud and data breaches cost organizations billions annually. 
+                    Traditional verification methods are insufficient for modern threats.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <!-- Problem 1 -->
+                <div class="feature-card bg-red-50 p-8 rounded-xl border border-red-100">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Document Fraud</h3>
+                    <p class="text-gray-600 mb-4">
+                        $3.2 trillion lost annually to document fraud globally. Traditional verification 
+                        methods can't detect sophisticated forgeries and manipulations.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Image manipulation</li>
+                        <li>• Metadata tampering</li>
+                        <li>• Content fabrication</li>
+                    </ul>
+                </div>
+
+                <!-- Problem 2 -->
+                <div class="feature-card bg-orange-50 p-8 rounded-xl border border-orange-100">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-user-secret text-2xl text-orange-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">PII Exposure</h3>
+                    <p class="text-gray-600 mb-4">
+                        Sensitive personal data scattered across documents creates privacy risks and 
+                        regulatory compliance challenges for organizations.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• GDPR violations</li>
+                        <li>• Identity theft risks</li>
+                        <li>• Regulatory penalties</li>
+                    </ul>
+                </div>
+
+                <!-- Problem 3 -->
+                <div class="feature-card bg-blue-50 p-8 rounded-xl border border-blue-100">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-search text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Audit Challenges</h3>
+                    <p class="text-gray-600 mb-4">
+                        Lack of transparent, tamper-proof audit trails makes it difficult to verify 
+                        document processing history and maintain compliance.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• No immutable records</li>
+                        <li>• Limited transparency</li>
+                        <li>• Trust issues</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="glass-card p-8 bg-gradient-to-r from-blue-600 to-purple-600">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center text-white">
+                    <div>
+                        <div class="text-4xl font-bold mb-2">$3.2T</div>
+                        <div class="text-blue-100">Annual Fraud Losses</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">83%</div>
+                        <div class="text-blue-100">Organizations Affected</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">45%</div>
+                        <div class="text-blue-100">Increase in Digital Fraud</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">6M</div>
+                        <div class="text-blue-100">PII Records Breached Daily</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solution" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6">
+                    Our <span class="text-blue-600">Comprehensive Solution</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    SecuredDoc combines cutting-edge AI, blockchain technology, and advanced security 
+                    practices to create the most robust document verification system available.
+                </p>
+            </div>
+
+            <!-- Solution Process -->
+            <div class="relative">
+                <!-- Process Flow -->
+                <div class="flex flex-col lg:flex-row items-center justify-between space-y-8 lg:space-y-0 lg:space-x-4">
+                    <!-- Step 1 -->
+                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg w-full lg:w-1/4 text-center">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-upload text-2xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">1. Upload Document</h3>
+                        <p class="text-gray-600 text-sm">
+                            Secure upload of PDFs, images, or CSV files with advanced file validation
+                        </p>
+                    </div>
+
+                    <div class="hidden lg:block text-gray-300">
+                        <i class="fas fa-arrow-right text-2xl"></i>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg w-full lg:w-1/4 text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-brain text-2xl text-green-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">2. AI Analysis</h3>
+                        <p class="text-gray-600 text-sm">
+                            Multi-layer AI analysis for PII detection, fraud patterns, and authenticity verification
+                        </p>
+                    </div>
+
+                    <div class="hidden lg:block text-gray-300">
+                        <i class="fas fa-arrow-right text-2xl"></i>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg w-full lg:w-1/4 text-center">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-cube text-2xl text-purple-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">3. Blockchain Registry</h3>
+                        <p class="text-gray-600 text-sm">
+                            Immutable registration on Stacks blockchain with complete audit trail
+                        </p>
+                    </div>
+
+                    <div class="hidden lg:block text-gray-300">
+                        <i class="fas fa-arrow-right text-2xl"></i>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg w-full lg:w-1/4 text-center">
+                        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-certificate text-2xl text-yellow-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">4. Secure Output</h3>
+                        <p class="text-gray-600 text-sm">
+                            Privacy-protected documents with comprehensive security reports and verification
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6">
+                    Powerful <span class="text-purple-600">Features</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Comprehensive document security powered by cutting-edge technology
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl">
+                    <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-robot text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Advanced PII Detection</h3>
+                    <p class="text-gray-600 mb-4">
+                        AI-powered detection of personally identifiable information using Presidio and Transformers models.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Names, SSN, Credit Cards</li>
+                        <li>• Custom entity recognition</li>
+                        <li>• Multi-language support</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-xl">
+                    <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-virus text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Fraud Detection</h3>
+                    <p class="text-gray-600 mb-4">
+                        Multi-layer analysis detecting document manipulation, forgeries, and suspicious patterns.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Image manipulation detection</li>
+                        <li>• Metadata forensics</li>
+                        <li>• Statistical analysis</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-xl">
+                    <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-link text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Blockchain Audit</h3>
+                    <p class="text-gray-600 mb-4">
+                        Immutable audit trails on Stacks blockchain ensuring document integrity and compliance.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Tamper-proof records</li>
+                        <li>• Complete audit history</li>
+                        <li>• Regulatory compliance</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card bg-gradient-to-br from-yellow-50 to-yellow-100 p-8 rounded-xl">
+                    <div class="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-mask text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Privacy Protection</h3>
+                    <p class="text-gray-600 mb-4">
+                        Advanced anonymization and redaction techniques protecting sensitive information.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Smart redaction</li>
+                        <li>• Blur effects</li>
+                        <li>• Data tokenization</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card bg-gradient-to-br from-indigo-50 to-indigo-100 p-8 rounded-xl">
+                    <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Risk Assessment</h3>
+                    <p class="text-gray-600 mb-4">
+                        Comprehensive scoring system with detailed risk analysis and actionable recommendations.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Real-time risk scoring</li>
+                        <li>• Pattern analysis</li>
+                        <li>• Compliance reports</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card bg-gradient-to-br from-pink-50 to-pink-100 p-8 rounded-xl">
+                    <div class="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-wallet text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Wallet Integration</h3>
+                    <p class="text-gray-600 mb-4">
+                        Seamless integration with Leather (Stacks) and MetaMask wallets for blockchain operations.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Leather wallet support</li>
+                        <li>• MetaMask integration</li>
+                        <li>• Secure transactions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-6">
+                    Powered by <span class="text-indigo-600">Cutting-Edge Technology</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Built on enterprise-grade technologies for maximum security and performance
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- AI/ML -->
+                <div class="bg-white p-6 rounded-lg text-center shadow-md">
+                    <i class="fas fa-brain text-3xl text-blue-600 mb-4"></i>
+                    <h4 class="font-bold text-gray-900 mb-2">AI & Machine Learning</h4>
+                    <p class="text-gray-600 text-sm">Presidio, Transformers, spaCy, OpenCV</p>
+                </div>
+
+                <!-- Blockchain -->
+                <div class="bg-white p-6 rounded-lg text-center shadow-md">
+                    <i class="fas fa-cube text-3xl text-purple-600 mb-4"></i>
+                    <h4 class="font-bold text-gray-900 mb-2">Blockchain</h4>
+                    <p class="text-gray-600 text-sm">Stacks Network, Smart Contracts</p>
+                </div>
+
+                <!-- Security -->
+                <div class="bg-white p-6 rounded-lg text-center shadow-md">
+                    <i class="fas fa-shield-alt text-3xl text-green-600 mb-4"></i>
+                    <h4 class="font-bold text-gray-900 mb-2">Security</h4>
+                    <p class="text-gray-600 text-sm">Cryptography, Digital Signatures</p>
+                </div>
+
+                <!-- Web Tech -->
+                <div class="bg-white p-6 rounded-lg text-center shadow-md">
+                    <i class="fas fa-code text-3xl text-orange-600 mb-4"></i>
+                    <h4 class="font-bold text-gray-900 mb-2">Web Technologies</h4>
+                    <p class="text-gray-600 text-sm">Flask, JavaScript, Web3</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="gradient-bg py-20">
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-white mb-6">
+                Ready to Secure Your Documents?
+            </h2>
+            <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+                Join the future of document security with blockchain-verified fraud detection 
+                and AI-powered privacy protection.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/dashboard" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition duration-200 text-center">
+                    <i class="fas fa-rocket mr-2"></i>Start Processing Now
+                </a>
+                <a href="/login" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-200 text-center">
+                    <i class="fas fa-wallet mr-2"></i>Connect Wallet
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="col-span-2">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-shield-alt text-2xl mr-3"></i>
+                        <h3 class="text-xl font-bold">SecuredDoc</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        Next-generation document security platform combining AI fraud detection 
+                        with blockchain verification for enterprise-grade protection.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Features</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition duration-200">Fraud Detection</a></li>
+                        <li><a href="#" class="hover:text-white transition duration-200">PII Protection</a></li>
+                        <li><a href="#" class="hover:text-white transition duration-200">Blockchain Audit</a></li>
+                        <li><a href="#" class="hover:text-white transition duration-200">Risk Assessment</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/dashboard" class="hover:text-white transition duration-200">Dashboard</a></li>
+                        <li><a href="/login" class="hover:text-white transition duration-200">Login</a></li>
+                        <li><a href="/auth" class="hover:text-white transition duration-200">Enhanced Features</a></li>
+                        <li><a href="/health" class="hover:text-white transition duration-200">System Status</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 SecuredDoc. Built for Standard Chartered Hackathon. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="fixed right-0 top-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 translate-x-full">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-xl font-bold text-gray-900">Menu</h3>
+                    <button id="closeMobileMenu" class="text-gray-500">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <nav class="space-y-4">
+                    <a href="#problem" class="block text-gray-700 hover:text-blue-600 transition duration-200">Problem</a>
+                    <a href="#solution" class="block text-gray-700 hover:text-blue-600 transition duration-200">Solution</a>
+                    <a href="#features" class="block text-gray-700 hover:text-blue-600 transition duration-200">Features</a>
+                    <a href="/dashboard" class="block bg-blue-600 text-white px-4 py-2 rounded-lg text-center">Get Started</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu functionality
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuPanel = mobileMenu.querySelector('div > div');
+            mobileMenu.classList.remove('hidden');
+            setTimeout(() => {
+                menuPanel.classList.remove('translate-x-full');
+            }, 10);
+        });
+
+        document.getElementById('closeMobileMenu').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuPanel = mobileMenu.querySelector('div > div');
+            menuPanel.classList.add('translate-x-full');
+            setTimeout(() => {
+                mobileMenu.classList.add('hidden');
+            }, 300);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to navbar
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.backgroundColor = 'rgba(102, 126, 234, 0.95)';
+            } else {
+                nav.style.backgroundColor = '';
+            }
+        });
+    </script>
+</body>
+</html>

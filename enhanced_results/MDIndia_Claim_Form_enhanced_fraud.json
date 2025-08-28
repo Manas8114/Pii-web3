@@ -1,0 +1,228 @@
+{
+  "filename": "MDIndia_Claim_Form.pdf",
+  "processed_filename": "enhanced_MDIndia_Claim_Form.pdf",
+  "timestamp": "2025-04-04 01:21:22",
+  "sensitive_data": {
+    "John Doe": {
+      "entity": "PERSON",
+      "confidence_score": 0.95
+    },
+    "123-45-6789": {
+      "entity": "US_SSN",
+      "confidence_score": 0.98
+    },
+    "ABCDE1234F": {
+      "entity": "IN_PAN",
+      "confidence_score": 0.99
+    },
+    "4111 1111 1111 1111": {
+      "entity": "CREDIT_CARD",
+      "confidence_score": 0.97
+    }
+  },
+  "pii_count": 4,
+  "fraud_score": 1.0,
+  "fraud_indicators": [
+    "Document is not encrypted",
+    "Found 2 high-risk PII types",
+    "Suspicious pattern detected: urgent_action",
+    "Suspicious pattern detected: legal_threats",
+    "Suspicious pattern detected: personal_emergency",
+    "Mixed Indian and foreign identification found"
+  ],
+  "fraud_categories": {
+    "high_risk_pii": {
+      "score": 0.4,
+      "count": 2,
+      "entities": [
+        {
+          "type": "IN_PAN",
+          "name": "PAN Card Number",
+          "text": "ABCDE1234F"
+        },
+        {
+          "type": "CREDIT_CARD",
+          "name": "Credit Card Number",
+          "text": "4111 1111 1111 1111"
+        }
+      ],
+      "description": "Document contains highly sensitive financial or identity information"
+    },
+    "suspicious_patterns": {
+      "score": 0.5,
+      "patterns": [
+        {
+          "category": "urgent_action",
+          "matches": [
+            "emergency"
+          ],
+          "score": 0.15,
+          "description": "Document contains urgent action language often used in scams"
+        },
+        {
+          "category": "legal_threats",
+          "matches": [
+            "sue",
+            "sue",
+            "legal",
+            "police",
+            "police",
+            "legal",
+            "police",
+            "police",
+            "legal",
+            "police",
+            "police",
+            "sue",
+            "police",
+            "police",
+            "legal",
+            "police",
+            "legal",
+            "police",
+            "police",
+            "legal",
+            "police",
+            "police",
+            "sue",
+            "police"
+          ],
+          "score": 0.2,
+          "description": "Document contains legal threats or intimidation"
+        },
+        {
+          "category": "personal_emergency",
+          "matches": [
+            "accident",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "injury",
+            "illness",
+            "injury",
+            "disease",
+            "injury",
+            "accident",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "illness",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "injury",
+            "disease",
+            "injury",
+            "hospital",
+            "injury",
+            "injury",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "emergency",
+            "hospital",
+            "hospital",
+            "hospital",
+            "injury",
+            "accident",
+            "injury",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "death",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "injury",
+            "injury",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "injury",
+            "injury",
+            "injury",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital",
+            "hospital"
+          ],
+          "score": 0.15,
+          "description": "Document mentions personal emergencies often used in scams"
+        }
+      ],
+      "description": "Document contains language patterns commonly found in fraudulent communications"
+    },
+    "unusual_combinations": {
+      "score": 0.25,
+      "combinations": [
+        {
+          "type": "mixed_identification",
+          "score": 0.25,
+          "description": "Document contains both Indian and foreign identification which is unusual"
+        }
+      ],
+      "description": "Document contains unusual combinations of sensitive information"
+    }
+  },
+  "forensics": {
+    "metadata_time_inconsistency": false,
+    "metadata_empty": false,
+    "suspicious_creation_tools": false,
+    "image_manipulation_detected": false
+  },
+  "content_analysis": {
+    "logical_inconsistencies": [],
+    "inconsistencies_found": false
+  },
+  "security_features": {
+    "is_encrypted": false,
+    "has_digital_signature": false
+  },
+  "risk_level": "High",
+  "risk_percentage": 100.0,
+  "extracted_text": "CLAIM FORM - PART A' to 'CLAIM FORM FOR HEALTH INSURANCE POLICIES OTHER THAN TRAVEL AND PERSONAL ACCIDENT - PART A\nTO BE FILLED BY THE INSURED\nThe issue of this Form is not to be taken as an admission of liablity\nDETAILS OF PRIMARY INSURED:\na) Policy No.:\n(To be Filled in block letters)\nSECTION A\nSECTION B\nb) Sl. No/ Certificate no.\nc) Company/ TPA ID No:\ne) Address:\nDETAILS OF INSURANCE HISTORY:\na) Currently covered by any other Mediclaim / Health Insurance:\nb) Date of  commencement of first Insurance without break:\nc) If yes, company name:\nPolicy No.\nSum insured (Rs.)\nd) Have you been hospitalized in the last four years since inception of the contract?\nDiagnosis:\ne) Previously covered by any other Mediclaim /Health insurance : :\nDate:\nM\nM\nY\nY\nY\nY\nf) If yes, company name:\nDETAILS OF INSURED PERSON HOSPITALIZED: :\nDETAILS OF HOSPITALIZATION: :\nDETAILS OF CLAIM:\nDETAILS OF BILLS ENCLOSED:\nSl. No.\nBill No.\nDate\nIssued by\nTowards\nAmount (Rs)\nDETAILS OF PRIMARY INSURED\u2019S BANK ACCOUNT::\nSECTION   C\nSECTION D\nSECTION E\nSECTION F\nSECTION G\nD\nY\nM\nD\nY\nM\n1.\n2.\n3.\n4.\n5.\n6.\n7.\n8.\n9.\n10.\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nD\nY\nM\nCity:\nState:\nPin Code\nPhone No:\nEmail ID:\nCity:\nState:\nPin Code\nPhone No:\nEmail ID:\nD\nD\nD\nD\nM\nM\nM\nM\nY\nY\nY\nY\nYes\nNo\nYes\nNo\nYes\nNo\nd) Name:\nS\nU\nR\nN\nA\nM\nE\nF\nI\nR\nS\nT  \nN\nA\nM\nE\nM\nI \nD\nD\nL\nE\nN\nA\nM\nE\na) Name:\nS\nU\nR\nN\nA\nM\nE\nF\nI\nR\nS\nT  \nN\nA\nM\nE\nM\nI\nD\nD\nL\nE\nN\nA\nM\nE\nb) Gender\nMale\nFemale\nc) Age years\nM\nM\nY\nY\nY\nY\nMonths\nd) Date of Birth\ne) Relationship to Primary insured:\nSelf\nSpouse\nChild\nFather\nMother\nOther\n(Please Specify)\n(Please Specify)\nOther\nRetired\nStudent\nHome Maker\nSelf Employed\nService\nf) Occupation\ng) Address (if diffrent from above) :\na) Name of Hospital where Admited:\nb) Room Category occupied:\nDay care\nD\nD\nM\nM\nY\nY\nH\nH\nH\nH\nM\nH\nM\nH\nD\nD\nM\nM\nY\nY\nY\nY\nD\nD\nM\nM\nY\nY\nSingle occupancy\nTwin sharing\n3 or more beds per room\nc) Hospitalization due to:\nInjury\nIllness\nMaternity\nd) Date of injury / Date Disease first detected  /Date of Delivery:\ne) Date of Admission:\nf) Time\ng) Date of Discharge:\nh) Time:\n:\nNo\nYes\nI) If Medico  legal\nj) System of Medicine:\nSubstance Abuse / Alcohol Consumption\nI) If injury give cause: \nSelf inflicted\nRoad Traffic Accident\niii. MLC Report & Police FIR attached\nii) Reported to Police\nNo\nYes\na) Details of the Treatment expenses claimed\nI.  Pre -hospitalization expenses \niii. Post-hospitalization expenses  \nv.  Ambulance Charges:\nRs.\nRs.\nRs.\nii.  Hospitalization expenses \nRs.\niv.  Health-Check up cost:\nvi. Others (code):\nRs.\nRs.\nRs.\nTotal\nvii.  Pre -hospitalization period:\ndays\nviii.  Post -hospitalization period:\ndays\nb) Claim for Domiciliary Hospitalization:\nNo\nYes\n(If yes, provide details in annexure)\nc) Details of Lump sum / cash benefit claimed:\ni. Hospital Daily cash: \nRs.\nRs.\nRs.\niii. Critical Illness benefit:\nv.  Pre/Post hospitalization Lump sum benefit:\nii. Surgical Cash:\niv. Convalescence:\nvi. Others:\nRs.\nRs.\nRs.\nRs.\nTotal\nClaim Documents Submitted - Check List:\nClaim form duly signed\nCopy of the claim intimation, if any\nHospital Main Bill\nHospital Break-up Bill\nHospital Bill Payment Receipt\nHospital Discharge Summary\nPharmacy Bill\nOperation Theater Notes\nECG\nDoctor\u2019s request for investigation\nInvestigation Reports (Including CT\n/ MRI / USG / HPE)\nDoctor\u2019s Prescriptions\nOthers\nHospital main Bill\nPharmacy Bills\nPost-hospitalization Bills:         Nos\nPre-hospitalization Bills:         Nos\na) PAN:\nc) Bank Name and Branch:\nd) Cheque / DD Payable details:\nb) Account Number:\ne) IFSC Code:\n(IMPORTANT: PLEASE TURN OVER)\nDECLARATION BY THE INSURED:\nI hereby declare that the information furnished in the claim form is true & correct to the best of my knowledge and belief. If I have made any false or untrue statement, suppression\nor concealent of any material fact with respect to questions asked in relation to this claim, my right to claim reimbrusement shall be forfeited, I also consent & authorize TPA /\nInsurance Company, to seek necessary medical information / documents from any hospital / Medical Practitioner who has attended on the person against whom this claim is made.\nI hereby declare that I have included all the bills / receipts for the purpose of this claim & that I will not be making any supplementary claim except the pre/post-hospitalization\nclaim, if any.\nDate\nY\nY\nD\nD\nM\nM\nY\nY\nPlace:\nSignature of the Insured\nGUIDANCE FOR FILLING CLAIM FORM - PART A (To be filled in by the insured)\nDATA ELEMENT\nDESCRIPTION\nFORMAT\nSECTION A - DETAILS OF PRIMARY INSURED\na)      Policy No.\nEnter the policy number\nAs allotted by the Insurance Company\nb)      Sl. No/ Certificate No.\nEnter the social Insurance number or the certificate number of\nAs allotted by the oraganization\nsocial health insurance scheme\nc)      Company TPA  ID No.\nEnter the TPA ID No.\nLicence number as allotted by IRDA and printed\nin TPA documents.\nd)       Name \nEnter the full name of the policyholder\nSurname, First name, Middle name\nInclude Street, City and Pin code\nEnter the full postal address\ne)      Address\nSECTION B -DETAILS OF INSURANCE HISTORY\na)      Currently covered by any other Mediclaim / Health\n         Insurance?\nIndicate whether currently covered by another Mediclaim /\nHealth Insurance\nTick Yes or No\nb)      Date of commencement of first Insurance without break\nEnter the date of commencement of first Insurance\nUse dd-mm-yy-forrmat\nc)      Company Name\nEnter the full name of the Insurance Company\nName of the organization in full\nPolicy No.\nEnter the policy number\nAs allotted by the Insurance Company\nIn rupees\nEnter the total sum insured as per the policy\nSum insured\nd)      Have you been Hospitalized in the last four years since\n         Inception of the contract? \nIndicate whether hospitalized in the last four years\nTick Yes or No\nDate\nEnter the date of Hospitalization\nUse mm-yy format\nDiagnosis\nEnter the diagnosis details\nOpen Text\nTick Yes or No\ne)      Previously covered by any other Mediclaim / Health\n        Insurance?\nIndicate whether  previously covered by another mediclaim / \nHealth Insurance\nf)      Company Name\nEnter the full name of the Insurance Company\nName of the organization in full\nSECTION C -DETAILS OF INSURED PERSON HOSPITALIZED\na)       Name \nEnter the full name of the patient\nSurname, First name, Middle name\nb)       Gender\nIndicate Gender of the patient\nTick Male or Female\nc)       Age\nEnter age of the patient\nNumber of years and months\nd)      Date of Birth\nEnter Date of Birth of patient\nUse dd-mm-yy format\ne)      Relationship to primary Insured\nIndicate relationship of  patient with policyholder\nTick the right option, if others, please specify\nf)       Occupation\nindicate occupation of patient\nTick the right option. If others, please specify.\ng)      Address\nEnter the full postal address\nInclude Street, City and Pin code\nInclude STD code with telephone number\nComplete e-mail address\nh)      Phone No\n1)      E-mail ID\nEnter the phone number of patient\nEnter e-mail address of patient\nSECTION D - DETAILS OF HOSPITALIZATION\na)       Name of Hospital where admited\nEnter the name of hospital\nName of hospital in full\nTick the right option\nTick the right option\nUse dd-mm-yy format\nUse dd-mm-yy format\nUse hh-mm- format\nUse dd-mm-yy format\nUse hh-mm- format\nTick the right option\nTick Yes or No\nTick Yes or No\nTick Yes or No\nOpen Text\nb)       Room category occupied\nc)       Hospitalization due to\nd)       Date of injury/Date Disease first detected / Date of \n          Delivery\ne)       Date of admission\nf)       Time\ng)       Date of discharge\nh)       Time\nI)       If injury give cause \nIf Medico legal\nReported to Police\nMLC Report & Police FIR attached\nj)       System of Medicene\nindicate the room category occupied\nindicate reason of hospitalization\nEnter the relevant date\nEnter date of admission\nEnter time of admission\nEnter date of discharge\nEnter time of discharge\nindicate cause of injury\nindicate whether injury is medico legal\nindicate whether police report was filed\nindicate whether MLC report and Police FIR attached\nEnter the system of medicine followed in treating the patient\nSECTION E - DETAILS OF CLAIM\na)       Details of Treatment Expences\nb)       Claim for Domiciliary Hospitalization\nc)       Details of Lump sum/ Cash benifit claimed\nd)       Claim documents Submitted-Check List\nEnter the amount claimed as treatment expences\nindicate whether claim is for domiciliary hospitalization\nEnter the amount claimed as lump sum / cash benefit\nindicate which supporting documents are submitted\nTick Yes or No\nTick the right option\nIn rupees (Do not enter paise values)\nIn rupees (Do not enter paise values)\nSECTION F - DETAILS OF BILLS ENCLOSED\nIndicate which bills are enclosed with the amount in rupees\nSECTION G - DETAILS OF PRIMARY INSURED\u2019s BANK ACCOUNT\na)       PAN\nb)       Account Number\nc)       Bank Name and Branch\nc)       Cheque/ DD payable details\nc)       IFSC Code\nEnter the permanent account number\nEnter the Bank account number\nEnter the Bank name along with the branch\nEnter the name of the beneficiary the cheque / DD should be\nmade out to\nEnter the IFSC code of the Bank branch\nAs allotted by the Income Tax Department\nAs allotted by the Bank\nName of the Bank in full\nName of the individual / organization in full\nIFSC code of the Bank branch in full\nSECTION H - DECLARATION BY THE INSURED\nRead declaration carefully and mention date (in dd:mm:yy format), place (open text) and sign.\nSECTION H\nCLAIM FORM - PART B\nTO BE FILLED IN BY THE HOSPITAL\nThe issue of this Form is not to be taken as an admission of liability\nPlease include the original preauthorization request form in lieu of PART A\n(To be Filled in block letters)\nDETAILS OF HOSPITAL\na) Name of the hospital:\na) Hospital ID:\nc) Name of the treating doctor:\ne) Qualification:\nDETAILS OF THE PATIENT ADMITTED\nc) Type of Hospital:\nNetwork :\nNon Network :\n(if non network fill section E)\nf) Registration No. with State Code:\ng) Phone No.\na) Name of the Patient:\nb) IP Registration Number:\nc) Gender:\nMale\nFemale\nd) Age: Years\nMonths\ne) Date of birth:\nii) Gravida Status: :\nm) Total claimed amount\nh) Date of Discharge:\ni) Date of Delivery: \nk) If Maternity\nMaternity\nDay Care\nPlanned\nEmergency\nf) Date of Admission:\nj) Type of Admission:\nI) Status  at time of discharge:\nDischarge to home\nDischarge to another hospital\nDeceased\nDETAILS OF AILMENT DIAGNOSED (PRIMARY)\na) \nICD 10 Codes\nI. Primary Diagnosis \nii. Additional Diagnosis:\niii. Co-morbidities:\niv. Co-morbidities:\nvi. If not reported to police give reason:\nDescription\nb) \ni. Procedure  1:\nii. Procedure 2:\niii. Procedure 3:\niv. Details of Procedure:\nICD 10 PCS\nDescription\nc) Pre-authorization obtained: \nYes\nYes\nYes\nYes\nNo\nNo\nNo\nNo\nd) Pre-authorization Number:\ne) If authorization by network hospital not obtained, give reason: \nf) Hospitalization due to injury:\nI. If Yes, give cause \nSelf-inflicted\nRoad Traffic Accident\nSubstance abuse / alcohol consumption\niv. Reported to Police\niii. If Medico legal:\n(If Yes, attach reports)\nii) If injury due to substance abuse / alcohol consumption, Test conducted to establish this:\nv. FIR No.\nCLAIM DOCUMENTS SUBMITTED - CHECK LIST\nClaim Form duly signed\nOriginal Pre-authorization request\nCopy of the Pre-authorization approval letter\nCopy of Photo ID Card of patient Verified by hospital\nHospital Discharge summary\nOperation Theatre Notes\nHospital main bill\nHospital break-up bill\nInvestigation reports\nCT/MR/USG/HPE investigation reports\nDoctor\u2019s reference slip for investigation\nECG\nPharmacy bills\nMLC reports & Police FIR\nOriginal death summary from hospital where applicable\nAny other, please specify\nADDITIONAL DETAILS IN CASE OF NON NETWORK HOSPITAL    (ONLY FILL IN CASE OF NON-NETWORK HOSPITAL)\n(PLEASE READ VERY CAREFULLY)\na) Address of the Hospital\nd) Hospital PAN:\niii. Others:\nDECLARATION BY THE HOSPITAL\nWe hereby declare that the information furnished in this Claim Form is true & correct to the best of our knowledge and belief. If we have made any false or untrue statement, suppression or concealment of any material fact,\nour right to claim under this claim shall be forfeited.\nDate:\nPlace:\nSignature and Seal of the Hospital Authority:\nSECTION A\nSECTION B\nSECTION   C\nSECTION D\nSECTION E\nSECTION F\nYes\nNo\nYes\nNo\nCity:\nState:\nPin Code:\nb) Phone No.\nc) Registration No. with State Code:\ne) Number of inpatient beds\nf) Facilities available in the hospital\ni. OT \nii. ICU\nYes\nNo\nS\nU\nR\nN\nA\nM\nE\nF\nI\nR\nS\nT  \nN\nA\nM\nE\nM\nI \nD\nD\nL\nE\nN\nA\nM\nE\nS\nU\nR\nN\nA\nM\nE\nF\nI\nR\nS\nT  \nN\nA\nM\nE\nM\nI \nD\nD\nL\nE\nN\nA\nM\nE\nD\nD\nM\nM\nY\nY\nH\nH\nM\nM\nY\nY\nM\nM\nM\nM\nM\nM\nD\nD\nD\nD\nH\nM\nH\nM\nY\nY\nD\nD\nM\nM\nY\nY\nD\nD\nM\nM\nY\nY\nY\nY\ng) Time: \nGUIDANCE FOR FILLING CLAIM FORM - PART B (To be filled in by the hospital)\nDATA ELEMENT\nDESCRIPTION\nFORMAT\na)       Name of the hospital:\nb)       Hospital ID\nc)       Type of Hospital\nc)       Name of treating doctor\nSECTION A - DETAILS OF HOSPITAL\ne)       Qualification\nf)       Registration No. with State Code\ng)       Phone No.\nEnter the name of hospital\nEnter ID number  of hospital\nIndicate whether in network or non network hospital\nEnter the name of the treating doctor\nEnter the qualification of the treating doctor\nEnter the registration number of the doctor along with the state code\nEnter the phone number of doctor\nSECTION B - DETAILS OF THE PATIENT ADMITTED\na)       Name of Patient\nb)       IP registration Number\nc)       Gender\nd)       Age\ne)       Date of Birth\nf)       Date of Admission\ng)       Time\nh)       Date of Discharge\ni)       Time\nj)       Type of Admission\nk)       If Maternity\nDate of Delivery\nGravida Status\nl)       Status at time of discharge\nM)       Total claimed amount\nEnter the name of patient\nEnter insurance provider registration number\nIndicate Gender of the patient\nEnter age of the patient\nEnter date of birth\nEnter date of admission\nEnter Time of admission\nEnter date of Discharge\nEnter time of Discharge\nIndicate type of admission of patient\nEnter Date of Delivery if maternity\nEnter Gravida status if maternity\nIndicate status of patient at time of discharge\nIndicate the total claimed amount\nSECTION C - DETAILS OF AILMENT DIAGNOSED (PRIMARY)\na)        ICD 10 Code\nPrimary Diagnosis\nAdditional  Diagnosis\nCo-morbidities\nb)       ICD 10 PCS\nProcedure 1\nProcedure 2\nProcedure 3\nDetails of Procedure\nc)       Pre-authorization obtained\nd)       Pre-authorization Number\ne)       If authorization by network hospital not obtained, give reason\nf)        Hospitalization due to injury\nCause\nIf injury due to substance abuse/alcohol consumption test \nconducted to establish this\nMedico Legal\nReported to Police\nFIR No.\nIf not reported to police, give reason\nIndicate which supporting documents are submitted\nSECTION D - CLAIM DOCUMENTS SUBMITTED-CHECK LIST\nSECTION E - DETAILS IN CASE OF NON NETWORK HOSPITAL\na)        Address\nb)        Phone No.\nc)        Registration No. with State Code\nd)        Hospital PAN\ne)        Number of Inpatient beds\nf)        Facilities available in the hospital\nRead declaration carefully and mention date (in dd:mm:yy format), place (open text) and sign. and stamp\nEnter the ICD 10 Code and description of the primary diagnosis\nEnter the ICD 10 Code and description of the additional diagnosis\nEnter the ICD 10 Code and description of the Co-morbidities\nEnter the ICD 10 Code and description of the first procedure\nEnter the ICD 10 Code and description of the second procedure\nEnter the ICD 10 Code and description of the third procedure\nEnter the details of the procedure\nEnter pre-authorization number\nIndicate whether pre-authorization obtained\nEnter reason for not obtaining pre-authorization number\nIndicate if hospitalization is due to injury\nIndicate cause of injury\nIndicate whether test conducted\nIndicate whether injury is medico legal\nIndicate whether police report was filed\nEnter first information report number\nEnter reason for not reporting to police\nEnter the full postal address\nEnter the phone number of hospital\nEnter the permanent account number\nEnter the number of inpatient beds\nIndicate facilities available in the hospital\nSECTION F - DECLARATION BY THE HOSPITAL\nName of the hospital in full\nAs allocated by the TPA\nTick the right option\nName of doctor in full\nAbbreviations of educational qualifications\nAs allocated by the Medical Council of India\nInclude STD code with telephone number\nName of patient in full\nAs allotted by the insurance provider\nTick Male or Female\nNumber of years and months\nUse dd-mm-yy format\nUse dd-mm-yy format\nUse hh:mm format\nUse dd-mm-yy format\nUse hh:mm format\nTick the right option\nUse dd-mm-yy format\nUse standard format\nTick the right option\nIn rupees (Do not enter paise values)\nInclude Street, City and Pin Code\nInclude STD code with telephone number\nAs allocated by the City Corporation / Municipality\nAs allocated by the Income Tax Department\nDigits\nTick the right option. If others, please specify\nStandard Format and Open text\nStandard Format and Open text\nStandard Format and Open text\nStandard Format and Open text\nStandard Format and Open text\nStandard Format and Open text\nOpen text\nTick Yes or No\nAs allotted by TPA\nOpen text\nTick Yes or No\nTick Yes or No\nTick the right option\nTick Yes or No\nTick Yes or No\nAs issued by police authrities\nOpen text\nEnter the registration number of the Hospital obtained from local body\nlike City Corporation / Municipality\n"
+}

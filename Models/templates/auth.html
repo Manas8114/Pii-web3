@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a56d4;
+            --bg-color: #f8f9fa;
+            --text-color: #343a40;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 400px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            background-color: var(--card-bg);
+            text-align: center;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .auth-toggle {
+            margin-top: 1rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sign In</h1>
+        
+        <div class="error-message" id="error-message"></div>
+        
+        <div id="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" required>
+            </div>
+            
+            <button type="button" id="auth-btn" class="btn">Sign In</button>
+            
+            <div class="auth-toggle" id="auth-toggle">Don't have an account? Sign Up</div>
+        </div>
+    </div>
+
+    <!-- Appwrite SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@11.0.0"></script>
+    
+    <script>
+        // Initialize Appwrite client
+        const client = new Appwrite.Client();
+        
+        // Set your Appwrite endpoint and project ID
+        client
+            .setEndpoint('https://cloud.appwrite.io/v1') // Replace with your Appwrite endpoint
+            .setProject('67e12abd001f3f51b664');        // Replace with your Appwrite project ID
+            
+        const account = new Appwrite.Account(client);
+        
+        // DOM elements
+        const authBtn = document.getElementById('auth-btn');
+        const authToggle = document.getElementById('auth-toggle');
+        const errorMessage = document.getElementById('error-message');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        
+        // Track authentication mode (login or register)
+        let isLoginMode = true;
+        
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const user = await account.get();
+                // User is logged in, redirect to index page
+                window.location.href = 'index.html';
+            } catch (error) {
+                // User is not logged in, show login form
+                console.log('User not logged in');
+            }
+        });
+        
+        // Toggle between login and register modes
+        authToggle.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            
+            if (isLoginMode) {
+                authBtn.textContent = 'Sign In';
+                authToggle.textContent = 'Don\'t have an account? Sign Up';
+                document.querySelector('h1').textContent = 'Sign In';
+            } else {
+                authBtn.textContent = 'Sign Up';
+                authToggle.textContent = 'Already have an account? Sign In';
+                document.querySelector('h1').textContent = 'Create Account';
+            }
+            
+            // Clear error message when switching modes
+            errorMessage.style.display = 'none';
+        });
+        
+        // Handle authentication (login or register)
+        authBtn.addEventListener('click', async () => {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            
+            if (!email || !password) {
+                displayError('Please fill in all fields');
+                return;
+            }
+            
+            // Show loading state
+            const originalBtnText = authBtn.textContent;
+            authBtn.disabled = true;
+            authBtn.innerHTML = originalBtnText + '<span class="loading"></span>';
+            
+            try {
+                if (isLoginMode) {
+                    // Login
+                    await account.createEmailSession(email, password);
+                } else {
+                    // Register
+                    await account.create('unique()', email, password);
+                    await account.createEmailSession(email, password);
+                }
+                
+                // Redirect to index page after successful authentication
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Authentication error:', error);
+                if (isLoginMode) {
+                    displayError('Invalid email or password');
+                } else {
+                    if (error.message.includes('already exists')) {
+                        displayError('Email already registered');
+                    } else {
+                        displayError('Registration failed: ' + error.message);
+                    }
+                }
+                
+                // Reset button state
+                authBtn.disabled = false;
+                authBtn.textContent = originalBtnText;
+            }
+        });
+        
+        // Helper function to display error messages
+        function displayError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

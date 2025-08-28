@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Security Processing</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        h3 {
+            color: var(--text);
+            margin-top: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        th {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+        }
+        
+        td {
+            padding: 0.75rem 1rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(241, 245, 249, 0.5);
+        }
+        
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.25rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        .confidence-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .high {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #065f46;
+        }
+        
+        .medium {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: #92400e;
+        }
+        
+        .low {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #b91c1c;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateY(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+        }
+        
+        .toast-success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .toast-error {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+        
+        .toast-message {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2>Document Security Processing</h2>
+            <p>Secure document analysis and PII detection system</p>
+        </header>
+        
+        <div class="card">
+            <h3>Processed Document: <span id="filename">{{ filename }}</span></h3>
+            <p>The system has analyzed your document and identified potentially sensitive information.</p>
+        </div>
+        
+        <div class="card">
+            <h3>Extracted Sensitive Entities</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Original Token</th>
+                        <th>Entity Type</th>
+                        <th>Secured Token</th>
+                        <th>Confidence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for token, details in sensitive_data.items() %}
+                    <tr>
+                        <td>{{ token }}</td>
+                        <td>{{ details.entity }}</td>
+                        <td>{{ details.safe_token }}</td>
+                        <td>
+                            {% if details.confidence_score >= 0.8 %}
+                                <span class="confidence-badge high">{{ details.confidence_score }}</span>
+                            {% elif details.confidence_score >= 0.5 %}
+                                <span class="confidence-badge medium">{{ details.confidence_score }}</span>
+                            {% else %}
+                                <span class="confidence-badge low">{{ details.confidence_score }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="actions">
+            <a href="{{ url_for('download_file', filename=filename) }}" class="btn btn-primary">
+                Download Secured Document
+            </a>
+            <button onclick="sendDataToAPI()" class="btn btn-outline">
+                Save to Database
+            </button>
+        </div>
+    </div>
+    
+    <div id="successToast" class="toast toast-success">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message">Data successfully saved to Firebase!</span>
+    </div>
+    
+    <div id="errorToast" class="toast toast-error">
+        <span class="toast-icon">✗</span>
+        <span class="toast-message" id="errorMessage">Error processing request.</span>
+    </div>
+
+    <script>
+        function showToast(id, message = null) {
+            const toast = document.getElementById(id);
+            if (message && id === 'errorToast') {
+                document.getElementById('errorMessage').textContent = message;
+            }
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }
+        
+        function sendDataToAPI() {
+            let inputText = document.getElementById('filename').textContent; // Get filename from the span element
+            
+            if (!inputText) {
+                showToast('errorToast', 'No text found to send!');
+                return;
+            }
+            
+            fetch("http://localhost:5000/extract-sensitive-data", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text: inputText })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Response from API:", data);
+                if (data.error) {
+                    showToast('errorToast', "API Error: " + data.error);
+                } else {
+                    showToast('successToast');
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                showToast('errorToast', "Failed to save data: " + error.message);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureDoc Upload</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a56d4;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --bg-color: #f8f9fa;
+            --text-color: #343a40;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+            --metamask-color: #f6851b;
+            --metamask-hover: #e67e17;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+.header-left, .header-right {
+    align-items: center;
+    display: flex;
+    flex: 1;
+}
+
+.header-center {
+    flex: 2;
+    text-align: center;
+}
+
+.auth-provider {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+}
+
+.appwrite-logo {
+    height: 18px;
+    margin-right: 0.5rem;
+}
+
+.powered-by {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 0.85rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+}
+.hacktrax-logo {
+    font-weight: bold;
+    margin-left: 0.4rem;
+    letter-spacing: 0.5px;
+    color: #ffcc00;
+}
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .header-left, .header-right, .header-center {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .auth-provider, .powered-by {
+        justify-content: center;
+    }
+}
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        
+        .blockchain-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        .blockchain-badge svg {
+            margin-right: 0.5rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+        }
+        
+        .upload-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .upload-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        .upload-title {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .upload-title svg {
+            margin-right: 0.75rem;
+        }
+        
+        .upload-content {
+            padding: 2rem;
+        }
+        
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .file-drop-area {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            background-color: rgba(67, 97, 238, 0.05);
+            text-align: center;
+        }
+        
+        .file-drop-area:hover, .file-drop-area.dragover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+        
+        .file-icon {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .file-message {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        .file-hint {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .file-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .upload-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .upload-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .upload-btn svg {
+            margin-right: 0.75rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 4rem;
+            height: 4rem;
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+        }
+        
+        .feature-card h3 {
+            margin-top: 0;
+            color: var(--text-color);
+        }
+        
+        .feature-card p {
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+        
+        .selected-file {
+            padding: 0.75rem;
+            margin-top: 1rem;
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 6px;
+            display: none;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .selected-file svg {
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+        
+        .selected-file-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Login area styles */
+        .login-area {
+            text-align: center;
+            margin: 20px 0;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .login-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+        
+        .login-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-icon {
+            margin-right: 10px;
+        }
+        
+        .google-btn {
+            background-color: #fff;
+            color: #757575;
+            border: 1px solid #ddd;
+        }
+        
+        .google-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .metamask-btn {
+            background-color: var(--metamask-color);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metamask-btn:hover {
+            background-color: var(--metamask-hover);
+        }
+        
+        .metamask-icon {
+            height: 20px;
+            width: 20px;
+            margin-right: 10px;
+        }
+        
+        .logout-btn {
+            background-color: #d9534f;
+            color: white;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c9302c;
+        }
+        
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(246, 133, 27, 0.1);
+            border-radius: 8px;
+            color: var(--metamask-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .wallet-info svg {
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+        
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(3px);
+        }
+        
+        .modal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin: 0;
+        }
+        
+        .modal-subtitle {
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+        
+        .modal-content {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .modal.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Wallet badge */
+        .wallet-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(246, 133, 27, 0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            color: var(--metamask-color);
+            font-weight: 500;
+        }
+        
+        .wallet-badge svg {
+            margin-right: 0.5rem;
+        }
+        
+        /* Animation for wallet connection */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(246, 133, 27, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(246, 133, 27, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(246, 133, 27, 0); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 1.5s infinite;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-content {
+                padding: 1.5rem;
+            }
+            
+            .file-drop-area {
+                padding: 2rem 1rem;
+            }
+            
+            .login-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="auth-provider">
+                    <img src="https://appwrite.io/images/logos/appwrite-light.svg" alt="Appwrite Logo" class="appwrite-logo">
+                    <span>Authentication by Appwrite</span>
+                </div>
+            </div>
+            
+            <div class="header-center">
+                <h1>SecureDoc Upload</h1>
+                <div class="blockchain-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                    Blockchain Secured
+                </div>
+                <div style="margin-top: 0.5rem;">
+                    <a href="/enhanced" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; font-size: 0.9rem; border: 1px solid rgba(255, 255, 255, 0.3); padding: 0.3rem 0.8rem; border-radius: 15px; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                        ✨ Try Enhanced Portal
+                    </a>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="powered-by">
+                    <span>Powered by</span>
+                    <span class="hacktrax-logo">HackTrax</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="upload-card">
+            <div class="upload-header">
+                <h2 class="upload-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Upload Document
+                </h2>
+            </div>
+            
+            <div class="login-area">
+                <div class="login-title">Connect to continue</div>
+                <div class="login-buttons">
+                    <button id="googleLoginBtn" class="btn google-btn" onclick="openLoginModal('google')">
+                        <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Login with Google
+                    </button>
+                    
+                    <button id="metamaskBtn" class="btn metamask-btn" onclick="openLoginModal('metamask')">
+                        <svg class="metamask-icon" viewBox="0 0 35 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M32.9582 1L19.8241 10.7183L22.2541 5.0167L32.9582 1Z" fill="white"/>
+                            <path d="M2.06653 1L15.0647 10.8407L12.778 5.0167L2.06653 1Z" fill="white"/>
+                            <path d="M28.1823 23.6283L24.6552 29.0617L32.2453 31.1333L34.4244 23.7567L28.1823 23.6283Z" fill="white"/>
+                            <path d="M0.602539 23.7567L2.76654 31.1333L10.3566 29.0617L6.84363 23.6283L0.602539 23.7567Z" fill="white"/>
+                            <path d="M9.97993 14.5028L7.9729 17.6833L15.5012 18.02L15.2472 9.88333L9.97993 14.5028Z" fill="white"/>
+                            <path d="M25.0451 14.5028L19.6963 9.76L19.8241 18.02L27.3523 17.6833L25.0451 14.5028Z" fill="white"/>
+                            <path d="M10.3566 29.0617L15.0647 26.8683L11.0207 23.8L10.3566 29.0617Z" fill="white"/>
+                            <path d="M19.9607 26.8683L24.6688 29.0617L24.0047 23.8L19.9607 26.8683Z" fill="white"/>
+                        </svg>
+                        Connect with MetaMask
+                    </button>
+                </div>
+                
+                <!-- Hidden elements - displayed when logged in -->
+                <div id="walletInfo" class="wallet-info" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                    <span id="walletAddress">Not connected</span>
+                </div>
+                
+                <div id="logoutButton" style="display: none; margin-top: 15px;">
+                    <button id="logoutBtn" class="btn logout-btn" onclick="logout()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Disconnect
+                    </button>
+                </div>
+            </div>
+            
+            <div class="upload-content">
+                <form action="/" method="POST" enctype="multipart/form-data" class="upload-form">
+                    <div class="file-drop-area" id="drop-area">
+                        <div class="file-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="12" y1="18" x2="12" y2="12"></line>
+                                <line x1="9" y1="15" x2="15" y2="15"></line>
+                            </svg>
+                        </div>
+                        <div class="file-message">Drag & drop files here</div>
+                        <div class="file-hint">or click to browse</div>
+                        <input type="file" name="file" id="file-input" class="file-input">
+                    </div>
+                    
+                    <div class="selected-file" id="selected-file">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>
+                        <span class="selected-file-name" id="file-name">No file selected</span>
+                    </div>
+                    
+                    <button type="submit" class="upload-btn" id="uploadBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2	 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        Upload to Blockchain
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                </div>
+                <h3>Blockchain Security</h3>
+                <p>Your documents are encrypted and stored with decentralized blockchain technology for immutable security.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <path d="M12 18v-6"></path>
+                        <path d="M8 15h8"></path>
+                    </svg>
+                </div>
+                <h3>Smart Documents</h3>
+                <p>Convert regular files into smart documents with AI-powered data extraction and analysis.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <h3>Guaranteed Authenticity</h3>
+                <p>Each document receives a unique digital fingerprint verifiable on the blockchain network.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Connect to SecureDoc</h3>
+                <p class="modal-subtitle" id="modalSubtitle">Choose your preferred login method</p>
+                <button class="modal-close" onclick="closeLoginModal()">×</button>
+            </div>
+            <div class="modal-content" id="modalContent">
+                <!-- Content will be set dynamically -->
+            </div>
+            <div class="modal-buttons" id="modalButtons">
+                <!-- Buttons will be set dynamically -->
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2025 SecureDoc • Powered by Blockchain Technology</p>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.10.0/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@11.0.0"></script>
+    
+    <script>
+        // Initialize Appwrite
+        const client = new Appwrite.Client();
+        const account = new Appwrite.Account(client);
+        
+        client
+            .setEndpoint('https://cloud.appwrite.io/v1')
+            .setProject('67e12abd001f3f51b664');
+        
+        // For MetaMask tracking
+        let walletConnected = false;
+        
+        // Google login function
+        function loginWithGoogle() {
+            account.createOAuth2Session('google', window.location.href, window.location.href);
+        }
+        
+        // Check if user is already logged in
+        async function checkLogin() {
+            try {
+                const user = await account.get();
+                console.log("User Logged In: ", user);
+                
+                // Add welcome message if it doesn't exist yet
+                if (!document.getElementById("welcomeMessage")) {
+                    document.body.insertAdjacentHTML('afterbegin', 
+                        `<p id="welcomeMessage" style="text-align:center; color: green; margin-top: 10px;">Welcome, ${user.name}</p>`);
+                }
+                
+                // Show logout button
+                document.getElementById("logoutButton").style.display = "block";
+                
+                // Update wallet info section
+                document.getElementById("walletInfo").style.display = "flex";
+                document.getElementById("walletAddress").innerText = `Logged in as: ${user.name}`;
+                
+            } catch (error) {
+                console.log("Not logged in with Google");
+            }
+        }
+        
+        // Google logout function
+        async function logout() {
+            try {
+                // Check if connected with MetaMask
+                if (walletConnected) {
+                    // Reset wallet display
+                    document.getElementById("walletAddress").innerText = "Not connected";
+                    walletConnected = false;
+                } else {
+                    // Try to logout from Appwrite
+                    await account.deleteSession('current');
+                    
+                    // Remove welcome message if it exists
+                    const welcomeMsg = document.getElementById("welcomeMessage");
+                    if (welcomeMsg) {
+                        welcomeMsg.remove();
+                    }
+                }
+                
+                // Hide logout button and wallet info
+                // Hide logout button and wallet info
+                document.getElementById("logoutButton").style.display = "none";
+                document.getElementById("walletInfo").style.display = "none";
+                
+                console.log("Logged out successfully");
+            } catch (error) {
+                console.error("Logout error", error);
+            }
+        }
+        
+        // MetaMask connection function
+        async function connectMetaMask() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    // Request account access
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const account = accounts[0];
+                    
+                    // Update UI
+                    document.getElementById("walletInfo").style.display = "flex";
+                    document.getElementById("walletAddress").innerText = `${account.slice(0, 6)}...${account.slice(-4)}`;
+                    document.getElementById("logoutButton").style.display = "block";
+                    
+                    walletConnected = true;
+                    closeLoginModal();
+                    
+                    console.log("Connected to MetaMask:", account);
+                    
+                    // Add event listener for account changes
+                    window.ethereum.on('accountsChanged', function (accounts) {
+                        if (accounts.length === 0) {
+                            // User disconnected from MetaMask
+                            logout();
+                        } else {
+                            // User switched accounts
+                            document.getElementById("walletAddress").innerText = 
+                                `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
+                        }
+                    });
+                    
+                    return account;
+                } catch (error) {
+                    console.error("Error connecting to MetaMask:", error);
+                    return null;
+                }
+            } else {
+                alert("MetaMask is not installed. Please install MetaMask to continue.");
+                return null;
+            }
+        }
+        
+        // Modal functions
+        function openLoginModal(type) {
+            const modal = document.getElementById('loginModal');
+            const modalOverlay = document.getElementById('loginModal');
+            const modalContent = document.getElementById('modalContent');
+            const modalButtons = document.getElementById('modalButtons');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalSubtitle = document.getElementById('modalSubtitle');
+            
+            // Clear previous content
+            modalContent.innerHTML = '';
+            modalButtons.innerHTML = '';
+            
+            if (type === 'google') {
+                modalTitle.textContent = 'Login with Google';
+                modalSubtitle.textContent = 'Secure your documents with Google authentication';
+                
+                modalContent.innerHTML = `
+                    <p>By logging in with Google, you agree to our Terms of Service and Privacy Policy.</p>
+                `;
+                
+                modalButtons.innerHTML = `
+                    <button class="btn google-btn" onclick="loginWithGoogle()">
+                        <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Continue with Google
+                    </button>
+                    <button class="btn" style="background-color: #f5f5f5;" onclick="closeLoginModal()">Cancel</button>
+                `;
+            } else if (type === 'metamask') {
+                modalTitle.textContent = 'Connect with MetaMask';
+                modalSubtitle.textContent = 'Secure blockchain authentication';
+                
+                modalContent.innerHTML = `
+                    <p>Connect your MetaMask wallet to securely store your documents on the blockchain.</p>
+                    <div class="wallet-badge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="2" y1="10" x2="22" y2="10"></line>
+                        </svg>
+                        Ethereum Blockchain
+                    </div>
+                `;
+                
+                modalButtons.innerHTML = `
+                    <button class="btn metamask-btn pulse-animation" onclick="connectMetaMask()">
+                        <svg class="metamask-icon" viewBox="0 0 35 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M32.9582 1L19.8241 10.7183L22.2541 5.0167L32.9582 1Z" fill="white"/>
+                            <path d="M2.06653 1L15.0647 10.8407L12.778 5.0167L2.06653 1Z" fill="white"/>
+                            <path d="M28.1823 23.6283L24.6552 29.0617L32.2453 31.1333L34.4244 23.7567L28.1823 23.6283Z" fill="white"/>
+                            <path d="M0.602539 23.7567L2.76654 31.1333L10.3566 29.0617L6.84363 23.6283L0.602539 23.7567Z" fill="white"/>
+                            <path d="M9.97993 14.5028L7.9729 17.6833L15.5012 18.02L15.2472 9.88333L9.97993 14.5028Z" fill="white"/>
+                            <path d="M25.0451 14.5028L19.6963 9.76L19.8241 18.02L27.3523 17.6833L25.0451 14.5028Z" fill="white"/>
+                            <path d="M10.3566 29.0617L15.0647 26.8683L11.0207 23.8L10.3566 29.0617Z" fill="white"/>
+                            <path d="M19.9607 26.8683L24.6688 29.0617L24.0047 23.8L19.9607 26.8683Z" fill="white"/>
+                        </svg>
+                        Connect Wallet
+                    </button>
+                    <button class="btn" style="background-color: #f5f5f5;" onclick="closeLoginModal()">Cancel</button>
+                `;
+            }
+            
+            modalOverlay.style.display = 'flex';
+            setTimeout(() => {
+                const modalElement = document.querySelector('.modal');
+                modalElement.classList.add('active');
+            }, 10);
+        }
+        
+        function closeLoginModal() {
+            const modalElement = document.querySelector('.modal');
+            modalElement.classList.remove('active');
+            
+            setTimeout(() => {
+                document.getElementById('loginModal').style.display = 'none';
+            }, 300);
+        }
+        
+        // File upload handling
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const selectedFile = document.getElementById('selected-file');
+        const fileName = document.getElementById('file-name');
+        const uploadBtn = document.getElementById('uploadBtn');
+        
+        // Prevent default behavior for drag events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // Highlight drop area when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropArea.classList.add('dragover');
+        }
+        
+        function unhighlight() {
+            dropArea.classList.remove('dragover');
+        }
+        
+        // Handle dropped files
+        dropArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                handleFiles(files);
+            }
+        }
+        
+        // Handle file selection via input
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                handleFiles(this.files);
+            }
+        });
+        
+        function handleFiles(files) {
+            const file = files[0]; // Only handle the first file
+            
+            if (file) {
+                fileName.textContent = file.name;
+                selectedFile.style.display = 'flex';
+                
+                // Check if user is logged in
+                checkLoginStatus(file);
+            }
+        }
+        
+        // Check if user is logged in before upload
+        function checkLoginStatus(file) {
+            if (!walletConnected && !document.getElementById("welcomeMessage")) {
+                openLoginModal('google'); // Default to Google login
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Form submission
+document.querySelector('.upload-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert("Please select a file to upload");
+        return;
+    }
+    
+    if (!checkLoginStatus()) {
+        return;
+    }
+    
+    // Show uploading status
+    uploadBtn.innerHTML = '<div class="loading">Uploading...</div>';
+    uploadBtn.disabled = true;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+        // Actually send the file to the server
+        const response = await fetch('/', {
+            method: 'POST',
+            body: formData,
+            // Add this to follow redirects
+            redirect: 'follow'
+        });
+        
+        if (response.ok) {
+            // Instead of trying to parse JSON, follow the redirect from the server
+            window.location.href = response.url;
+        } else {
+            alert("Upload failed: " + (await response.text()));
+        }
+    } catch (error) {
+        console.error("Error uploading file:", error);
+        alert("Error uploading file: " + error.message);
+    } finally {
+        // The finally block might not execute if we redirect
+        // but keeping it here in case of errors
+        fileInput.value = '';
+        selectedFile.style.display = 'none';
+        uploadBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            Upload to Blockchain
+        `;
+        uploadBtn.disabled = false;
+    }
+});
+        // Check login status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLogin();
+            
+            // Add event handlers for the modal close button and background
+            document.querySelector('.modal-close').addEventListener('click', closeLoginModal);
+            document.getElementById('loginModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeLoginModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Processor</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a56d4;
+            --bg-color: #f8f9fa;
+            --text-color: #343a40;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            background-color: var(--card-bg);
+            text-align: center;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .file-drop-area {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .file-drop-area:hover, .file-drop-area.dragover {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .file-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .file-message {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .file-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+            display: none;
+        }
+        
+        .submit-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .submit-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .processing {
+            display: none;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        .processing-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .success-message, .error-message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload a PDF or Image for Processing</h1>
+        
+        <form id="file-form" enctype="multipart/form-data">
+            <div class="file-drop-area" id="drop-area">
+                <div class="file-icon">📄</div>
+                <div class="file-message">Drag & drop your file here or click to browse</div>
+                <div class="file-name" id="file-name">No file selected</div>
+                <input type="file" name="file" id="file-input" class="file-input" required>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submit-btn" disabled>Process File</button>
+        </form>
+        
+        <div class="processing" id="processing">
+            <div class="processing-spinner"></div>
+            <div>Processing your file...</div>
+        </div>
+        
+        <div class="success-message" id="success-message">
+            File processed successfully!
+        </div>
+        
+        <div class="error-message" id="error-message">
+            An error occurred while processing the file.
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const fileName = document.getElementById('file-name');
+        const submitBtn = document.getElementById('submit-btn');
+        const processing = document.getElementById('processing');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+        
+        // File input change handler
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileName.textContent = this.files[0].name;
+                fileName.style.display = 'block';
+                submitBtn.disabled = false;
+            } else {
+                fileName.textContent = 'No file selected';
+                submitBtn.disabled = true;
+            }
+        });
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, function() {
+                this.classList.add('dragover');
+            }, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, function() {
+                this.classList.remove('dragover');
+            }, false);
+        });
+        
+        dropArea.addEventListener('drop', function(e) {
+            fileInput.files = e.dataTransfer.files;
+            
+            // Trigger change event manually
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        }, false);
+        
+        // Form submission
+        document.getElementById('file-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            // Reset messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Show processing state
+            processing.style.display = 'block';
+            submitBtn.disabled = true;
+            
+            let formData = new FormData(this); // FormData to collect form inputs
+
+            fetch('/process', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data); // Handle response
+                processing.style.display = 'none';
+                successMessage.style.display = 'block';
+                // Reset form after success if desired
+                // document.getElementById('file-form').reset();
+                // fileName.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                processing.style.display = 'none';
+                errorMessage.style.display = 'block';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Document - SecuredDoc</title>
+    
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .document-preview {
+            max-width: 800px;
+            max-height: 600px;
+            overflow: auto;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <i class="fas fa-shield-alt text-white text-2xl mr-3"></i>
+                        <h1 class="text-white text-xl font-bold">SecuredDoc</h1>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/dashboard" class="text-white hover:text-blue-200 transition duration-200">
+                        <i class="fas fa-chart-bar mr-1"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Document Preview</h1>
+            <p class="text-gray-600">Review your document before processing</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Document Preview -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-eye mr-2 text-blue-600"></i>Document Preview
+                    </h3>
+                    
+                    <!-- File Info -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-file-alt text-blue-600 text-2xl mr-4"></i>
+                            <div>
+                                <div class="font-semibold text-gray-900">{{ filename }}</div>
+                                <div class="text-sm text-gray-600">Ready for processing</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preview Container -->
+                    <div class="document-preview bg-gray-50 p-4 rounded-lg">
+                        {% if filename.endswith('.pdf') %}
+                            <div class="text-center py-12">
+                                <i class="fas fa-file-pdf text-6xl text-red-500 mb-4"></i>
+                                <p class="text-gray-600">PDF Preview</p>
+                                <p class="text-sm text-gray-500">{{ filename }}</p>
+                            </div>
+                        {% elif filename.endswith(('.png', '.jpg', '.jpeg')) %}
+                            <div class="text-center py-12">
+                                <i class="fas fa-image text-6xl text-green-500 mb-4"></i>
+                                <p class="text-gray-600">Image Preview</p>
+                                <p class="text-sm text-gray-500">{{ filename }}</p>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-12">
+                                <i class="fas fa-file text-6xl text-gray-500 mb-4"></i>
+                                <p class="text-gray-600">File Preview</p>
+                                <p class="text-sm text-gray-500">{{ filename }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Processing Options -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-cog mr-2 text-green-600"></i>Processing Options
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="enablePII" class="mr-3" checked>
+                            <label for="enablePII" class="text-gray-700">
+                                <i class="fas fa-user-secret text-blue-600 mr-2"></i>PII Detection & Redaction
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="enableFraud" class="mr-3" checked>
+                            <label for="enableFraud" class="text-gray-700">
+                                <i class="fas fa-shield-virus text-red-600 mr-2"></i>Fraud Detection
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="enableBlockchain" class="mr-3" checked>
+                            <label for="enableBlockchain" class="text-gray-700">
+                                <i class="fas fa-cube text-purple-600 mr-2"></i>Blockchain Registration
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="enableAudit" class="mr-3" checked>
+                            <label for="enableAudit" class="text-gray-700">
+                                <i class="fas fa-history text-green-600 mr-2"></i>Audit Trail
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Process Button -->
+                    <button id="processBtn" class="w-full mt-6 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-200 font-semibold">
+                        <i class="fas fa-cog mr-2"></i>Process Document
+                    </button>
+                </div>
+
+                <!-- Expected Features -->
+                <div class="bg-blue-50 rounded-lg p-6">
+                    <h4 class="font-bold text-gray-900 mb-3">What Will Happen:</h4>
+                    <ul class="space-y-2 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-2 mt-1 flex-shrink-0"></i>
+                            <span>Extract and identify sensitive information (PII)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-2 mt-1 flex-shrink-0"></i>
+                            <span>Analyze document for fraud indicators</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-2 mt-1 flex-shrink-0"></i>
+                            <span>Create anonymized/redacted version</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-2 mt-1 flex-shrink-0"></i>
+                            <span>Store secure tokens in Firebase</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-2 mt-1 flex-shrink-0"></i>
+                            <span>Register on Stacks blockchain</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Status Modal -->
+    <div id="processingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center h-full p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-spinner fa-spin text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Processing Document</h3>
+                    <p id="processingText" class="text-gray-600 mb-6">Analyzing your document...</p>
+                    
+                    <!-- Progress Steps -->
+                    <div class="space-y-2 text-left">
+                        <div class="processing-step flex items-center p-2 rounded" data-step="extract">
+                            <i class="fas fa-circle text-gray-400 mr-3"></i>
+                            <span class="text-gray-600">Extracting text content</span>
+                        </div>
+                        <div class="processing-step flex items-center p-2 rounded" data-step="pii">
+                            <i class="fas fa-circle text-gray-400 mr-3"></i>
+                            <span class="text-gray-600">Detecting PII entities</span>
+                        </div>
+                        <div class="processing-step flex items-center p-2 rounded" data-step="fraud">
+                            <i class="fas fa-circle text-gray-400 mr-3"></i>
+                            <span class="text-gray-600">Fraud analysis</span>
+                        </div>
+                        <div class="processing-step flex items-center p-2 rounded" data-step="blockchain">
+                            <i class="fas fa-circle text-gray-400 mr-3"></i>
+                            <span class="text-gray-600">Blockchain registration</span>
+                        </div>
+                        <div class="processing-step flex items-center p-2 rounded" data-step="complete">
+                            <i class="fas fa-circle text-gray-400 mr-3"></i>
+                            <span class="text-gray-600">Finalizing results</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const filename = "{{ filename }}";
+
+        async function processDocument() {
+            // Show processing modal
+            document.getElementById('processingModal').classList.remove('hidden');
+            
+            // Simulate processing steps
+            const steps = ['extract', 'pii', 'fraud', 'blockchain', 'complete'];
+            const stepTexts = [
+                'Extracting text content...',
+                'Detecting PII entities...',
+                'Running fraud analysis...',
+                'Registering on blockchain...',
+                'Finalizing results...'
+            ];
+
+            try {
+                for (let i = 0; i < steps.length; i++) {
+                    // Update processing text
+                    document.getElementById('processingText').textContent = stepTexts[i];
+                    
+                    // Update step visual
+                    const stepElement = document.querySelector(`[data-step="${steps[i]}"]`);
+                    stepElement.querySelector('i').className = 'fas fa-spinner fa-spin text-blue-600 mr-3';
+                    stepElement.classList.add('bg-blue-50');
+                    
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Mark step as complete
+                    stepElement.querySelector('i').className = 'fas fa-check text-green-600 mr-3';
+                    stepElement.classList.remove('bg-blue-50');
+                    stepElement.classList.add('bg-green-50');
+                }
+
+                // Prepare form data for actual processing
+                const formData = new FormData();
+                
+                // Create a file object from the filename (this would need to be handled differently in production)
+                const response = await fetch(`/uploads/${filename}`);
+                const fileBlob = await response.blob();
+                const file = new File([fileBlob], filename);
+                
+                formData.append('file', file);
+                formData.append('enableBlockchain', document.getElementById('enableBlockchain').checked);
+                formData.append('enableFraudDetection', document.getElementById('enableFraud').checked);
+                formData.append('enableAuditTrail', document.getElementById('enableAudit').checked);
+
+                // Send to backend for processing
+                const processResponse = await fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const results = await processResponse.json();
+                
+                if (results.success) {
+                    // Redirect to results page
+                    window.location.href = `/result/${results.filename}`;
+                } else {
+                    throw new Error(results.error || 'Processing failed');
+                }
+
+            } catch (error) {
+                console.error('Processing error:', error);
+                alert('Processing failed: ' + error.message);
+                document.getElementById('processingModal').classList.add('hidden');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('processBtn').addEventListener('click', processDocument);
+    </script>
+</body>
+</html>

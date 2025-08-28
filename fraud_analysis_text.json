@@ -1,0 +1,130 @@
+{
+  "content_analysis": {
+    "logical_inconsistencies": [
+      "Date inconsistency detected",
+      "Numeric value inconsistency detected"
+    ],
+    "inconsistencies_found": true
+  },
+  "text_patterns": {},
+  "pii_analysis": {},
+  "overall_risk": "High",
+  "fraud_score": 1.0,
+  "fraud_indicators": [
+    "Date inconsistency detected",
+    "Numeric value inconsistency detected",
+    "Found 1 high-risk PII types",
+    "Suspicious pattern detected: urgent_action",
+    "Suspicious pattern detected: verification",
+    "Suspicious pattern detected: account_issues",
+    "Suspicious pattern detected: financial_opportunity",
+    "Suspicious pattern detected: legal_threats",
+    "Suspicious pattern detected: personal_emergency",
+    "Suspicious pattern detected: phishing_indicators",
+    "Mixed Indian and foreign identification found"
+  ],
+  "fraud_categories": {
+    "content_inconsistencies": {
+      "score": 0.4,
+      "inconsistencies": [
+        "Date inconsistency detected",
+        "Numeric value inconsistency detected"
+      ],
+      "description": "Document contains logical inconsistencies in its content"
+    },
+    "high_risk_pii": {
+      "score": 0.2,
+      "count": 1,
+      "entities": [
+        {
+          "type": "IN_PAN",
+          "name": "PAN Card Number",
+          "text": "ABCDE1234F"
+        }
+      ],
+      "description": "Document contains highly sensitive financial or identity information"
+    },
+    "suspicious_patterns": {
+      "score": 1.3499999999999999,
+      "patterns": [
+        {
+          "category": "urgent_action",
+          "matches": [
+            "urgent",
+            "immediate",
+            "emergency"
+          ],
+          "score": 0.15,
+          "description": "Document contains urgent action language often used in scams"
+        },
+        {
+          "category": "verification",
+          "matches": [
+            "verify"
+          ],
+          "score": 0.15,
+          "description": "Document requests verification of sensitive information"
+        },
+        {
+          "category": "account_issues",
+          "matches": [
+            "account has been suspend",
+            "account #12345678 has been temporarily suspend",
+            "account will be permanently terminat"
+          ],
+          "score": 0.2,
+          "description": "Document mentions account problems requiring immediate action"
+        },
+        {
+          "category": "financial_opportunity",
+          "matches": [
+            "offer",
+            "lottery"
+          ],
+          "score": 0.25,
+          "description": "Document mentions financial opportunities typical in scams"
+        },
+        {
+          "category": "legal_threats",
+          "matches": [
+            "legal",
+            "legal"
+          ],
+          "score": 0.2,
+          "description": "Document contains legal threats or intimidation"
+        },
+        {
+          "category": "personal_emergency",
+          "matches": [
+            "emergency",
+            "help"
+          ],
+          "score": 0.15,
+          "description": "Document mentions personal emergencies often used in scams"
+        },
+        {
+          "category": "phishing_indicators",
+          "matches": [
+            "verify your identity",
+            "click"
+          ],
+          "score": 0.25,
+          "description": "Document contains potential phishing language"
+        }
+      ],
+      "description": "Document contains language patterns commonly found in fraudulent communications"
+    },
+    "unusual_combinations": {
+      "score": 0.25,
+      "combinations": [
+        {
+          "type": "mixed_identification",
+          "score": 0.25,
+          "description": "Document contains both Indian and foreign identification which is unusual"
+        }
+      ],
+      "description": "Document contains unusual combinations of sensitive information"
+    }
+  },
+  "risk_percentage": 100.0
+}

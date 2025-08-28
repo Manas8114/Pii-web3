@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Results - SecuredDoc</title>
+    
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .success-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <i class="fas fa-shield-alt text-white text-2xl mr-3"></i>
+                        <h1 class="text-white text-xl font-bold">SecuredDoc</h1>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/dashboard" class="text-white hover:text-blue-200 transition duration-200">
+                        <i class="fas fa-chart-bar mr-1"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 success-pulse">
+                <i class="fas fa-check text-3xl text-green-600"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Processing Complete!</h1>
+            <p class="text-gray-600">Your document has been successfully analyzed and secured</p>
+            <p class="text-sm text-gray-500 mt-2">File: {{ filename }}</p>
+        </div>
+
+        <!-- Processing Summary -->
+        <div class="grid md:grid-cols-4 gap-6 mb-8">
+            <div class="stat-card bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-user-secret text-xl text-blue-600"></i>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">{{ results.pii_detection.pii_count }}</div>
+                <div class="text-sm text-gray-600">PII Entities Found</div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-shield-virus text-xl text-red-600"></i>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {% if results.fraud_detection %}
+                        {{ (results.fraud_detection.fraud_probability * 100)|round }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </div>
+                <div class="text-sm text-gray-600">Fraud Risk Score</div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-cube text-xl text-purple-600"></i>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">
+                    {% if results.blockchain and results.blockchain.success %}✓{% else %}✗{% endif %}
+                </div>
+                <div class="text-sm text-gray-600">Blockchain Registered</div>
+            </div>
+            
+            <div class="stat-card bg-white rounded-lg shadow-md p-6 text-center">
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-history text-xl text-green-600"></i>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">{{ results.pii_detection.entities_found|length }}</div>
+                <div class="text-sm text-gray-600">Entity Types</div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Main Results -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- PII Detection Results -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-user-secret mr-2 text-blue-600"></i>PII Detection Results
+                    </h3>
+                    
+                    {% if results.pii_detection.sensitive_data %}
+                        <div class="space-y-3">
+                            {% for entity_text, entity_info in results.pii_detection.sensitive_data.items() %}
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded mr-3">
+                                        {{ entity_info.entity }}
+                                    </span>
+                                    <span class="text-gray-700 font-mono">{{ entity_text[:20] }}***</span>
+                                </div>
+                                <div class="text-sm text-blue-600">
+                                    Confidence: {{ (entity_info.confidence_score * 100)|round }}%
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-shield-alt text-4xl mb-3"></i>
+                            <p>No PII entities detected in this document</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Fraud Analysis -->
+                {% if results.fraud_detection %}
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-shield-virus mr-2 text-red-600"></i>Fraud Analysis
+                    </h3>
+                    
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-gray-700">Risk Level</span>
+                            <span class="font-bold px-2 py-1 rounded text-xs
+                                {% if results.fraud_detection.risk_level == 'High' %}bg-red-100 text-red-800
+                                {% elif results.fraud_detection.risk_level == 'Medium' %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-green-100 text-green-800{% endif %}">
+                                {{ results.fraud_detection.risk_level }}
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-gray-700">Fraud Probability</span>
+                            <span class="font-bold">{{ (results.fraud_detection.fraud_probability * 100)|round }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="h-3 rounded-full 
+                                {% if results.fraud_detection.fraud_probability >= 0.7 %}bg-red-500
+                                {% elif results.fraud_detection.fraud_probability >= 0.4 %}bg-yellow-500
+                                {% else %}bg-green-500{% endif %}" 
+                                style="width: {{ (results.fraud_detection.fraud_probability * 100)|round }}%"></div>
+                        </div>
+                    </div>
+
+                    {% if results.fraud_detection.suspicious_patterns %}
+                        <div class="space-y-2">
+                            <h4 class="font-semibold text-gray-900">Suspicious Patterns Found:</h4>
+                            {% for pattern in results.fraud_detection.suspicious_patterns %}
+                            <div class="flex items-center p-2 bg-yellow-50 rounded">
+                                <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
+                                <span class="text-gray-700">{{ pattern }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4 text-green-600">
+                            <i class="fas fa-check-circle text-2xl mb-2"></i>
+                            <p>No suspicious patterns detected</p>
+                        </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Processing Summary -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-info-circle mr-2 text-green-600"></i>Processing Summary
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-start p-3 border-l-4 border-green-400 bg-green-50">
+                            <i class="fas fa-clock text-green-600 mr-3 mt-1"></i>
+                            <div>
+                                <div class="font-medium text-gray-900">Document Processed</div>
+                                <div class="text-sm text-gray-600">{{ results.timestamp }}</div>
+                                <div class="text-sm text-gray-700 mt-1">Successfully analyzed and secured</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start p-3 border-l-4 border-blue-400 bg-blue-50">
+                            <i class="fas fa-search text-blue-600 mr-3 mt-1"></i>
+                            <div>
+                                <div class="font-medium text-gray-900">PII Analysis Complete</div>
+                                <div class="text-sm text-gray-600">Found {{ results.pii_detection.pii_count }} sensitive entities</div>
+                                <div class="text-sm text-gray-700 mt-1">{{ results.pii_detection.entities_found|join(', ') }}</div>
+                            </div>
+                        </div>
+                        
+                        {% if results.fraud_detection %}
+                        <div class="flex items-start p-3 border-l-4 border-red-400 bg-red-50">
+                            <i class="fas fa-shield-alt text-red-600 mr-3 mt-1"></i>
+                            <div>
+                                <div class="font-medium text-gray-900">Fraud Analysis Complete</div>
+                                <div class="text-sm text-gray-600">Risk Level: {{ results.fraud_detection.risk_level }}</div>
+                                <div class="text-sm text-gray-700 mt-1">Confidence: {{ (results.fraud_detection.confidence_score * 100)|round }}%</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if results.blockchain %}
+                        <div class="flex items-start p-3 border-l-4 border-purple-400 bg-purple-50">
+                            <i class="fas fa-cube text-purple-600 mr-3 mt-1"></i>
+                            <div>
+                                <div class="font-medium text-gray-900">Blockchain Registration</div>
+                                <div class="text-sm text-gray-600">
+                                    {% if results.blockchain.success %}Successfully registered{% else %}Registration failed{% endif %}
+                                </div>
+                                {% if results.blockchain.transaction_hash %}
+                                <div class="text-sm text-gray-700 mt-1 font-mono">{{ results.blockchain.transaction_hash[:16] }}...</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Download Options -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-download mr-2 text-green-600"></i>Download Files
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <a href="/download/{{ results.filename }}" 
+                           class="block w-full bg-blue-600 text-white text-center px-4 py-3 rounded-lg hover:bg-blue-700 transition duration-200">
+                            <i class="fas fa-file-alt mr-2"></i>Original Document
+                        </a>
+                        
+                        {% if results.processed_filename %}
+                        <a href="/download/{{ results.processed_filename }}" 
+                           class="block w-full bg-green-600 text-white text-center px-4 py-3 rounded-lg hover:bg-green-700 transition duration-200">
+                            <i class="fas fa-user-secret mr-2"></i>Redacted Version
+                        </a>
+                        {% endif %}
+                        
+                        <a href="/download/{{ results.filename }}_analysis.json" 
+                           class="block w-full bg-purple-600 text-white text-center px-4 py-3 rounded-lg hover:bg-purple-700 transition duration-200">
+                            <i class="fas fa-chart-bar mr-2"></i>Analysis Report
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Blockchain Info -->
+                {% if results.blockchain and results.blockchain.success %}
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-cube mr-2 text-purple-600"></i>Blockchain Record
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        {% if results.blockchain.transaction_hash %}
+                        <div>
+                            <div class="text-sm font-medium text-gray-700">Transaction Hash</div>
+                            <div class="text-xs font-mono bg-gray-100 p-2 rounded break-all">
+                                {{ results.blockchain.transaction_hash }}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div>
+                            <div class="text-sm font-medium text-gray-700">Network</div>
+                            <div class="text-sm text-gray-600">Stacks Testnet</div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm font-medium text-gray-700">Status</div>
+                            <div class="text-sm text-green-600 flex items-center">
+                                <i class="fas fa-check-circle mr-1"></i>Confirmed
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Processing Options -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-cog mr-2 text-gray-600"></i>Processing Options Used
+                    </h3>
+                    
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">PII Detection</span>
+                            <i class="fas fa-check text-green-600"></i>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Fraud Detection</span>
+                            {% if results.processing_options.fraud_detection_enabled %}
+                                <i class="fas fa-check text-green-600"></i>
+                            {% else %}
+                                <i class="fas fa-times text-gray-400"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Blockchain Registration</span>
+                            {% if results.processing_options.blockchain_enabled %}
+                                <i class="fas fa-check text-green-600"></i>
+                            {% else %}
+                                <i class="fas fa-times text-gray-400"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Audit Trail</span>
+                            {% if results.processing_options.audit_trail_enabled %}
+                                <i class="fas fa-check text-green-600"></i>
+                            {% else %}
+                                <i class="fas fa-times text-gray-400"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-tools mr-2 text-gray-600"></i>Actions
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <button onclick="window.print()" 
+                                class="block w-full bg-gray-600 text-white text-center px-4 py-3 rounded-lg hover:bg-gray-700 transition duration-200">
+                            <i class="fas fa-print mr-2"></i>Print Results
+                        </button>
+                        
+                        <button onclick="shareResults()" 
+                                class="block w-full bg-blue-600 text-white text-center px-4 py-3 rounded-lg hover:bg-blue-700 transition duration-200">
+                            <i class="fas fa-share mr-2"></i>Share Report
+                        </button>
+                        
+                        <a href="/dashboard" 
+                           class="block w-full bg-green-600 text-white text-center px-4 py-3 rounded-lg hover:bg-green-700 transition duration-200">
+                            <i class="fas fa-chart-bar mr-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center h-full p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">Share Results</h3>
+                    <button onclick="closeShareModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Share Link</label>
+                        <input type="text" id="shareLink" readonly
+                               class="w-full p-2 border border-gray-300 rounded-lg bg-gray-50"
+                               value="{{ request.url }}">
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="copyShareLink()" 
+                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+                            <i class="fas fa-copy mr-2"></i>Copy Link
+                        </button>
+                        
+                        <button onclick="emailReport()" 
+                                class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200">
+                            <i class="fas fa-envelope mr-2"></i>Email
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function shareResults() {
+            document.getElementById('shareModal').classList.remove('hidden');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.add('hidden');
+        }
+
+        function copyShareLink() {
+            const shareLink = document.getElementById('shareLink');
+            shareLink.select();
+            shareLink.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(shareLink.value).then(() => {
+                // Show success feedback
+                const button = event.target.closest('button');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
+                button.classList.add('bg-green-600');
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('bg-green-600');
+                }, 2000);
+            });
+        }
+
+        function emailReport() {
+            const subject = encodeURIComponent('Document Processing Report - SecuredDoc');
+            const body = encodeURIComponent(`
+Document Processing Results:
+
+- PII Entities Found: {{ results.pii_detection.pii_count }}
+- Fraud Risk Score: {% if results.fraud_detection %}{{ (results.fraud_detection.fraud_probability * 100)|round }}%{% else %}N/A{% endif %}
+- Blockchain Registration: {% if results.blockchain and results.blockchain.success %}Yes{% else %}No{% endif %}
+- Processing Date: {{ results.timestamp }}
+
+View full report: {{ request.url }}
+            `);
+            
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "pii_detection": {
+    "error": "cannot import name 'process_document' from 'Models.script' (D:\\CodeFest(tokenization)\\Standard-Chartered-Hackthon\\Models\\script.py)",
+    "pii_count": 0
+  },
+  "fraud_detection": {
+    "fraud_probability": 0.3894489825642072,
+    "risk_level": "Low",
+    "suspicious_patterns": [
+      "image_manipulation_detected",
+      "signature_issues",
+      "author_inconsistency",
+      "compression_anomaly"
+    ],
+    "confidence_score": 0.7568097715778533,
+    "blockchain_hash": "954f279a43d5554e44c5face2b971880ca53d5ae3d1ab4e40b1de8e28b3c2366",
+    "audit_trail_id": "0xdb52585e1c5f485c5af35c8b641323a299b9e4c05a2d868bc083cfa00cb3"
+  },
+  "blockchain": {
+    "success": true,
+    "transaction_hash": "0x75e71bb0eb0477449592609236dd3d1b8e22ff6ae26933b6818b4abf0cb3",
+    "document_hash": "954f279a43d5554e44c5face2b971880ca53d5ae3d1ab4e40b1de8e28b3c2366",
+    "block_height": 342346,
+    "cost": "1.0 STX",
+    "network": "testnet",
+    "timestamp": "2025-08-28T23:11:37.057629"
+  }
+}

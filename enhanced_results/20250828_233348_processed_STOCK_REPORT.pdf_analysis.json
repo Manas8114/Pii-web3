@@ -1,0 +1,56 @@
+{
+  "success": true,
+  "filename": "20250828_233348_processed_STOCK_REPORT.pdf",
+  "processed_filename": "processed_20250828_233348_processed_STOCK_REPORT.pdf",
+  "timestamp": "2025-08-28T23:33:54.494577",
+  "extracted_text": "Client Information\nClient Name :\nClient Code :\nPAN :\nStatement of Accounts of \n for the period from '\n To \n ('MONDAY' To 'SATURDAY')\nStatement of Account reflecting Clear Balance as on \n of statement:\nTransaction\nDate\nExecution\nDate\nClearing\nCorporation\n/Clearing Member\nSegm\nent\nType\nMember Demat Account No.\nCounterparty Demat Account No.\nSettlement\nNo.\nISIN Code\nScrip Name\nQuantity\nDelivere\nd (Qty.)\nQuantity\nReceive\nd (Qty.)\nBalance\n(Qty.)\nTrf. Ref.\nNo.\nTransacti\non Type\nPurpose\nTo\nFrom\nTo\nFrom\nPending Obligations as on \n (As on 'SATURDAY')\nTransaction\nDate\nExecution\nDate\nClearing\nCorporation\n/Clearing Member\nSegm\nent\nType\nMember Demat Account No.\nCounterparty Demat Account No.\nSettlement\nNo.\nISIN Code\nScrip Name\nQuantity\nDelivere\nd (Qty.)\nQuantity\nReceive\nd (Qty.)\nBalance\n(Qty.)\nTrf. Ref.\nNo.\nTransacti\non Type\nPurpose\nTo\nFrom\nTo\nFrom\n",
+  "pii_detection": {
+    "sensitive_data": {
+      "Segm\nent": {
+        "entity": "PERSON",
+        "safe_token": "06208445-1087-4aba-a7b5-a12085468ef0",
+        "confidence_score": 0.85
+      },
+      "Clearing\nCorporation": {
+        "entity": "ORGANIZATION",
+        "safe_token": "4e60148a-83bd-4af6-a745-14b94f0b61be",
+        "confidence_score": "0.7741746"
+      }
+    },
+    "pii_count": 2,
+    "entities_found": [
+      "PERSON",
+      "ORGANIZATION"
+    ]
+  },
+  "fraud_detection": {
+    "fraud_probability": 0.420497961505626,
+    "risk_level": "Low",
+    "suspicious_patterns": [
+      "image_manipulation_detected",
+      "formatting_inconsistencies",
+      "potential_copy_paste",
+      "illogical_content_flow",
+      "irregular_layout",
+      "potential_text_manipulation",
+      "suspicious_creation_date"
+    ],
+    "confidence_score": 0.7338100027136696,
+    "blockchain_hash": "292fdd5cd8629c2374772a6b9b275b78962524f48b35f03372c4228b5d09a955",
+    "audit_trail_id": "0x065d510d2aae9d9347aa4dadc7a2efc324b80a0b14d09987823696fb2655"
+  },
+  "blockchain": {
+    "success": true,
+    "transaction_hash": "0x87444089582ea370cd3e21484b2af3ad8bc19eef24a2dec9dc21b9822655",
+    "document_hash": "292fdd5cd8629c2374772a6b9b275b78962524f48b35f03372c4228b5d09a955",
+    "block_height": 342348,
+    "cost": "1.0 STX",
+    "network": "testnet",
+    "timestamp": "2025-08-28T23:33:54.492577"
+  },
+  "processing_options": {
+    "blockchain_enabled": true,
+    "fraud_detection_enabled": true,
+    "audit_trail_enabled": true
+  }
+}

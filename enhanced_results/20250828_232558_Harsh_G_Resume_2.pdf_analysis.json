@@ -1,0 +1,292 @@
+{
+  "success": true,
+  "filename": "20250828_232558_Harsh_G_Resume_2.pdf",
+  "processed_filename": "processed_20250828_232558_Harsh_G_Resume_2.pdf",
+  "timestamp": "2025-08-28T23:26:48.283211",
+  "extracted_text": "Harsh Sahu\n9399073131 | hs3657@srmist.edu.in | linkedin.com/in/harsh-sahu | github.com/Harsh067899\nEducation\nSRM Institute of Technology\nChennai, Tamil Nadu\nBachelor of Technology in CSE (Data Science), Current CGPA: 9.50\nSept. 2022 \u2013 Present\nBharat Ratan School\nSeoni, Madhya Pradesh\nClass 12th, Percentage: 92.8% (Mathematics, Physics, Chemistry)\nApril 2020 \u2013 May 2021\nExperience\nProject Engineer\nRemote\nKalvium\nMay 2025 \u2013 Aug 2025\n\u2013 Developing full-stack applications (React.js, Node.js/Express, Python, C++, Java), ensuring coding standards,\nunit testing, and integration testing for high-quality deliverables.\n\u2013 Building cloud-native applications on Google Cloud Platform and AWS, practicing Agile teamwork, problem\nsolving, and continuous learning in collaborative environments.\nSoftware Engineer\nChennai, India\nRento (SRM DEI Startup)\nJan 2025 \u2013 May 2025\n\u2013 Architected property management platform with React.js, Node.js, and PostgreSQL, implementing real-time chat\nand advanced search, boosting engagement by 35% and Backend in Java Springboot.\n\u2013 Designed ML-based recommendation system with TensorFlow, improving property match accuracy by 25%,\nfollowing quality testing and problem-solving practices.\nBackend Developer\nRemote\nZidio Development\nJune 2024 \u2013 Sept 2024\n\u2013 Developed predictive models in Python (pandas, scikit-learn), deployed via Flask APIs with Docker, ensuring\nsoftware testing compliance.\n\u2013 Created React + Plotly dashboards, reducing stakeholder decision-making time by 40% through clear\ncommunication and data visualization.\nComputer Vision Research Scientist Intern\nRemote\nNational Chung Cheng University, Taiwan\nJuly 2023 \u2013 Dec 2023\n\u2013 Developed accident detection systems with OpenCV and TensorFlow, achieving 92% accuracy with reproducible\ncoding practices.\n\u2013 Collaborated with global teams, practicing teamwork, adaptability, and communication while publishing\nresearch findings.\nAndroid Developer\nChennai, India\nSRM Hospitals\nJan 2023 \u2013 June 2023\n\u2013 Built Flutter-based cross-platform mobile app with Firebase backend, implementing secure coding and\ncompliance standards.\n\u2013 Developed Python + SQL dashboards in Tableau, reducing manual reporting time by 30% and supporting team\nefficiency.\nKey Projects\nBlockchain-Secured PII Data Masking Platform\nEthereum, Solidity, Python, React, IPFS\n\u2013 Designed secure data platform using blockchain and cryptography, ensuring compliance, testing, and quality\nstandards.\n\u2013 Built AI model for PII detection with Python (NLP + ML) and smart contracts for decentralized access control,\nreducing breach risk by 85%.\n6G AI-Native Network Slice Orchestration\nPython, TensorFlow, Kubernetes, gRPC\n\u2013 Implemented ML-driven slice allocation, improving resource use by 45%.\n\u2013 Built orchestration platform with Kubernetes + APIs, following coding standards, problem-solving, and\nAgile collaboration.\nAI-Powered Accident Detection System\nPython, TensorFlow, OpenCV\n\n\u2013 Built CNN-based accident detection system, achieving 94% accuracy, tested across large datasets.\n\u2013 Optimized for edge deployment, reducing compute needs by 35% while ensuring quality compliance.\nChromaGenius: Deep Learning Image Colorization\nPython, GANs, PyTorch\n\u2013 Developed GAN-based colorization model, improving output quality by 20%.\n\u2013 Optimized training pipeline, reducing processing time by 25% and applying testing + code review best\npractices.\nAchievements & Publications\nWinner, ITU 6G Hackathon (2025) \u2013 Built AI-native wireless optimization system, showing teamwork, adaptability,\nand innovation.\nFirst Prize, HackTrax Hackathon \u2013 Delivered blockchain-based system with real-time processing, applying coding\nand problem-solving skills.\nResearch Publication: \u201cReal-Time Accident Detection with Deep Learning\u201d \u2013 Presented at ICPR.\nGlobal Rank 496, TCS CodeVita (Top 1% globally) \u2013 Competitive programming and algorithm design.\nTop 2000 Global, Meta Hacker Cup \u2013 Problem solving, algorithms, and coding standards under time constraints.\nCertifications & Training\nGoogle AI/ML AICTE Virtual Internship \u2013 Hands-on ML training in TensorFlow and problem-solving projects.\nNPTEL Python for Data Science \u2013 Elite Grade (Top 2%), covering data analysis, visualization, and quality testing.\nAWS Certified Developer Associate \u2013 Cloud deployments, containerization, and scalable application practices.\nTechnical Skills\nLanguages: Python, Java, C++, JavaScript, SQL\nGoogle Technologies: Google Cloud Platform (GCP), Google Workspace, Firebase, Google Colab\nWeb Development: React.js, Node.js, Express.js, Spring Boot, HTML5, CSS3\nDatabases: PostgreSQL, MySQL, MongoDB, Firebase\nAI/ML: TensorFlow, PyTorch, Scikit-learn, OpenCV, GANs, CNNs\nTools: Git, Docker, Linux, VS Code, IntelliJ, Agile, Unit Testing\nOther: Kubernetes, D3.js, Tableau, APIs, Problem Solving, Team Collaboration, Communication\n",
+  "pii_detection": {
+    "sensitive_data": {
+      "hs3657@srmist.edu.in": {
+        "entity": "EMAIL_ADDRESS",
+        "safe_token": "73bfb18f-eadb-49d4-b2c4-7b0180603ee5",
+        "confidence_score": 1.0
+      },
+      "Madhya Pradesh": {
+        "entity": "LOCATION",
+        "safe_token": "514db645-2590-4c52-9552-1e28060c3ed6",
+        "confidence_score": "0.9984654"
+      },
+      "Tamil Nadu": {
+        "entity": "LOCATION",
+        "safe_token": "cf0cb9aa-a659-4daf-a196-8dcee87c3f1f",
+        "confidence_score": "0.99616784"
+      },
+      "Chennai": {
+        "entity": "LOCATION",
+        "safe_token": "338b9ee7-fa63-403f-b8c6-d343d7edab7e",
+        "confidence_score": "0.9363315"
+      },
+      "SRM DEI Startup": {
+        "entity": "ORGANIZATION",
+        "safe_token": "e27a8781-9dae-46f0-9b66-a47a9e258ad6",
+        "confidence_score": "0.9928434"
+      },
+      "Taiwan": {
+        "entity": "LOCATION",
+        "safe_token": "25be6081-e9ff-4e24-bca7-d2b62fe1746d",
+        "confidence_score": "0.9890752"
+      },
+      "India": {
+        "entity": "LOCATION",
+        "safe_token": "9eac1d70-c416-4a1d-be07-0da00671204c",
+        "confidence_score": "0.969453"
+      },
+      "Docker": {
+        "entity": "LOCATION",
+        "safe_token": "f1bfa712-2cac-42b2-af88-9f5252b951d0",
+        "confidence_score": 0.85
+      },
+      "SRM Institute of Technology": {
+        "entity": "ORGANIZATION",
+        "safe_token": "4d17b0b2-71d0-4645-aa17-2d541efcbbee",
+        "confidence_score": "0.9199127"
+      },
+      "Seoni": {
+        "entity": "LOCATION",
+        "safe_token": "a6513802-10ba-4321-be32-bed7403a1599",
+        "confidence_score": "0.9066303"
+      },
+      "Bharat Ratan": {
+        "entity": "ORGANIZATION",
+        "safe_token": "ffa6d1c7-5d34-40d8-84a0-7849f9a18d4e",
+        "confidence_score": "0.8854074"
+      },
+      "React": {
+        "entity": "ORGANIZATION",
+        "safe_token": "a44be02b-a3e2-42b2-8d26-1bb4b596b9e2",
+        "confidence_score": "0.34067065"
+      },
+      "Sahu": {
+        "entity": "ORGANIZATION",
+        "safe_token": "f852eacf-cb9e-4d30-bed6-c2ac5fa83e48",
+        "confidence_score": "0.6708257"
+      },
+      "linkedin.com/in/harsh-sahu": {
+        "entity": "URL",
+        "safe_token": "1f6ab14d-7597-476f-8550-4818e0cc5a33",
+        "confidence_score": 0.85
+      },
+      "github.com/Harsh067899": {
+        "entity": "URL",
+        "safe_token": "4e7287f9-05b9-4329-805d-7e2be3a76e8f",
+        "confidence_score": 0.85
+      },
+      "Tamil": {
+        "entity": "NRP",
+        "safe_token": "55723d67-efc6-4192-b954-32480ced6490",
+        "confidence_score": 0.85
+      },
+      "Sept. 2022": {
+        "entity": "DATE_TIME",
+        "safe_token": "5d9a2489-7b09-4d54-b996-25723793f6bb",
+        "confidence_score": 0.85
+      },
+      "April 2020": {
+        "entity": "DATE_TIME",
+        "safe_token": "d31ddcad-9877-46a3-9175-c0c268d9786b",
+        "confidence_score": 0.85
+      },
+      "May 2021": {
+        "entity": "DATE_TIME",
+        "safe_token": "93286a3f-c07d-4521-b30d-6c8704968ab2",
+        "confidence_score": 0.85
+      },
+      "May 2025": {
+        "entity": "DATE_TIME",
+        "safe_token": "0ab953f4-a408-4dc1-8028-51868c298f2a",
+        "confidence_score": 0.85
+      },
+      "Aug 2025": {
+        "entity": "DATE_TIME",
+        "safe_token": "d1c9270e-fd73-44fe-84b7-6fb806aa91ea",
+        "confidence_score": 0.85
+      },
+      "C++": {
+        "entity": "LOCATION",
+        "safe_token": "02093d6a-6043-4dbe-b5dc-ebc3e35edc1e",
+        "confidence_score": 0.85
+      },
+      "Java": {
+        "entity": "LOCATION",
+        "safe_token": "97504f1f-3da1-415b-8ed0-4beefd372367",
+        "confidence_score": 0.85
+      },
+      "Agile": {
+        "entity": "NRP",
+        "safe_token": "0738e74c-5c48-4c9e-98cd-c527ce25e6da",
+        "confidence_score": 0.85
+      },
+      "Jan 2025": {
+        "entity": "DATE_TIME",
+        "safe_token": "afc098b4-cffe-4288-8dea-1948fa799980",
+        "confidence_score": 0.85
+      },
+      "June 2024": {
+        "entity": "DATE_TIME",
+        "safe_token": "6dfe86a4-b09f-4682-9c9c-6ef8e60bdbe5",
+        "confidence_score": 0.85
+      },
+      "Sept 2024": {
+        "entity": "DATE_TIME",
+        "safe_token": "bd83d556-707b-4e15-8605-190332bb8e36",
+        "confidence_score": 0.85
+      },
+      "Flask": {
+        "entity": "LOCATION",
+        "safe_token": "e025707f-9258-4f6d-a3fb-9f90ee9c5ba4",
+        "confidence_score": 0.85
+      },
+      "July 2023": {
+        "entity": "DATE_TIME",
+        "safe_token": "21c3872d-ceb7-4209-87a4-21db0de0d8e3",
+        "confidence_score": 0.85
+      },
+      "Dec 2023": {
+        "entity": "DATE_TIME",
+        "safe_token": "d87d67ff-95e7-4460-8bc2-e2004e659e5c",
+        "confidence_score": 0.85
+      },
+      "Jan 2023": {
+        "entity": "DATE_TIME",
+        "safe_token": "2f86cf53-9ef8-4e98-8391-35c89a299b9b",
+        "confidence_score": 0.85
+      },
+      "June 2023": {
+        "entity": "DATE_TIME",
+        "safe_token": "72c20260-6f90-46e3-b73a-e589896abb10",
+        "confidence_score": 0.85
+      },
+      "Tableau": {
+        "entity": "LOCATION",
+        "safe_token": "b214b9e2-20d5-41d2-a643-c8f857bb6876",
+        "confidence_score": 0.85
+      },
+      "2025": {
+        "entity": "DATE_TIME",
+        "safe_token": "8daa7754-c07b-480d-b2c5-553c1110235a",
+        "confidence_score": 0.85
+      },
+      "2000": {
+        "entity": "DATE_TIME",
+        "safe_token": "e3506ac0-50f3-4a53-8575-e2c799675709",
+        "confidence_score": 0.85
+      },
+      "Express.js": {
+        "entity": "LOCATION",
+        "safe_token": "944eedb7-af62-4651-a7ba-6d365d41a547",
+        "confidence_score": 0.85
+      },
+      "Firebase": {
+        "entity": "LOCATION",
+        "safe_token": "eeec34f8-47f4-4c2c-bd5d-a16844832836",
+        "confidence_score": 0.85
+      },
+      "Scikit": {
+        "entity": "LOCATION",
+        "safe_token": "8aa88935-285d-46ff-aefc-771d05070f3d",
+        "confidence_score": 0.85
+      },
+      "Linux": {
+        "entity": "LOCATION",
+        "safe_token": "b368082e-fba3-44d0-b1ff-97beb830cfc4",
+        "confidence_score": 0.85
+      },
+      "Rento": {
+        "entity": "ORGANIZATION",
+        "safe_token": "9d989b4e-879a-4a28-a234-a3d38979eddd",
+        "confidence_score": "0.8231472"
+      },
+      "Node": {
+        "entity": "ORGANIZATION",
+        "safe_token": "7bba6290-2557-4533-9ab7-6042ac9473ae",
+        "confidence_score": "0.70556223"
+      },
+      "TensorFlow": {
+        "entity": "ORGANIZATION",
+        "safe_token": "d3b2401f-9fcb-46b5-a5d9-0501a36c24a1",
+        "confidence_score": "0.69760805"
+      },
+      "Harsh": {
+        "entity": "PERSON",
+        "safe_token": "bc3650fa-5ea9-46f8-a564-87c0fb68ceff",
+        "confidence_score": "0.64331985"
+      },
+      "Zidio": {
+        "entity": "ORGANIZATION",
+        "safe_token": "0aae1d4c-cb63-4b49-9c80-3d1baf3077e7",
+        "confidence_score": "0.59012157"
+      },
+      "srmist.edu.in": {
+        "entity": "URL",
+        "safe_token": "14ca4aa5-44fd-4071-a2d4-334fa76598b0",
+        "confidence_score": 0.5
+      },
+      "Kalvium": {
+        "entity": "ORGANIZATION",
+        "safe_token": "3e816e0f-ee83-48b0-8187-bcc806204ca8",
+        "confidence_score": "0.40206912"
+      },
+      "9399073131": {
+        "entity": "IN_PHONE_WITHOUT_CODE",
+        "safe_token": "14f66be3-4378-4b5a-bf51-8e7aa8f598e9",
+        "confidence_score": 1.0
+      },
+      "hs3657": {
+        "entity": "IN_VEHICLE_REGISTRATION",
+        "safe_token": "1811c37a-79e4-4af9-96a8-fec36a76ef7b",
+        "confidence_score": 0.01
+      }
+    },
+    "pii_count": 48,
+    "entities_found": [
+      "PERSON",
+      "DATE_TIME",
+      "ORGANIZATION",
+      "EMAIL_ADDRESS",
+      "NRP",
+      "URL",
+      "LOCATION",
+      "IN_VEHICLE_REGISTRATION",
+      "IN_PHONE_WITHOUT_CODE"
+    ]
+  },
+  "fraud_detection": {
+    "fraud_probability": 0.4879958159730475,
+    "risk_level": "Low",
+    "suspicious_patterns": [
+      "author_inconsistency",
+      "formatting_inconsistencies",
+      "compression_anomaly",
+      "potential_copy_paste",
+      "signature_issues",
+      "illogical_content_flow"
+    ],
+    "confidence_score": 0.7001041173102724,
+    "blockchain_hash": "7c8a1330bf1f8c34d6598736b5b1a2c8334264fdec71c7c1eba11b360ec5b82b",
+    "audit_trail_id": "0x1264a660c1eff85061f9a2b10bdb3e45576b0b6664f905c1fea425ce0d5e"
+  },
+  "blockchain": {
+    "success": true,
+    "transaction_hash": "0x07938760af126fe0eda397e9530527d4e65097811d773db278cd12010d5e",
+    "document_hash": "7c8a1330bf1f8c34d6598736b5b1a2c8334264fdec71c7c1eba11b360ec5b82b",
+    "block_height": 342347,
+    "cost": "1.0 STX",
+    "network": "testnet",
+    "timestamp": "2025-08-28T23:26:48.282209"
+  },
+  "processing_options": {
+    "blockchain_enabled": true,
+    "fraud_detection_enabled": true,
+    "audit_trail_enabled": true
+  }
+}

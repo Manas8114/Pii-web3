@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SecuredDoc</title>
+    
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .drag-area {
+            border: 3px dashed #cbd5e0;
+            transition: all 0.3s ease;
+        }
+        .drag-area.dragover {
+            border-color: #4299e1;
+            background-color: #ebf8ff;
+            transform: scale(1.02);
+        }
+        .processing-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring-circle {
+            stroke-dasharray: 283; /* 2 * PI * 45 */
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        .risk-high { color: #dc2626; }
+        .risk-medium { color: #f59e0b; }
+        .risk-low { color: #059669; }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+        .sidebar {
+            transition: transform 0.3s ease;
+        }
+        .sidebar.collapsed {
+            transform: translateX(-200px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button id="sidebarToggle" class="text-white mr-4 md:hidden">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <a href="/" class="flex items-center">
+                        <i class="fas fa-shield-alt text-white text-2xl mr-3"></i>
+                        <h1 class="text-white text-xl font-bold">SecuredDoc</h1>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- System Status -->
+                    <div id="systemStatus" class="flex items-center text-white text-sm">
+                        <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                        <span>System Online</span>
+                    </div>
+                    <!-- User Menu -->
+                    <div class="relative">
+                        <button id="userMenuBtn" class="flex items-center text-white hover:text-blue-200 transition duration-200">
+                            <i class="fas fa-user-circle text-2xl mr-2"></i>
+                            <span id="currentUser">User</span>
+                            <i class="fas fa-chevron-down ml-2"></i>
+                        </button>
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
+                            <a href="/login" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-wallet mr-2"></i>Connect Wallet
+                            </a>
+                            <a href="/auth" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-cog mr-2"></i>Enhanced Features
+                            </a>
+                            <a href="/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-home mr-2"></i>Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar w-64 bg-white shadow-lg h-screen fixed left-0 top-16 z-40 md:relative md:top-0">
+            <div class="p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-6">Dashboard Menu</h2>
+                <nav class="space-y-2">
+                    <a href="#upload" class="flex items-center px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition duration-200">
+                        <i class="fas fa-upload mr-3"></i>Upload Document
+                    </a>
+                    <a href="#analysis" class="flex items-center px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition duration-200">
+                        <i class="fas fa-chart-line mr-3"></i>Analysis Results
+                    </a>
+                    <a href="#blockchain" class="flex items-center px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition duration-200">
+                        <i class="fas fa-cube mr-3"></i>Blockchain
+                    </a>
+                    <a href="#history" class="flex items-center px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition duration-200">
+                        <i class="fas fa-history mr-3"></i>Processing History
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 md:ml-0 p-6">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">Document Security Dashboard</h1>
+                <p class="text-gray-600 mt-2">Process documents with AI-powered fraud detection and blockchain verification</p>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow p-6 text-center">
+                    <div class="text-2xl font-bold text-blue-600" id="totalProcessed">0</div>
+                    <div class="text-gray-600 text-sm">Documents Processed</div>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6 text-center">
+                    <div class="text-2xl font-bold text-red-600" id="fraudDetected">0</div>
+                    <div class="text-gray-600 text-sm">Fraud Cases Detected</div>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6 text-center">
+                    <div class="text-2xl font-bold text-green-600" id="piiProtected">0</div>
+                    <div class="text-gray-600 text-sm">PII Items Protected</div>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6 text-center">
+                    <div class="text-2xl font-bold text-purple-600" id="blockchainRecords">0</div>
+                    <div class="text-gray-600 text-sm">Blockchain Records</div>
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <div id="upload" class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-upload mr-2 text-indigo-600"></i>Upload Document for Analysis
+                </h2>
+                
+                <!-- File Upload Area -->
+                <div id="dropArea" class="drag-area border-3 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6">
+                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                    <p class="text-lg text-gray-600 mb-2">Drag & drop your document here</p>
+                    <p class="text-sm text-gray-500 mb-4">or</p>
+                    <label for="fileInput" class="bg-blue-600 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition duration-200 inline-block">
+                        Choose File
+                    </label>
+                    <input type="file" id="fileInput" class="hidden" accept=".pdf,.png,.jpg,.jpeg,.csv">
+                    <p class="text-xs text-gray-500 mt-4">Supported: PDF, PNG, JPG, JPEG, CSV (Max: 50MB)</p>
+                    
+                    <!-- File Info Display -->
+                    <div id="fileInfo" class="mt-4 p-4 bg-blue-50 rounded-lg hidden">
+                        <div class="flex items-center justify-center">
+                            <i class="fas fa-file text-blue-600 mr-2"></i>
+                            <span id="fileName" class="font-medium text-blue-800"></span>
+                            <button id="removeFile" class="ml-2 text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Processing Options -->
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                        <input type="checkbox" id="enableBlockchain" class="mr-3" checked>
+                        <label for="enableBlockchain" class="text-sm text-gray-700">
+                            <i class="fas fa-cube text-purple-600 mr-2"></i>Blockchain Registration
+                        </label>
+                    </div>
+                    <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                        <input type="checkbox" id="enableFraudDetection" class="mr-3" checked>
+                        <label for="enableFraudDetection" class="text-sm text-gray-700">
+                            <i class="fas fa-shield-virus text-red-600 mr-2"></i>Fraud Detection
+                        </label>
+                    </div>
+                    <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                        <input type="checkbox" id="enableAuditTrail" class="mr-3" checked>
+                        <label for="enableAuditTrail" class="text-sm text-gray-700">
+                            <i class="fas fa-history text-green-600 mr-2"></i>Audit Trail
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Process Button -->
+                <div class="text-center">
+                    <button id="processBtn" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-semibold" disabled>
+                        <i class="fas fa-cog mr-2"></i>Process Document
+                    </button>
+                </div>
+            </div>
+
+            <!-- Processing Status -->
+            <div id="processingStatus" class="bg-white rounded-lg shadow-md p-6 mb-8 hidden">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">
+                    <i class="fas fa-spinner fa-spin mr-2 text-blue-600"></i>Processing Document
+                </h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span id="processingText">Uploading document...</span>
+                        <span id="processingPercentage">0%</span>
+                    </div>
+                    <div class="bg-gray-200 rounded-full h-3">
+                        <div id="progressBar" class="bg-blue-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div id="processingSteps" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div class="processing-step p-3 bg-gray-50 rounded-lg" data-step="upload">
+                            <i class="fas fa-upload text-gray-400 mr-2"></i>
+                            <span>Upload</span>
+                        </div>
+                        <div class="processing-step p-3 bg-gray-50 rounded-lg" data-step="analysis">
+                            <i class="fas fa-brain text-gray-400 mr-2"></i>
+                            <span>AI Analysis</span>
+                        </div>
+                        <div class="processing-step p-3 bg-gray-50 rounded-lg" data-step="blockchain">
+                            <i class="fas fa-cube text-gray-400 mr-2"></i>
+                            <span>Blockchain</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Results Section -->
+            <div id="analysis" class="grid md:grid-cols-2 gap-6 mb-8 hidden">
+                <!-- PII Detection Results -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-user-secret mr-2 text-blue-600"></i>PII Detection Results
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Total PII Found:</span>
+                            <span id="totalPII" class="text-2xl font-bold text-blue-600">0</span>
+                        </div>
+                        <div id="piiBreakdown" class="space-y-2">
+                            <!-- PII entities will be populated here -->
+                        </div>
+                        <canvas id="piiChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Fraud Detection Results -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-shield-virus mr-2 text-red-600"></i>Fraud Analysis
+                    </h3>
+                    <div class="text-center mb-6">
+                        <div class="relative inline-flex items-center justify-center">
+                            <svg class="progress-ring w-24 h-24" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" stroke="#e5e7eb" stroke-width="8" fill="none"></circle>
+                                <circle id="fraudScoreCircle" class="progress-ring-circle" cx="50" cy="50" r="45" stroke="#dc2626" stroke-width="8" fill="none"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span id="fraudScoreText" class="text-2xl font-bold text-red-600">0%</span>
+                            </div>
+                        </div>
+                        <div id="riskLevel" class="text-lg font-semibold mt-2">Risk Level: Unknown</div>
+                    </div>
+                    <div id="fraudIndicators" class="space-y-2">
+                        <!-- Fraud indicators will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blockchain Information -->
+            <div id="blockchain" class="bg-white rounded-lg shadow-md p-6 mb-8 hidden">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-cube mr-2 text-purple-600"></i>Blockchain Registration
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Transaction Hash:</span>
+                            <span id="txHash" class="font-mono text-sm text-blue-600">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Document Hash:</span>
+                            <span id="docHash" class="font-mono text-sm text-green-600">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Block Height:</span>
+                            <span id="blockHeight" class="text-purple-600">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Network:</span>
+                            <span class="text-gray-900">Stacks Testnet</span>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Registration Cost:</span>
+                            <span id="registrationCost" class="text-green-600">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Timestamp:</span>
+                            <span id="registrationTime" class="text-gray-900">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Status:</span>
+                            <span id="blockchainStatus" class="text-green-600">
+                                <i class="fas fa-check-circle mr-1"></i>Confirmed
+                            </span>
+                        </div>
+                        <div class="mt-4">
+                            <button id="viewAuditTrail" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition duration-200 w-full">
+                                <i class="fas fa-history mr-2"></i>View Audit Trail
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Processing History -->
+            <div id="history" class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-history mr-2 text-green-600"></i>Recent Processing History
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-3 text-gray-600 font-medium">Document</th>
+                                <th class="text-left py-3 text-gray-600 font-medium">Risk Level</th>
+                                <th class="text-left py-3 text-gray-600 font-medium">PII Count</th>
+                                <th class="text-left py-3 text-gray-600 font-medium">Processed</th>
+                                <th class="text-left py-3 text-gray-600 font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- History entries will be populated here -->
+                        </tbody>
+                    </table>
+                    <div id="noHistory" class="text-center py-8 text-gray-500">
+                        <i class="fas fa-inbox text-3xl mb-2"></i>
+                        <p>No documents processed yet. Upload your first document to get started!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download Section -->
+            <div id="downloadSection" class="bg-white rounded-lg shadow-md p-6 mt-8 hidden">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-download mr-2 text-indigo-600"></i>Download Results
+                </h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <button id="downloadProcessed" class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition duration-200 w-full">
+                        <i class="fas fa-file-pdf mr-2"></i>Download Processed Document
+                    </button>
+                    <button id="downloadReport" class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition duration-200 w-full">
+                        <i class="fas fa-chart-line mr-2"></i>Download Analysis Report
+                    </button>
+                    <button id="downloadAudit" class="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition duration-200 w-full">
+                        <i class="fas fa-cube mr-2"></i>Download Blockchain Receipt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <!-- Modal for Audit Trail -->
+    <div id="auditModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center h-full p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-gray-900">
+                            <i class="fas fa-history mr-2 text-purple-600"></i>Document Audit Trail
+                        </h3>
+                        <button id="closeAuditModal" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="auditContent" class="p-6">
+                    <!-- Audit trail content will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        const dashboardState = {
+            currentFile: null,
+            processing: false,
+            lastResults: null,
+            processingHistory: JSON.parse(localStorage.getItem('processingHistory') || '[]')
+        };
+
+        // Configuration
+        const API_BASE = window.location.origin;
+
+        // Utility Functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification px-4 py-3 rounded-md text-white mb-2 ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span><i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : 'info'} mr-2"></i>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            document.getElementById('notificationContainer').appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        function updateUI() {
+            // Update stats
+            document.getElementById('totalProcessed').textContent = dashboardState.processingHistory.length;
+            document.getElementById('fraudDetected').textContent = dashboardState.processingHistory.filter(h => h.risk_level === 'High').length;
+            document.getElementById('piiProtected').textContent = dashboardState.processingHistory.reduce((sum, h) => sum + (h.pii_count || 0), 0);
+            document.getElementById('blockchainRecords').textContent = dashboardState.processingHistory.filter(h => h.blockchain_hash).length;
+
+            // Update process button
+            const processBtn = document.getElementById('processBtn');
+            processBtn.disabled = !dashboardState.currentFile || dashboardState.processing;
+
+            // Update history table
+            updateHistoryTable();
+        }
+
+        function updateHistoryTable() {
+            const tbody = document.getElementById('historyTableBody');
+            const noHistory = document.getElementById('noHistory');
+            
+            if (dashboardState.processingHistory.length === 0) {
+                tbody.innerHTML = '';
+                noHistory.style.display = 'block';
+                return;
+            }
+            
+            noHistory.style.display = 'none';
+            tbody.innerHTML = dashboardState.processingHistory.slice(-10).reverse().map(entry => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-file-alt mr-2 text-blue-600"></i>
+                            <span class="truncate max-w-32">${entry.filename}</span>
+                        </div>
+                    </td>
+                    <td class="py-3">
+                        <span class="px-2 py-1 text-xs rounded-full ${
+                            entry.risk_level === 'High' ? 'bg-red-100 text-red-800' :
+                            entry.risk_level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-green-100 text-green-800'
+                        }">
+                            ${entry.risk_level || 'Unknown'}
+                        </span>
+                    </td>
+                    <td class="py-3 text-center">${entry.pii_count || 0}</td>
+                    <td class="py-3 text-sm text-gray-500">${new Date(entry.timestamp).toLocaleDateString()}</td>
+                    <td class="py-3">
+                        <button onclick="viewDetails('${entry.id}')" class="text-blue-600 hover:text-blue-800 text-sm">
+                            <i class="fas fa-eye mr-1"></i>View
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // File Upload Handling
+        function setupFileUpload() {
+            const dropArea = document.getElementById('dropArea');
+            const fileInput = document.getElementById('fileInput');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const removeFile = document.getElementById('removeFile');
+
+            // Drag and drop events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            dropArea.addEventListener('drop', handleDrop, false);
+            fileInput.addEventListener('change', handleFileSelect, false);
+            removeFile.addEventListener('click', clearFile, false);
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function highlight() {
+                dropArea.classList.add('dragover');
+            }
+
+            function unhighlight() {
+                dropArea.classList.remove('dragover');
+            }
+
+            function handleDrop(e) {
+                const files = e.dataTransfer.files;
+                handleFiles(files);
+            }
+
+            function handleFileSelect(e) {
+                const files = e.target.files;
+                handleFiles(files);
+            }
+
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (validateFile(file)) {
+                        dashboardState.currentFile = file;
+                        fileName.textContent = file.name;
+                        fileInfo.classList.remove('hidden');
+                        showNotification(`File selected: ${file.name}`, 'success');
+                        updateUI();
+                    } else {
+                        showNotification('Invalid file type. Please select PDF, PNG, JPG, JPEG, or CSV.', 'error');
+                    }
+                }
+            }
+
+            function validateFile(file) {
+                const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'text/csv'];
+                const maxSize = 50 * 1024 * 1024; // 50MB
+                
+                if (!allowedTypes.includes(file.type)) {
+                    return false;
+                }
+                if (file.size > maxSize) {
+                    showNotification('File too large. Maximum size is 50MB.', 'error');
+                    return false;
+                }
+                return true;
+            }
+
+            function clearFile() {
+                dashboardState.currentFile = null;
+                fileInput.value = '';
+                fileInfo.classList.add('hidden');
+                updateUI();
+                showNotification('File removed', 'info');
+            }
+        }
+
+        // Enhanced Document Processing with Stacks Integration
+        async function processDocument() {
+            if (!dashboardState.currentFile || dashboardState.processing) {
+                return;
+            }
+
+            dashboardState.processing = true;
+            updateUI();
+
+            try {
+                // Check if wallet is connected for blockchain features
+                const enableBlockchain = document.getElementById('enableBlockchain').checked;
+                const walletConnected = checkWalletConnection();
+                
+                if (enableBlockchain && !walletConnected) {
+                    showNotification('Please connect your Leather wallet for blockchain features', 'warning');
+                    // Continue without blockchain features
+                    document.getElementById('enableBlockchain').checked = false;
+                }
+
+                // Show processing status
+                document.getElementById('processingStatus').classList.remove('hidden');
+                document.getElementById('analysis').classList.add('hidden');
+                document.getElementById('blockchain').classList.add('hidden');
+                document.getElementById('downloadSection').classList.add('hidden');
+
+                const steps = [
+                    'Uploading document...',
+                    'Extracting content...',
+                    'Detecting PII entities...',
+                    'Running fraud analysis...',
+                    'Analyzing document structure...',
+                    'Preparing Stacks transaction...',
+                    'Registering on blockchain...',
+                    'Creating audit trail...',
+                    'Finalizing results...'
+                ];
+
+                // Simulate processing steps with visual feedback
+                for (let i = 0; i < steps.length; i++) {
+                    document.getElementById('processingText').textContent = steps[i];
+                    document.getElementById('processingPercentage').textContent = `${Math.round((i + 1) * (100 / steps.length))}%`;
+                    document.getElementById('progressBar').style.width = `${(i + 1) * (100 / steps.length)}%`;
+                    
+                    // Update step indicators
+                    const stepElements = document.querySelectorAll('.processing-step');
+                    if (i < 3) {
+                        const stepElement = stepElements[i];
+                        stepElement.classList.add('bg-blue-100');
+                        stepElement.querySelector('i').className = stepElement.querySelector('i').className.replace('text-gray-400', 'text-blue-600');
+                    }
+                    
+                    // Handle Stacks transaction step
+                    if (i === 5 && enableBlockchain && walletConnected) {
+                        await handleStacksTransaction();
+                    }
+                    
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                }
+
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('file', dashboardState.currentFile);
+                formData.append('enableBlockchain', document.getElementById('enableBlockchain').checked);
+                formData.append('enableFraudDetection', document.getElementById('enableFraudDetection').checked);
+                formData.append('enableAuditTrail', document.getElementById('enableAuditTrail').checked);
+                
+                // Add wallet info if connected
+                if (walletConnected) {
+                    const walletInfo = getWalletInfo();
+                    formData.append('wallet_address', walletInfo.address);
+                    formData.append('wallet_type', walletInfo.type);
+                }
+
+                // Send to backend
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const results = await response.json();
+                
+                if (results.success) {
+                    displayResults(results);
+                    addToHistory(results);
+                    showNotification('Document processed successfully!', 'success');
+                } else {
+                    throw new Error(results.error || 'Processing failed');
+                }
+
+            } catch (error) {
+                console.error('Processing error:', error);
+                showNotification(`Processing failed: ${error.message}`, 'error');
+            } finally {
+                dashboardState.processing = false;
+                document.getElementById('processingStatus').classList.add('hidden');
+                updateUI();
+            }
+        }
+
+        function displayResults(results) {
+            dashboardState.lastResults = results;
+
+            // Display PII results
+            if (results.results.pii_detection) {
+                const piiData = results.results.pii_detection;
+                document.getElementById('totalPII').textContent = piiData.pii_count || 0;
+                
+                // Update PII breakdown
+                const piiBreakdown = document.getElementById('piiBreakdown');
+                piiBreakdown.innerHTML = Object.entries(piiData.sensitive_data || {}).map(([text, info]) => `
+                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                        <span class="text-sm font-medium">${info.entity}</span>
+                        <span class="text-xs text-gray-500">${(info.confidence_score * 100).toFixed(1)}%</span>
+                    </div>
+                `).join('');
+            }
+
+            // Display fraud results
+            if (results.results.fraud_detection) {
+                const fraudData = results.results.fraud_detection;
+                const fraudScore = Math.round(fraudData.fraud_probability * 100);
+                
+                document.getElementById('fraudScoreText').textContent = `${fraudScore}%`;
+                document.getElementById('riskLevel').textContent = `Risk Level: ${fraudData.risk_level}`;
+                document.getElementById('riskLevel').className = `text-lg font-semibold mt-2 risk-${fraudData.risk_level.toLowerCase()}`;
+                
+                // Update fraud score circle
+                const circle = document.getElementById('fraudScoreCircle');
+                const circumference = 283;
+                const offset = circumference - (fraudScore / 100) * circumference;
+                circle.style.strokeDashoffset = offset;
+                
+                // Update fraud indicators
+                const fraudIndicators = document.getElementById('fraudIndicators');
+                fraudIndicators.innerHTML = (fraudData.suspicious_patterns || []).map(pattern => `
+                    <div class="flex items-center p-2 bg-red-50 rounded">
+                        <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
+                        <span class="text-sm text-red-800">${pattern}</span>
+                    </div>
+                `).join('');
+            }
+
+            // Display blockchain results
+            if (results.results.blockchain) {
+                const blockchainData = results.results.blockchain;
+                
+                document.getElementById('txHash').textContent = blockchainData.transaction_hash || '-';
+                document.getElementById('docHash').textContent = blockchainData.document_hash || '-';
+                document.getElementById('blockHeight').textContent = blockchainData.block_height || '-';
+                document.getElementById('registrationCost').textContent = blockchainData.cost || '-';
+                document.getElementById('registrationTime').textContent = 
+                    blockchainData.timestamp ? new Date(blockchainData.timestamp).toLocaleString() : '-';
+                
+                document.getElementById('blockchain').classList.remove('hidden');
+            }
+
+            // Show sections
+            document.getElementById('analysis').classList.remove('hidden');
+            document.getElementById('downloadSection').classList.remove('hidden');
+        }
+
+        function addToHistory(results) {
+            const entry = {
+                id: Date.now().toString(),
+                filename: results.filename,
+                timestamp: results.timestamp,
+                risk_level: results.results.fraud_detection?.risk_level || 'Unknown',
+                pii_count: results.results.pii_detection?.pii_count || 0,
+                fraud_score: results.results.fraud_detection?.fraud_probability || 0,
+                blockchain_hash: results.results.blockchain?.document_hash || null
+            };
+            
+            dashboardState.processingHistory.push(entry);
+            localStorage.setItem('processingHistory', JSON.stringify(dashboardState.processingHistory));
+            updateUI();
+        }
+
+        function viewDetails(id) {
+            showNotification('Viewing details for processing entry: ' + id, 'info');
+            // Here you would implement detailed view functionality
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize components
+            setupFileUpload();
+            updateUI();
+
+            // Bind event listeners
+            document.getElementById('processBtn').addEventListener('click', processDocument);
+            document.getElementById('sidebarToggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('collapsed');
+            });
+
+            // User menu toggle
+            document.getElementById('userMenuBtn').addEventListener('click', function() {
+                document.getElementById('userMenu').classList.toggle('hidden');
+            });
+
+            // Close user menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#userMenuBtn')) {
+                    document.getElementById('userMenu').classList.add('hidden');
+                }
+            });
+
+            // Audit trail modal
+            document.getElementById('viewAuditTrail').addEventListener('click', function() {
+                document.getElementById('auditModal').classList.remove('hidden');
+                loadAuditTrail();
+            });
+
+            document.getElementById('closeAuditModal').addEventListener('click', function() {
+                document.getElementById('auditModal').classList.add('hidden');
+            });
+
+            // Download buttons
+            document.getElementById('downloadProcessed').addEventListener('click', function() {
+                if (dashboardState.lastResults) {
+                    showNotification('Downloading processed document...', 'info');
+                    // Implement download functionality
+                }
+            });
+
+            document.getElementById('downloadReport').addEventListener('click', function() {
+                if (dashboardState.lastResults) {
+                    showNotification('Downloading analysis report...', 'info');
+                    // Implement report download
+                }
+            });
+
+            document.getElementById('downloadAudit').addEventListener('click', function() {
+                if (dashboardState.lastResults) {
+                    showNotification('Downloading blockchain receipt...', 'info');
+                    // Implement audit download
+                }
+            });
+
+            // Load system status
+            checkSystemStatus();
+        });
+
+        function loadAuditTrail() {
+            if (!dashboardState.lastResults?.results?.blockchain?.document_hash) {
+                document.getElementById('auditContent').innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-info-circle text-3xl mb-2"></i>
+                        <p>No blockchain audit trail available for this document.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Simulate audit trail data
+            const auditSteps = [
+                { step: 'Document uploaded', timestamp: new Date().toISOString(), status: 'completed' },
+                { step: 'PII detection initiated', timestamp: new Date().toISOString(), status: 'completed' },
+                { step: 'Fraud analysis started', timestamp: new Date().toISOString(), status: 'completed' },
+                { step: 'Blockchain registration', timestamp: new Date().toISOString(), status: 'completed' },
+                { step: 'Audit trail created', timestamp: new Date().toISOString(), status: 'completed' },
+                { step: 'Processing completed', timestamp: new Date().toISOString(), status: 'completed' }
+            ];
+
+            document.getElementById('auditContent').innerHTML = `
+                <div class="space-y-4">
+                    <div class="mb-6">
+                        <h4 class="font-bold text-gray-900 mb-2">Document Hash</h4>
+                        <p class="font-mono text-sm bg-gray-100 p-2 rounded">${dashboardState.lastResults.results.blockchain.document_hash}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-4">Processing Timeline</h4>
+                        <div class="space-y-3">
+                            ${auditSteps.map(step => `
+                                <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                                    <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                                    <div class="flex-1">
+                                        <div class="font-medium text-gray-900">${step.step}</div>
+                                        <div class="text-sm text-gray-500">${new Date(step.timestamp).toLocaleString()}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch('/health');
+                const status = await response.json();
+                
+                const statusElement = document.getElementById('systemStatus');
+                if (status.status === 'healthy') {
+                    statusElement.innerHTML = `
+                        <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                        <span>System Online</span>
+                    `;
+                } else {
+                    statusElement.innerHTML = `
+                        <div class="w-2 h-2 bg-red-400 rounded-full mr-2"></div>
+                        <span>System Issues</span>
+                    `;
+                }
+            } catch (error) {
+                console.error('Health check failed:', error);
+            }
+        }
+
+        // Stacks Wallet Integration Functions
+        function checkWalletConnection() {
+            // Check session storage for wallet connection
+            const authState = sessionStorage.getItem('authState');
+            if (authState) {
+                const parsed = JSON.parse(authState);
+                return parsed.wallet && parsed.wallet.type === 'leather';
+            }
+            return false;
+        }
+
+        function getWalletInfo() {
+            const authState = sessionStorage.getItem('authState');
+            if (authState) {
+                const parsed = JSON.parse(authState);
+                return parsed.wallet;
+            }
+            return null;
+        }
+
+        async function handleStacksTransaction() {
+            try {
+                const walletInfo = getWalletInfo();
+                if (!walletInfo) {
+                    throw new Error('No wallet connected');
+                }
+
+                // Prepare transaction for document registration
+                const transactionData = {
+                    transaction_type: 'registration',
+                    wallet_address: walletInfo.address,
+                    document_hash: generateDocumentHash(dashboardState.currentFile)
+                };
+
+                const response = await fetch('/api/stacks/transaction/prepare', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(transactionData)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Stacks transaction prepared for signing', 'info');
+                    // In a real implementation, you would use Stacks Connect to sign the transaction
+                    // For demo purposes, we'll simulate a successful transaction
+                    await simulateStacksTransaction(result.transaction_data);
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                console.error('Stacks transaction error:', error);
+                showNotification('Stacks transaction failed: ' + error.message, 'warning');
+            }
+        }
+
+        async function simulateStacksTransaction(transactionData) {
+            // Simulate transaction signing and submission
+            const simulatedTxId = 'stx_' + Math.random().toString(36).substr(2, 16);
+            
+            // Submit transaction record
+            const submitData = {
+                tx_id: simulatedTxId,
+                transaction_type: transactionData.transaction_type,
+                amount_stx: transactionData.amount_stx,
+                wallet_address: transactionData.sender,
+                document_hash: transactionData.memo.split(': ')[1]
+            };
+
+            const response = await fetch('/api/stacks/transaction/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(submitData)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                showNotification(`Transaction submitted: ${simulatedTxId}`, 'success');
+                dashboardState.lastTransactionId = simulatedTxId;
+            }
+        }
+
+        function generateDocumentHash(file) {
+            // Simple hash generation for demo purposes
+            return 'doc_' + file.name.replace(/[^a-zA-Z0-9]/g, '') + '_' + file.size;
+        }
+
+        async function connectLeatherWallet() {
+            try {
+                showNotification('Connecting to Leather wallet...', 'info');
+                
+                // Check if Stacks Connect is available
+                if (typeof showConnect !== 'undefined') {
+                    const authOptions = {
+                        onFinish: async (authData) => {
+                            try {
+                                const response = await fetch('/api/wallet/leather/connect', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        authData: authData,
+                                        userSession: authData.userSession ? {
+                                            userData: authData.userSession.loadUserData()
+                                        } : null
+                                    })
+                                });
+                                
+                                const result = await response.json();
+                                
+                                if (result.success) {
+                                    // Update session storage
+                                    const authState = {
+                                        wallet: result.wallet,
+                                        user: result.user,
+                                        authenticated: true
+                                    };
+                                    sessionStorage.setItem('authState', JSON.stringify(authState));
+                                    
+                                    showNotification('Leather wallet connected successfully!', 'success');
+                                    updateWalletDisplay(result.wallet);
+                                } else {
+                                    throw new Error(result.error);
+                                }
+                            } catch (error) {
+                                showNotification('Wallet connection failed: ' + error.message, 'error');
+                            }
+                        },
+                        onCancel: () => {
+                            showNotification('Wallet connection cancelled', 'warning');
+                        },
+                        appDetails: {
+                            name: 'SecuredDoc',
+                            icon: window.location.origin + '/favicon.ico'
+                        }
+                    };
+                    
+                    showConnect(authOptions);
+                } else {
+                    // Fallback for demo mode
+                    const demoWallet = {
+                        type: 'leather',
+                        address: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+                        network: 'testnet'
+                    };
+                    
+                    const authState = {
+                        wallet: demoWallet,
+                        user: { name: 'Demo User' },
+                        authenticated: true
+                    };
+                    sessionStorage.setItem('authState', JSON.stringify(authState));
+                    
+                    showNotification('Demo wallet connected!', 'success');
+                    updateWalletDisplay(demoWallet);
+                }
+            } catch (error) {
+                console.error('Leather wallet connection error:', error);
+                showNotification('Failed to connect wallet: ' + error.message, 'error');
+            }
+        }
+
+        function updateWalletDisplay(wallet) {
+            // Update UI to show connected wallet
+            const currentUser = document.getElementById('currentUser');
+            if (wallet) {
+                currentUser.textContent = `${wallet.address.substring(0, 8)}...`;
+                currentUser.title = wallet.address;
+            }
+            updateUI();
+        }
+
+        // Add wallet connection button to user menu
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add connect wallet option if not already connected
+            if (!checkWalletConnection()) {
+                const userMenu = document.getElementById('userMenu');
+                const connectWalletBtn = document.createElement('a');
+                connectWalletBtn.href = '#';
+                connectWalletBtn.className = 'block px-4 py-2 text-gray-700 hover:bg-gray-100';
+                connectWalletBtn.innerHTML = '<i class="fas fa-wallet mr-2"></i>Connect Leather Wallet';
+                connectWalletBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    connectLeatherWallet();
+                });
+                userMenu.insertBefore(connectWalletBtn, userMenu.firstChild);
+            }
+        });
+
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>
