@@ -1,0 +1,49 @@
+{
+	"folders": [
+		{
+			"name": "Models",
+			"path": "../../Models"
+		},
+		{
+			"name": "outputs",
+			"path": "../../outputs"
+		},
+		{
+			"name": "securedoc-stacks",
+			"path": "../../securedoc-stacks"
+		},
+		{
+			"name": "static",
+			"path": "../../static"
+		},
+		{
+			"name": "templates",
+			"path": "../../templates"
+		},
+		{
+			"name": "Token",
+			"path": "../../Token"
+		},
+		{
+			"name": "uploads",
+			"path": "../../uploads"
+		},
+		{
+			"name": ".qodo",
+			"path": "../../.qodo"
+		},
+		{
+			"name": "__pycache__",
+			"path": "../../__pycache__"
+		},
+		{
+			"name": "enhanced_results",
+			"path": "../../enhanced_results"
+		},
+		{
+			"name": "Pii-web3",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

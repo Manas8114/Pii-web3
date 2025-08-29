@@ -1,0 +1,30 @@
+[project]
+name = "standard-chartered-tokenization"
+description = "Tokenization system with real-time transaction monitoring"
+version = "1.0.0"
+authors = ["Standard Chartered Hackathon Team"]
+telemetry = false
+cache_dir = "./.clarinet"
+
+[contracts.tokenization-system]
+path = "contracts/tokenization-system.clar"
+clarity_version = 2
+epoch = 2.4
+
+[contracts.pii-storage-system]
+path = "contracts/pii-storage-system.clar"
+clarity_version = 2
+epoch = 2.4
+
+[repl]
+costs_version = 2
+parser_version = 2
+
+[repl.analysis]
+passes = ["check_checker"]
+
+[repl.analysis.check_checker]
+strict = false
+trusted_sender = false
+trusted_caller = false
+callee_filter = false

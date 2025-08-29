@@ -1,0 +1,49 @@
+# Core Flask dependencies
+Flask==2.3.2
+Flask-CORS==4.0.0
+Werkzeug==2.3.6
+Jinja2==3.1.2
+MarkupSafe==2.1.3
+itsdangerous==2.1.2
+click==8.1.6
+
+# File handling and processing
+PyPDF2==3.0.1
+pdf2image==1.16.3
+Pillow==10.0.0
+python-magic==0.4.27
+
+# Data processing and analysis
+numpy==1.24.3
+pandas==2.0.3
+opencv-python==4.8.0.74
+
+# Machine Learning and AI
+scikit-learn==1.3.0
+transformers==4.32.1
+torch==2.0.1
+safetensors==0.3.3
+
+# Natural Language Processing
+spacy==3.6.1
+nltk==3.8.1
+
+# Blockchain and Web3 integration
+requests==2.31.0
+web3==6.9.0
+
+# Authentication and security
+google-auth==2.22.0
+google-auth-oauthlib==1.0.0
+google-auth-httplib2==0.1.0
+PyJWT==2.8.0
+cryptography==41.0.3
+
+# Database and Firebase
+firebase-admin==6.2.0
+google-cloud-firestore==2.11.1
+
+# Utilities
+python-dotenv==1.0.0
+gunicorn==21.2.0
+waitress==2.1.2

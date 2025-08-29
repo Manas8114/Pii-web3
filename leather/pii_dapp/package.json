@@ -1,0 +1,11 @@
+{
+  "name": "pii-dapp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "serve . -p 3000"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}

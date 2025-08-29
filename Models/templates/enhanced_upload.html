@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureDoc Upload - AI-Powered Document Security</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --danger: #f56565;
+            --info: #4299e1;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --metamask-color: #f6851b;
+            --leather-color: #8B5CF6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .hero-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .upload-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .upload-title {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .upload-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Login Section */
+        .login-section {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .login-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .wallet-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid transparent;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 160px;
+            justify-content: center;
+        }
+
+        .google-btn {
+            background: white;
+            color: #4285f4;
+            border-color: #dadce0;
+        }
+
+        .google-btn:hover {
+            border-color: #4285f4;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .metamask-btn {
+            background: var(--metamask-color);
+            color: white;
+        }
+
+        .metamask-btn:hover {
+            background: #e67e17;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .leather-btn {
+            background: var(--leather-color);
+            color: white;
+        }
+
+        .leather-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .leather-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 1rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-upload-area:hover,
+        .file-upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .upload-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .upload-hint {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0 auto;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Selected File */
+        .selected-file {
+            display: none;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .file-preview-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .file-size {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Features Grid */
+        .features-section {
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 1rem;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .feature-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-features {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .main-content {
+                padding: 0 1rem;
+            }
+
+            .upload-section {
+                padding: 1.5rem;
+            }
+
+            .login-buttons {
+                flex-direction: column;
+            }
+
+            .wallet-btn {
+                width: 100%;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Wallet Info */
+        .wallet-info {
+            background: rgba(72, 187, 120, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .wallet-info-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 0.5rem;
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .logout-section {
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SecureDoc
+            </div>
+            <div class="header-actions">
+                <a href="/" class="btn btn-secondary">
+                    <i class="fas fa-chart-line"></i>
+                    Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section animate-fade-in">
+            <h1 class="hero-title">AI-Powered Document Security</h1>
+            <p class="hero-subtitle">
+                Upload your documents for advanced fraud detection, PII protection, and blockchain verification. 
+                Our AI analyzes every aspect to ensure your data is secure and authentic.
+            </p>
+            <div class="hero-features">
+                <div class="hero-feature">
+                    <i class="fas fa-brain"></i>
+                    AI Fraud Detection
+                </div>
+                <div class="hero-feature">
+                    <i class="fas fa-shield-alt"></i>
+                    PII Protection
+                </div>
+                <div class="hero-feature">
+                    <i class="fas fa-link"></i>
+                    Blockchain Verified
+                </div>
+            </div>
+        </section>
+
+        <!-- Upload Section -->
+        <section class="upload-section animate-fade-in">
+            <div class="upload-header">
+                <h2 class="upload-title">Upload Your Document</h2>
+                <p class="upload-subtitle">Supports PDF, PNG, JPG, and JPEG files up to 10MB</p>
+            </div>
+
+            <!-- Login Section -->
+            <div class="login-section">
+                <h3 class="login-title">Connect your wallet or account to continue</h3>
+                <div class="login-buttons">
+                    <button class="wallet-btn google-btn" onclick="openLoginModal('google')">
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Google
+                    </button>
+                    
+                    <button class="wallet-btn metamask-btn" onclick="openLoginModal('metamask')">
+                        <i class="fab fa-ethereum"></i>
+                        MetaMask
+                    </button>
+                    
+                    <button id="leatherBtn" class="wallet-btn leather-btn" onclick="openLoginModal('leather')" disabled style="opacity: 0.5;" title="Loading Stacks Connect...">
+                        <i class="fas fa-coins"></i>
+                        Leather Wallet
+                    </button>
+                </div>
+
+                <!-- Wallet Info (Hidden by default) -->
+                <div id="walletInfo" class="wallet-info">
+                    <div class="wallet-info-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <strong>Wallet Connected</strong><br>
+                        <span id="walletAddress">Not connected</span>
+                    </div>
+                </div>
+
+                <!-- Logout Section (Hidden by default) -->
+                <div id="logoutSection" class="logout-section">
+                    <button class="btn logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Disconnect
+                    </button>
+                </div>
+            </div>
+
+            <!-- File Upload Form -->
+            <form action="/upload" method="POST" enctype="multipart/form-data" class="upload-form">
+                <div class="file-upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">Drag & drop your document here</div>
+                    <div class="upload-hint">or click to browse files</div>
+                    <input type="file" name="file" id="fileInput" class="file-input" accept=".pdf,.png,.jpg,.jpeg">
+                </div>
+
+                <!-- Selected File Preview -->
+                <div id="selectedFile" class="selected-file">
+                    <div class="file-preview-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="file-details">
+                        <div class="file-name" id="fileName">No file selected</div>
+                        <div class="file-size" id="fileSize"></div>
+                    </div>
+                    <button type="button" onclick="removeFile()" style="background: none; border: none; color: var(--text-muted); cursor: pointer;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <button type="submit" class="upload-btn" id="uploadBtn">
+                    <i class="fas fa-shield-alt"></i>
+                    Secure & Analyze Document
+                </button>
+            </form>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="features-grid">
+                <div class="feature-card animate-fade-in">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="feature-title">AI Fraud Detection</h3>
+                    <p class="feature-description">
+                        Advanced 5-step analysis process using machine learning to detect document manipulation, 
+                        inconsistencies, and potential fraud with 95%+ accuracy.
+                    </p>
+                </div>
+
+                <div class="feature-card animate-fade-in">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3 class="feature-title">PII Protection</h3>
+                    <p class="feature-description">
+                        Automatically detects and protects sensitive personal information including emails, 
+                        phone numbers, SSNs, Aadhaar numbers, and PAN cards with secure tokenization.
+                    </p>
+                </div>
+
+                <div class="feature-card animate-fade-in">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3 class="feature-title">Blockchain Security</h3>
+                    <p class="feature-description">
+                        Every document gets a unique cryptographic hash stored on the blockchain, 
+                        creating an immutable audit trail for verification and authenticity.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Stacks Connect Library -->
+    <script src="https://unpkg.com/@stacks/connect@7.2.0/dist/connect.umd.js" 
+            onload="console.log('✅ Stacks Connect loaded successfully')" 
+            onerror="loadStacksFallback()"></script>
+
+    <!-- JavaScript -->
+    <script>
+        // Global variables
+        let stacksConnectReady = false;
+        let leatherConnected = false;
+        let walletConnected = false;
+        let stacksSession = null;
+    let leatherProvider = null; // Native provider reference if injected by extension
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFileUpload();
+            checkStacksConnect();
+            detectLeatherProvider();
+            setupFormSubmission();
+        });
+
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const selectedFile = document.getElementById('selectedFile');
+
+            // Drag and drop handlers
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
+            });
+
+            uploadArea.addEventListener('drop', handleDrop, false);
+            fileInput.addEventListener('change', handleFileSelect, false);
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function handleDrop(e) {
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFile(files[0]);
+                }
+            }
+
+            function handleFileSelect(e) {
+                if (e.target.files.length > 0) {
+                    handleFile(e.target.files[0]);
+                }
+            }
+
+            function handleFile(file) {
+                // Validate file type
+                const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Please select a PDF, PNG, or JPEG file.');
+                    return;
+                }
+
+                // Validate file size (10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File size must be less than 10MB.');
+                    return;
+                }
+
+                // Show file details
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                selectedFile.style.display = 'flex';
+            }
+        }
+
+        function removeFile() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('selectedFile').style.display = 'none';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function setupFormSubmission() {
+            document.querySelector('.upload-form').addEventListener('submit', function(e) {
+                // Let the form submit normally for now
+                const fileInput = document.getElementById('fileInput');
+                if (!fileInput.files.length) {
+                    e.preventDefault();
+                    alert('Please select a file to upload.');
+                    return;
+                }
+
+                // Show loading state
+                const uploadBtn = document.getElementById('uploadBtn');
+                uploadBtn.innerHTML = '<div class="loading"></div> Processing...';
+                uploadBtn.disabled = true;
+            });
+        }
+
+        // Stacks Connect functionality
+        function loadStacksFallback() {
+            console.log('⚠️ Primary Stacks Connect failed, trying fallback...');
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@stacks/connect@7.2.0/dist/connect.umd.js';
+            script.onload = () => {
+                console.log('✅ Stacks Connect loaded from fallback');
+                checkStacksConnect();
+            };
+            script.onerror = () => {
+                console.error('❌ All Stacks Connect sources failed');
+                showStacksError();
+            };
+            document.head.appendChild(script);
+        }
+
+        function checkStacksConnect() {
+            const candidate = window.StacksConnect || window.connect || window['@stacks/connect'];
+            if (candidate && (candidate.showConnect || candidate.openAuth)) {
+                stacksConnectReady = true;
+                window.__StacksConnectLib = candidate;
+                console.log('🎉 Stacks Connect detected:', Object.keys(candidate));
+                enableLeatherButton('Stacks Connect loaded');
+                return;
+            }
+            // Retry for up to ~10s
+            if (!stacksConnectReady) setTimeout(checkStacksConnect, 500);
+        }
+
+        function enableLeatherButton(reason = '') {
+            const leatherBtn = document.getElementById('leatherBtn');
+            if (leatherBtn) {
+                leatherBtn.disabled = false;
+                leatherBtn.style.opacity = '1';
+                leatherBtn.title = 'Connect with Leather Wallet' + (reason ? ` (${reason})` : '');
+            }
+        }
+
+        function showStacksError() {
+            const leatherBtn = document.getElementById('leatherBtn');
+            if (leatherBtn) {
+                leatherBtn.disabled = true;
+                leatherBtn.style.opacity = '0.5';
+                leatherBtn.title = 'Stacks Connect failed to load. Try installing Leather extension or refresh.';
+                leatherBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> Install Leather';
+                leatherBtn.onclick = () => {
+                    window.open('https://leather.io', '_blank');
+                };
+            }
+        }
+
+        // ===== Native Leather Provider Detection =====
+        function detectLeatherProvider(attempt = 0) {
+            // Known injection possibilities (may evolve over versions)
+            const candidates = [
+                window.leather,
+                window.LeatherProvider,
+                (window.btc && (window.btc.leather || window.btc.provider)),
+                window.stx,
+                window.hiroWallet,
+            ].filter(Boolean);
+
+            if (candidates.length) {
+                leatherProvider = candidates[0];
+                console.log('✅ Native Leather provider detected', leatherProvider);
+                enableLeatherButton('native provider');
+                return;
+            }
+
+            if (attempt < 40) { // ~6s @150ms
+                setTimeout(() => detectLeatherProvider(attempt + 1), 150);
+            } else {
+                console.warn('⚠️ Native Leather provider not detected after retries. If extension is installed, ensure it is enabled for this site.');
+            }
+        }
+
+        // Modal functionality (simplified for this demo)
+        function openLoginModal(type) {
+            if (type === 'google') {
+                // Simulate Google login
+                setTimeout(() => {
+                    showConnectedState('Google User', 'google');
+                }, 1000);
+            } else if (type === 'metamask') {
+                connectMetaMask();
+            } else if (type === 'leather') {
+                connectLeatherWallet();
+            }
+        }
+
+        function connectMetaMask() {
+            if (typeof window.ethereum !== 'undefined') {
+                window.ethereum.request({ method: 'eth_requestAccounts' })
+                    .then(accounts => {
+                        walletConnected = true;
+                        showConnectedState(accounts[0], 'metamask');
+                    })
+                    .catch(error => {
+                        console.error('MetaMask connection failed:', error);
+                    });
+            } else {
+                alert('MetaMask is not installed. Please install MetaMask to continue.');
+            }
+        }
+
+        async function connectLeatherWallet() {
+            // 1. Prefer native provider if present
+            if (leatherProvider) {
+                try {
+                    console.log('Attempting native Leather provider connection...');
+                    // Different APIs exist; attempt progressively
+                    let address = null;
+                    if (leatherProvider.request) {
+                        try {
+                            const resp = await leatherProvider.request({ method: 'getAddresses' });
+                            if (resp && resp.addresses && resp.addresses.length) {
+                                address = resp.addresses[0].address || resp.addresses[0];
+                            }
+                        } catch (e) {
+                            console.log('Primary getAddresses failed, trying stx_signMessage fallback', e);
+                        }
+                    }
+                    if (!address && leatherProvider.getAddresses) {
+                        try {
+                            const resp2 = await leatherProvider.getAddresses();
+                            if (Array.isArray(resp2) && resp2.length) address = resp2[0].address || resp2[0];
+                        } catch (e2) {
+                            console.log('getAddresses() throw', e2);
+                        }
+                    }
+                    if (!address && leatherProvider?.stxAddress) address = leatherProvider.stxAddress;
+                    if (!address) {
+                        console.warn('No address obtained from native provider; falling back to Stacks Connect if available');
+                    } else {
+                        leatherConnected = true;
+                        showConnectedState(address, 'leather');
+                        return;
+                    }
+                } catch (nativeErr) {
+                    console.warn('Native Leather provider path failed:', nativeErr);
+                }
+            }
+
+            // 2. Use Stacks Connect modal if library loaded
+            const lib = window.__StacksConnectLib;
+            if (lib && (lib.showConnect || lib.openAuth)) {
+                try {
+                    console.log('Opening Stacks Connect auth flow...');
+                    const appDetails = { name: 'SecureDoc', icon: window.location.origin + '/favicon.ico' };
+                    const AppConfig = lib.AppConfig || (lib?.default && lib.default.AppConfig);
+                    const UserSession = lib.UserSession || (lib?.default && lib.default.UserSession);
+                    const showConnect = lib.showConnect || lib.openAuth || (lib?.default && lib.default.showConnect);
+                    const config = {
+                        appDetails,
+                        redirectTo: window.location.href,
+                        onFinish: (authData) => {
+                            try {
+                                leatherConnected = true;
+                                stacksSession = authData;
+                                let userData = null;
+                                if (authData?.userSession?.loadUserData) {
+                                    userData = authData.userSession.loadUserData();
+                                }
+                                const testnetAddr = userData?.profile?.stxAddress?.testnet;
+                                const mainnetAddr = userData?.profile?.stxAddress?.mainnet;
+                                const addr = testnetAddr || mainnetAddr || 'Unknown';
+                                showConnectedState(addr, 'leather');
+                            } catch (finishErr) {
+                                console.error('onFinish handler error', finishErr);
+                            }
+                        },
+                        onCancel: () => console.log('Leather connection cancelled'),
+                        userSession: (UserSession && AppConfig) ? new UserSession({ appConfig: new AppConfig(['store_write','publish_data']) }) : undefined
+                    };
+                    await showConnect(config);
+                    return;
+                } catch (connectErr) {
+                    console.error('Stacks Connect modal failed:', connectErr);
+                }
+            }
+
+            // 3. All strategies failed
+            alert('Leather wallet not detected. Steps to fix:\n\n1. Install/Enable Leather (https://leather.io)\n2. Unlock the wallet extension\n3. Reload this page (Ctrl+R)\n4. Open DevTools Console and run: typeof window.leather\nIf still failing, report console logs.');
+        }
+
+        function showConnectedState(address, type) {
+            // Show wallet info
+            const walletInfo = document.getElementById('walletInfo');
+            const walletAddress = document.getElementById('walletAddress');
+            const logoutSection = document.getElementById('logoutSection');
+
+            walletInfo.style.display = 'flex';
+            logoutSection.style.display = 'block';
+            
+            if (type === 'google') {
+                walletAddress.textContent = `Logged in as: ${address}`;
+            } else {
+                walletAddress.textContent = `${address.slice(0, 8)}...${address.slice(-6)}`;
+            }
+
+            // Hide login buttons
+            document.querySelector('.login-buttons').style.display = 'none';
+            document.querySelector('.login-title').textContent = 'Connected successfully!';
+        }
+
+        function logout() {
+            // Reset connection states
+            walletConnected = false;
+            leatherConnected = false;
+            stacksSession = null;
+
+            // Hide wallet info
+            document.getElementById('walletInfo').style.display = 'none';
+            document.getElementById('logoutSection').style.display = 'none';
+
+            // Show login buttons
+            document.querySelector('.login-buttons').style.display = 'flex';
+            document.querySelector('.login-title').textContent = 'Connect your wallet or account to continue';
+        }
+    </script>
+</body>
+</html>

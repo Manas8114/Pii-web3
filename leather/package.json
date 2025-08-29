@@ -1,0 +1,36 @@
+{
+  "name": "pii-transaction-monitor",
+  "version": "1.0.0",
+  "description": "Advanced PII transaction monitoring dashboard for Stacks blockchain",
+  "main": "app.js",
+  "private": true,
+  "scripts": {
+    "start": "serve .",
+    "dev": "serve . --listen 3000",
+    "build": "echo 'Static build complete'",
+    "test": "echo 'No tests specified'"
+  },
+  "dependencies": {
+    "@stacks/connect": "^7.10.2",
+    "@stacks/network": "^6.13.0",
+    "@stacks/transactions": "^6.17.0",
+    "serve": "^14.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "keywords": [
+    "stacks",
+    "blockchain",
+    "pii",
+    "clarity",
+    "smart-contract",
+    "real-time",
+    "leather-wallet"
+  ],
+  "author": "PII Monitor Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

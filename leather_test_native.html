@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leather Wallet Test - Native Provider</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background-color: #8B5CF6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #7C3AED;
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .wallet-info {
+            background-color: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Leather Wallet Test (Native Provider)</h1>
+        <p>This page tests the native Leather wallet provider without external libraries.</p>
+        
+        <div id="status" class="status info">
+            📡 Page loaded. Ready to test...
+        </div>
+        
+        <div>
+            <button id="connectBtn" class="btn" onclick="testLeatherConnection()">
+                🔗 Connect Leather Wallet
+            </button>
+            
+            <button class="btn" onclick="checkProvider()">
+                🔍 Check Provider
+            </button>
+            
+            <button class="btn" onclick="clearLog()">
+                🗑️ Clear Log
+            </button>
+        </div>
+        
+        <div id="walletInfo" class="wallet-info" style="display: none;">
+            <h3>💼 Connected Wallet Info:</h3>
+            <div id="addressInfo"></div>
+        </div>
+        
+        <h3>📝 Debug Log:</h3>
+        <pre id="log"></pre>
+        
+        <h3>ℹ️ Instructions:</h3>
+        <ol>
+            <li><strong>Install Leather:</strong> Download from <a href="https://leather.io/install-extension" target="_blank">https://leather.io/install-extension</a></li>
+            <li><strong>Unlock your wallet:</strong> Make sure Leather is unlocked</li>
+            <li><strong>Click "Check Provider"</strong> to see if Leather is detected</li>
+            <li><strong>Click "Connect Leather Wallet"</strong> to test the connection</li>
+            <li><strong>Check the debug log</strong> for detailed information</li>
+        </ol>
+        
+        <h3>🔧 Troubleshooting:</h3>
+        <ul>
+            <li>Make sure you're accessing this via <code>http://localhost:5001</code></li>
+            <li>Leather wallet must be unlocked</li>
+            <li>Some browsers may block wallet providers on file:// URLs</li>
+            <li>Check browser console for additional errors</li>
+        </ul>
+    </div>
+
+    <script>
+        let leatherWalletData = null;
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('log');
+            logElement.textContent += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+            document.getElementById('walletInfo').style.display = 'none';
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+        }
+        
+        // Check if Leather provider is injected
+        function getLeatherProvider() {
+            log('🔍 Checking for Leather providers...');
+            
+            if (window.leather) {
+                log('✅ Found window.leather');
+                return window.leather;
+            }
+            if (window.LeatherProvider) {
+                log('✅ Found window.LeatherProvider');
+                return window.LeatherProvider;
+            }
+            if (window.btc) {
+                log('✅ Found window.btc (alternative Leather provider)');
+                return window.btc;
+            }
+            
+            log('❌ No Leather provider found');
+            return null;
+        }
+        
+        function checkProvider() {
+            log('🔍 === Provider Check ===');
+            
+            const provider = getLeatherProvider();
+            
+            if (provider) {
+                log('✅ Leather provider detected!');
+                log(`📋 Provider type: ${typeof provider}`);
+                log(`📋 Provider methods: ${Object.getOwnPropertyNames(provider).join(', ')}`);
+                
+                updateStatus('✅ Leather provider found!', 'success');
+            } else {
+                log('❌ Leather provider not found');
+                log('💡 Available window objects:');
+                const relevantObjects = ['leather', 'LeatherProvider', 'btc', 'ethereum', 'solana'];
+                relevantObjects.forEach(obj => {
+                    if (window[obj]) {
+                        log(`  - window.${obj}: ${typeof window[obj]}`);
+                    }
+                });
+                
+                updateStatus('❌ Leather provider not found. Please install Leather wallet.', 'error');
+            }
+            
+            log('🌐 Current URL:', window.location.href);
+            log('🏠 Current hostname:', window.location.hostname);
+        }
+        
+        async function testLeatherConnection() {
+            const connectBtn = document.getElementById('connectBtn');
+            
+            try {
+                log('🚀 === Starting Leather Connection Test ===');
+                
+                // Update button state
+                connectBtn.textContent = 'Connecting...';
+                connectBtn.disabled = true;
+                updateStatus('🔗 Connecting to Leather wallet...', 'info');
+                
+                const provider = getLeatherProvider();
+                if (!provider) {
+                    throw new Error('Leather Wallet not detected. Please install it from https://leather.io');
+                }
+                
+                log('📞 Requesting addresses from Leather...');
+                
+                // Request addresses from the wallet
+                const accounts = await provider.request("getAddresses", {
+                    purposes: ["payment"], // BTC addresses
+                    message: "Connect to Leather Test App"
+                });
+                
+                log('📋 Raw response from Leather:');
+                log(JSON.stringify(accounts, null, 2));
+                
+                if (!accounts || accounts.length === 0) {
+                    throw new Error('No accounts returned from Leather wallet');
+                }
+                
+                // Store wallet data
+                leatherWalletData = {
+                    accounts: accounts,
+                    primaryAddress: accounts[0].address,
+                    network: accounts[0].network || 'mainnet',
+                    timestamp: new Date().toISOString()
+                };
+                
+                log('✅ Connection successful!');
+                log(`💼 Primary address: ${leatherWalletData.primaryAddress}`);
+                log(`🌐 Network: ${leatherWalletData.network}`);
+                log(`📊 Total accounts: ${accounts.length}`);
+                
+                // Update UI
+                updateStatus('🎉 Successfully connected to Leather wallet!', 'success');
+                displayWalletInfo(leatherWalletData);
+                
+                // Update button
+                connectBtn.textContent = 'Connected ✓';
+                connectBtn.style.backgroundColor = '#10B981';
+                
+                log('🎉 === Connection Test Complete ===');
+                
+            } catch (error) {
+                log('❌ === Connection Failed ===');
+                log(`💥 Error: ${error.message}`);
+                console.error('Full error object:', error);
+                
+                updateStatus(`❌ Connection failed: ${error.message}`, 'error');
+                
+                // Reset button
+                connectBtn.textContent = '🔗 Connect Leather Wallet';
+                connectBtn.disabled = false;
+                connectBtn.style.backgroundColor = '#8B5CF6';
+                
+                if (error.message.includes('not detected')) {
+                    log('💡 Try installing Leather from: https://leather.io/install-extension');
+                }
+            }
+        }
+        
+        function displayWalletInfo(walletData) {
+            const walletInfo = document.getElementById('walletInfo');
+            const addressInfo = document.getElementById('addressInfo');
+            
+            let html = `
+                <p><strong>Primary Address:</strong> ${walletData.primaryAddress}</p>
+                <p><strong>Network:</strong> ${walletData.network}</p>
+                <p><strong>Connected At:</strong> ${new Date(walletData.timestamp).toLocaleString()}</p>
+                <p><strong>Total Accounts:</strong> ${walletData.accounts.length}</p>
+            `;
+            
+            if (walletData.accounts.length > 1) {
+                html += '<p><strong>All Addresses:</strong></p><ul>';
+                walletData.accounts.forEach((account, index) => {
+                    html += `<li>Account ${index + 1}: ${account.address} (${account.purpose})</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            addressInfo.innerHTML = html;
+            walletInfo.style.display = 'block';
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            log('📄 Page initialized');
+            log(`🌐 Current URL: ${window.location.href}`);
+            
+            // Auto-check provider on load
+            setTimeout(() => {
+                checkProvider();
+            }, 500);
+        });
+        
+        // Listen for wallet events (if supported)
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'leather') {
+                log('📨 Received Leather message:', JSON.stringify(event.data));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -11,6 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- Stacks Connect for Leather Wallet -->
+    <script src="https://unpkg.com/@stacks/connect@20.0.0/dist/index.umd.js"></script>
+    <script src="https://unpkg.com/@stacks/transactions@4.3.5/dist/index.umd.js"></script>
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -94,9 +98,12 @@
                             <i class="fas fa-chevron-down ml-2"></i>
                         </button>
                         <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
-                            <a href="/login" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-wallet mr-2"></i>Connect Wallet
+                            <a href="#" id="connectLeatherBtn" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-wallet mr-2"></i>Connect Leather Wallet
                             </a>
+                            <div id="walletStatus" class="hidden px-4 py-2 text-sm text-green-600">
+                                <i class="fas fa-check-circle mr-2"></i>Wallet Connected
+                            </div>
                             <a href="/auth" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                                 <i class="fas fa-cog mr-2"></i>Enhanced Features
                             </a>
@@ -138,6 +145,25 @@
             <div class="mb-8">
                 <h1 class="text-3xl font-bold text-gray-900">Document Security Dashboard</h1>
                 <p class="text-gray-600 mt-2">Process documents with AI-powered fraud detection and blockchain verification</p>
+            </div>
+
+            <!-- Wallet Connection Section -->
+            <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg shadow-lg p-6 mb-8 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">🔗 Stacks Wallet Connection</h3>
+                        <p class="text-purple-100" id="walletConnectionText">Connect your Leather wallet to enable blockchain features and STX payments</p>
+                    </div>
+                    <div class="text-right">
+                        <button id="mainConnectBtn" class="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-purple-50 transition duration-200 shadow-lg">
+                            <i class="fas fa-wallet mr-2"></i>Connect Leather Wallet
+                        </button>
+                        <div id="mainWalletStatus" class="hidden mt-2 text-purple-100">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            <span id="connectedAddress">Wallet Connected</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Quick Stats -->
@@ -993,12 +1019,68 @@
             return 'doc_' + file.name.replace(/[^a-zA-Z0-9]/g, '') + '_' + file.size;
         }
 
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification bg-white border-l-4 p-4 shadow-lg rounded-r-lg transform transition-all duration-300 translate-x-full`;
+            
+            // Set border color based on type
+            const borderColors = {
+                'success': 'border-green-500',
+                'error': 'border-red-500',
+                'warning': 'border-yellow-500',
+                'info': 'border-blue-500'
+            };
+            
+            const textColors = {
+                'success': 'text-green-800',
+                'error': 'text-red-800',
+                'warning': 'text-yellow-800',
+                'info': 'text-blue-800'
+            };
+            
+            notification.classList.add(borderColors[type] || borderColors.info);
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} ${textColors[type] || textColors.info}"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm ${textColors[type] || textColors.info}">${message}</p>
+                    </div>
+                    <div class="ml-auto pl-3">
+                        <button class="text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
         async function connectLeatherWallet() {
             try {
                 showNotification('Connecting to Leather wallet...', 'info');
                 
                 // Check if Stacks Connect is available
-                if (typeof showConnect !== 'undefined') {
+                if (typeof StacksConnect !== 'undefined' && StacksConnect.showConnect) {
                     const authOptions = {
                         onFinish: async (authData) => {
                             try {
@@ -1044,8 +1126,10 @@
                         }
                     };
                     
-                    showConnect(authOptions);
+                    StacksConnect.showConnect(authOptions);
                 } else {
+                    showNotification('Stacks Connect not available. Connecting demo wallet...', 'warning');
+                    
                     // Fallback for demo mode
                     const demoWallet = {
                         type: 'leather',
@@ -1060,7 +1144,6 @@
                     };
                     sessionStorage.setItem('authState', JSON.stringify(authState));
                     
-                    showNotification('Demo wallet connected!', 'success');
                     updateWalletDisplay(demoWallet);
                 }
             } catch (error) {
@@ -1072,27 +1155,79 @@
         function updateWalletDisplay(wallet) {
             // Update UI to show connected wallet
             const currentUser = document.getElementById('currentUser');
+            const connectBtn = document.getElementById('connectLeatherBtn');
+            const walletStatus = document.getElementById('walletStatus');
+            const mainConnectBtn = document.getElementById('mainConnectBtn');
+            const mainWalletStatus = document.getElementById('mainWalletStatus');
+            const connectedAddress = document.getElementById('connectedAddress');
+            const walletConnectionText = document.getElementById('walletConnectionText');
+            
             if (wallet) {
                 currentUser.textContent = `${wallet.address.substring(0, 8)}...`;
                 currentUser.title = wallet.address;
+                
+                // Hide connect button and show status in header menu
+                if (connectBtn) connectBtn.style.display = 'none';
+                if (walletStatus) {
+                    walletStatus.classList.remove('hidden');
+                    walletStatus.innerHTML = `<i class="fas fa-check-circle mr-2"></i>Connected: ${wallet.address.substring(0, 12)}...`;
+                }
+                
+                // Update main wallet section
+                if (mainConnectBtn) mainConnectBtn.style.display = 'none';
+                if (mainWalletStatus) {
+                    mainWalletStatus.classList.remove('hidden');
+                    if (connectedAddress) {
+                        connectedAddress.textContent = `Connected: ${wallet.address}`;
+                    }
+                }
+                if (walletConnectionText) {
+                    walletConnectionText.textContent = 'Wallet connected! You can now use blockchain features and pay with STX tokens.';
+                }
+                
+                showNotification('Leather wallet connected successfully!', 'success');
+            } else {
+                currentUser.textContent = 'User';
+                currentUser.title = '';
+                
+                // Show connect button and hide status in header menu
+                if (connectBtn) connectBtn.style.display = 'block';
+                if (walletStatus) walletStatus.classList.add('hidden');
+                
+                // Update main wallet section
+                if (mainConnectBtn) mainConnectBtn.style.display = 'block';
+                if (mainWalletStatus) mainWalletStatus.classList.add('hidden');
+                if (walletConnectionText) {
+                    walletConnectionText.textContent = 'Connect your Leather wallet to enable blockchain features and STX payments';
+                }
             }
             updateUI();
         }
 
-        // Add wallet connection button to user menu
+        // Add wallet connection event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // Add connect wallet option if not already connected
-            if (!checkWalletConnection()) {
-                const userMenu = document.getElementById('userMenu');
-                const connectWalletBtn = document.createElement('a');
-                connectWalletBtn.href = '#';
-                connectWalletBtn.className = 'block px-4 py-2 text-gray-700 hover:bg-gray-100';
-                connectWalletBtn.innerHTML = '<i class="fas fa-wallet mr-2"></i>Connect Leather Wallet';
-                connectWalletBtn.addEventListener('click', (e) => {
+            // Connect wallet button events (both header and main section)
+            const connectBtn = document.getElementById('connectLeatherBtn');
+            const mainConnectBtn = document.getElementById('mainConnectBtn');
+            
+            if (connectBtn) {
+                connectBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     connectLeatherWallet();
                 });
-                userMenu.insertBefore(connectWalletBtn, userMenu.firstChild);
+            }
+            
+            if (mainConnectBtn) {
+                mainConnectBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    connectLeatherWallet();
+                });
+            }
+            
+            // Check if wallet is already connected on page load
+            if (checkWalletConnection()) {
+                const walletInfo = getWalletInfo();
+                updateWalletDisplay(walletInfo);
             }
         });
 

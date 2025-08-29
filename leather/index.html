@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PII Storage DApp</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      background-color: #f5f5f5;
+    }
+    
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    h2 {
+      color: #555;
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 10px;
+    }
+    
+    button {
+      background: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 14px;
+    }
+    
+    button:hover {
+      background: #0056b3;
+    }
+    
+    input {
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 200px;
+    }
+    
+    pre {
+      background: #f8f9fa;
+      padding: 15px;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 30px 0;
+    }
+    
+    .section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>PII Storage DApp (Testnet)</h1>
+
+  <button id="connectBtn">🔌 Connect Leather Wallet</button>
+  <pre id="walletInfo">Not connected</pre>
+  <hr/>
+
+  <h2>Add PII Record</h2>
+  <input id="recordId" type="number" placeholder="Record ID" />
+  <input id="recordData" type="text" placeholder="Record Data" />
+  <button id="btnAdd">➕ Add Record</button>
+
+  <h2>Get PII Record</h2>
+  <input id="getRecordId" type="number" placeholder="Record ID" />
+  <button id="btnGet">🔍 Fetch Record</button>
+  <pre id="recordResult"></pre>
+
+  <h2>Access PII Record</h2>
+  <input id="accessRecordId" type="number" placeholder="Record ID" />
+  <button id="btnAccess">🔑 Access Record</button>
+  <pre id="accessResult"></pre>
+
+  <hr/>
+  <h2>🔧 Administrative Functions</h2>
+
+  <button id="btnAddAuthorized">👤 Add Authorized User</button>
+  <button id="btnRemoveAuthorized">🚫 Remove Authorized User</button>
+  <button id="btnVerifyHash">🔐 Verify PII Hash</button>
+  <button id="btnGetStats">📊 Get Contract Statistics</button>
+  <button id="btnGetTransactions">📋 Get PII Transactions</button>
+  <button id="btnGetTransaction">🔍 Get Transaction Details</button>
+  <button id="btnGetUserCount">📈 Get User PII Count</button>
+  <button id="btnHashExists">🔍 Check Hash Existence</button>
+  <button id="btnIsAuthorized">🔐 Check User Authorization</button>
+
+  <pre id="mockResult"></pre>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>

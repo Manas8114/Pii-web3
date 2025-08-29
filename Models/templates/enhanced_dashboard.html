@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureDoc Analytics Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --danger: #f56565;
+            --info: #4299e1;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --glass: rgba(255,255,255,0.6);
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --scrollbar-thumb: rgba(102,126,234,0.4);
+        }
+
+        .theme-dark {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --shadow: 0 4px 12px -2px rgba(0,0,0,0.6);
+            --shadow-lg: 0 25px 40px -10px rgba(0,0,0,0.7);
+            --glass: rgba(30,41,59,0.65);
+            --scrollbar-thumb: rgba(148,163,184,0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gradient-bg) fixed;
+            min-height: 100vh;
+            color: var(--text-color);
+            overflow-y: overlay;
+            transition: background 0.5s ease, color 0.3s ease;
+        }
+        body::-webkit-scrollbar { width: 10px; }
+        body::-webkit-scrollbar-track { background: transparent; }
+        body::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 20px; }
+
+        /* Header */
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(18px) saturate(160%);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient, var(--primary));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        /* Chart Grid */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .chart-subtitle {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Fraud Detection Section */
+        .fraud-section {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            background: var(--danger);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .fraud-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .fraud-step {
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            border-left: 4px solid var(--step-color, var(--primary));
+            transition: all 0.3s ease;
+        }
+
+        .fraud-step:hover {
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--step-color, var(--primary));
+            color: white;
+            font-size: 0.875rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-description {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Recent Activity */
+        .activity-section {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-item:hover {
+            background: #f8fafc;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-meta {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .activity-time {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 0 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--progress-color, var(--primary));
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+
+        /* Risk Level Indicators */
+        .risk-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .risk-low {
+            background: rgba(72, 187, 120, 0.1);
+            color: var(--success);
+        }
+
+        .risk-medium {
+            background: rgba(237, 137, 54, 0.1);
+            color: var(--warning);
+        }
+
+        .risk-high {
+            background: rgba(245, 101, 101, 0.1);
+            color: var(--danger);
+        }
+
+    /* Added new UI components */
+    .overview-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap:1.25rem; margin-bottom:2rem; }
+    .mini-card { background: linear-gradient(160deg,var(--card-bg),rgba(255,255,255,0.08)); border:1px solid var(--border-color); border-radius:1rem; padding:1.1rem 1.25rem; position:relative; overflow:hidden; }
+    .mini-card h4 { margin:0 0 .6rem; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color: var(--text-muted); font-weight:600; }
+    .mini-value { font-size:1.65rem; font-weight:600; display:flex; align-items:center; gap:.55rem; }
+    .sparkline { height:56px; width:100%; margin-top:.4rem; }
+    .skeleton { position:relative; overflow:hidden; background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.15) 37%, rgba(255,255,255,0.05) 63%); background-size:400% 100%; animation: shimmer 1.3s infinite; border-radius:8px; }
+    @keyframes shimmer { 0%{background-position:100% 0} 100%{background-position:0 0} }
+    .theme-toggle { background: var(--card-bg); border:1px solid var(--border-color); border-radius: 999px; padding:.45rem .85rem; cursor:pointer; box-shadow: var(--shadow); }
+    .theme-toggle:hover { transform:translateY(-2px); }
+    .activity-filter { display:flex; flex-wrap:wrap; gap:.5rem; margin: .5rem 0 1rem; }
+    .filter-pill { background: var(--card-bg); border:1px solid var(--border-color); padding:.45rem .85rem; font-size:.65rem; letter-spacing:.08em; border-radius: 40px; text-transform:uppercase; cursor:pointer; display:inline-flex; align-items:center; gap:.4rem; transition:.25s; }
+    .filter-pill.active { background: var(--primary); color:#fff; border-color: var(--primary); box-shadow:0 4px 14px -2px rgba(102,126,234,0.5); }
+    .filter-pill:hover { transform:translateY(-2px); }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SecureDoc Analytics
+            </div>
+            <div class="header-actions">
+                <div class="theme-toggle" id="themeToggle" title="Toggle dark/light (Ctrl+J)" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                    <span id="themeLabel">Dark</span>
+                </div>
+                <a href="/upload" class="btn btn-primary">
+                    <i class="fas fa-upload"></i>
+                    Upload Document
+                </a>
+                <button class="btn" style="background: #f56565; color: white;" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Overview Mini Grid -->
+        <div class="overview-grid" id="overviewGrid">
+            <div class="mini-card">
+                <h4>Processing Rate</h4>
+                <div class="mini-value"><i class="fas fa-gauge-high" style="color:var(--primary)"></i><span id="rateValue">—</span><span style="font-size:.9rem;font-weight:500;color:var(--text-muted)">/hr</span></div>
+                <div class="sparkline skeleton" id="rateSpark"></div>
+            </div>
+            <div class="mini-card">
+                <h4>Avg Fraud Score</h4>
+                <div class="mini-value"><i class="fas fa-shield-virus" style="color:var(--danger)"></i><span id="avgFraud">—</span></div>
+                <div class="sparkline skeleton" id="fraudSpark"></div>
+            </div>
+            <div class="mini-card">
+                <h4>PII / Document</h4>
+                <div class="mini-value"><i class="fas fa-user-shield" style="color:var(--info)"></i><span id="piiPerDoc">—</span></div>
+                <div class="sparkline skeleton" id="piiSpark"></div>
+            </div>
+            <div class="mini-card">
+                <h4>Chain Confirms</h4>
+                <div class="mini-value"><i class="fas fa-link" style="color:var(--success)"></i><span id="chainConf">—</span></div>
+                <div class="sparkline skeleton" id="chainSpark"></div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card animate-slide-in" style="--gradient: linear-gradient(135deg, #667eea, #764ba2);">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalDocs">{{ stats.total_documents or 1247 }}</div>
+                <div class="stat-label">Total Documents Processed</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 85%; --progress-color: #667eea;"></div>
+                </div>
+            </div>
+
+            <div class="stat-card animate-slide-in" style="--gradient: linear-gradient(135deg, #f093fb, #f5576c);">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="fraudDetected">{{ stats.fraud_detected or 23 }}</div>
+                <div class="stat-label">Fraud Cases Detected</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 23%; --progress-color: #f5576c;"></div>
+                </div>
+            </div>
+
+            <div class="stat-card animate-slide-in" style="--gradient: linear-gradient(135deg, #4facfe, #00f2fe);">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="piiProtected">{{ stats.pii_protected or 8932 }}</div>
+                <div class="stat-label">PII Entities Protected</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 92%; --progress-color: #4facfe;"></div>
+                </div>
+            </div>
+
+            <div class="stat-card animate-slide-in" style="--gradient: linear-gradient(135deg, #a8edea, #fed6e3);">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">
+                        <i class="fas fa-link"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="blockchainRecords">{{ stats.blockchain_records or 1205 }}</div>
+                <div class="stat-label">Blockchain Records</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 96%; --progress-color: #a8edea;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Grid -->
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Document Processing Trends</div>
+                        <div class="chart-subtitle">Daily processing volume over the last 30 days</div>
+                    </div>
+                    <div class="btn" style="background: #f8fafc; color: #718096;">
+                        <i class="fas fa-download"></i>
+                        Export
+                    </div>
+                </div>
+                <div id="trendChart" style="height: 300px;"></div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Risk Distribution</div>
+                        <div class="chart-subtitle">Current risk levels</div>
+                    </div>
+                </div>
+                <div id="riskChart" style="height: 300px;"></div>
+            </div>
+        </div>
+
+        <!-- Additional Chart Row -->
+        <div class="chart-grid" style="margin-top:1.5rem;">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Fraud Risk Gauge</div>
+                        <div class="chart-subtitle">Current average fraud probability</div>
+                    </div>
+                </div>
+                <div id="fraudGauge" style="height:300px;"></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">PII Entity Breakdown</div>
+                        <div class="chart-subtitle">Distribution of detected PII categories</div>
+                    </div>
+                </div>
+                <canvas id="piiCategoryChart" height="300" style="width:100%;"></canvas>
+            </div>
+        </div>
+
+        <!-- Fraud Detection Section -->
+        <div class="fraud-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div>
+                    <h2>AI-Powered Fraud Detection Pipeline</h2>
+                    <p style="color: var(--text-muted); margin-top: 0.25rem;">
+                        5-step advanced analysis process with blockchain verification
+                    </p>
+                </div>
+            </div>
+
+            <div class="fraud-steps">
+                {% if fraud_steps %}
+                    {% for step in fraud_steps %}
+                    <div class="fraud-step" style="--step-color: {{ step.color }};">
+                        <div class="step-number">{{ loop.index }}</div>
+                        <div class="step-title">{{ step.title }}</div>
+                        <div class="step-description">{{ step.description }}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ step.progress }}%; --progress-color: {{ step.color }};"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="fraud-step" style="--step-color: #4299e1;">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Document Intake & Analysis</div>
+                    <div class="step-description">AI-powered format validation and structure analysis</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%; --progress-color: #4299e1;"></div>
+                    </div>
+                </div>
+
+                <div class="fraud-step" style="--step-color: #8b5cf6;">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Metadata Examination</div>
+                    <div class="step-description">Deep analysis of digital fingerprints and history</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 95%; --progress-color: #8b5cf6;"></div>
+                    </div>
+                </div>
+
+                <div class="fraud-step" style="--step-color: #10b981;">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Content Consistency Check</div>
+                    <div class="step-description">Font analysis, layout consistency, text coherence</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 88%; --progress-color: #10b981;"></div>
+                    </div>
+                </div>
+
+                <div class="fraud-step" style="--step-color: #f59e0b;">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Digital Forensics Scan</div>
+                    <div class="step-description">Advanced forensic analysis for manipulation detection</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 92%; --progress-color: #f59e0b;"></div>
+                    </div>
+                </div>
+
+                <div class="fraud-step" style="--step-color: #ef4444;">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Risk Assessment & Blockchain Audit</div>
+                    <div class="step-description">Final scoring and immutable audit trail creation</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 98%; --progress-color: #ef4444;"></div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+            <div class="section-header">
+                <div class="section-icon" style="background: var(--info);">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div>
+                    <h2>Recent Activity</h2>
+                    <p style="color: var(--text-muted); margin-top: 0.25rem;">
+                        Latest document processing and security events
+                    </p>
+                </div>
+            </div>
+
+            <div class="activity-list" id="activityList">
+                <div class="activity-filter" id="activityFilter">
+                    <div class="filter-pill active" data-type="all"><i class="fas fa-stream"></i> All</div>
+                    <div class="filter-pill" data-type="fraud"><i class="fas fa-skull-crossbones"></i> Fraud</div>
+                    <div class="filter-pill" data-type="pii"><i class="fas fa-user-shield"></i> PII</div>
+                    <div class="filter-pill" data-type="blockchain"><i class="fas fa-link"></i> Chain</div>
+                    <div class="filter-pill" data-type="success"><i class="fas fa-check-circle"></i> Success</div>
+                    <div class="filter-pill" data-type="search"><i class="fas fa-search"></i> Search (/)</div>
+                    <input id="activitySearch" placeholder="Type to filter activity..." style="display:none;margin-top:.5rem;width:100%;padding:.6rem .8rem;border:1px solid var(--border-color);border-radius:.6rem;background:var(--card-bg);color:var(--text-color);" />
+                </div>
+                {% if recent_activity %}
+                    {% for activity in recent_activity %}
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: {{ activity.color }};">
+                            <i class="{{ activity.icon }}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">{{ activity.title }}</div>
+                            <div class="activity-meta">{{ activity.meta }}</div>
+                        </div>
+                        <div class="activity-time">{{ activity.time }}</div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Initialize charts and data
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTrendChart();
+            initializeRiskChart();
+            initializeFraudGauge();
+            initializePiiCategory();
+            buildSparklines();
+            loadRecentActivity();
+            animateCounters();
+            setupTheme();
+            setupActivityFilters();
+            setupFraudStepExpansion();
+        });
+
+        function initializeTrendChart() {
+            const options = {
+                series: [{
+                    name: 'Documents Processed',
+                    data: [30, 40, 35, 50, 49, 60, 70, 91, 125, 134, 123, 145, 156, 167, 178, 189, 201, 212, 223, 234, 245, 256, 267, 278, 289, 300, 311, 322, 333, 344]
+                }, {
+                    name: 'Fraud Detected',
+                    data: [1, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6, 8, 7, 9, 8, 10, 9, 11, 10, 12, 11, 13, 12, 14, 13, 15, 14, 16]
+                }],
+                chart: {
+                    height: 300,
+                    type: 'area',
+                    toolbar: {
+                        show: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 2
+                },
+                xaxis: {
+                    type: 'datetime',
+                    categories: generateDates()
+                },
+                tooltip: {
+                    x: {
+                        format: 'dd/MM/yy'
+                    },
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.7,
+                        opacityTo: 0.9,
+                        stops: [0, 90, 100]
+                    }
+                },
+                colors: ['#667eea', '#f093fb']
+            };
+
+            const chart = new ApexCharts(document.querySelector("#trendChart"), options);
+            chart.render();
+        }
+
+        function initializeRiskChart() {
+            const options = {
+                series: [76.2, 18.5, 5.3],
+                chart: {
+                    type: 'donut',
+                    height: 300
+                },
+                labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                colors: ['#48bb78', '#ed8936', '#f56565'],
+                legend: {
+                    position: 'bottom'
+                },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '70%'
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function (val) {
+                        return val.toFixed(1) + '%'
+                    }
+                }
+            };
+
+            const chart = new ApexCharts(document.querySelector("#riskChart"), options);
+            chart.render();
+        }
+
+        function initializeFraudGauge() {
+            if (!document.querySelector('#fraudGauge')) return;
+            const options = { series:[42], chart:{height:300,type:'radialBar'}, plotOptions:{ radialBar:{ hollow:{ size:'55%' }, dataLabels:{ name:{show:false}, value:{ fontSize:'26px', formatter:v=>v+'%' } } } }, colors:['#f56565'] };
+            const g = new ApexCharts(document.querySelector('#fraudGauge'), options); g.render();
+        }
+
+        function initializePiiCategory() {
+            const el = document.getElementById('piiCategoryChart'); if(!el) return;
+            new Chart(el.getContext('2d'), { type:'doughnut', data:{ labels:['NAME','PHONE','AADHAAR','PAN','EMAIL','ADDRESS'], datasets:[{ data:[35,28,17,9,23,15], backgroundColor:['#667eea','#4facfe','#10b981','#f59e0b','#f093fb','#a8edea'], borderWidth:1, borderColor:'rgba(255,255,255,0.4)'}]}, options:{ plugins:{ legend:{ position:'bottom', labels:{ color:'var(--text-color)' } } } } });
+        }
+
+        function buildSparklines() {
+            const sparkConfigs=[{el:'rateSpark',color:'#667eea'},{el:'fraudSpark',color:'#f56565'},{el:'piiSpark',color:'#4facfe'},{el:'chainSpark',color:'#10b981'}];
+            sparkConfigs.forEach(cfg=>{ const div=document.getElementById(cfg.el); if(!div) return; const data=Array.from({length:24},()=>Math.round(Math.random()*40)+5); const max=Math.max(...data); const canvas=document.createElement('canvas'); canvas.height=56; canvas.width=div.clientWidth; div.classList.remove('skeleton'); div.appendChild(canvas); const ctx=canvas.getContext('2d'); ctx.strokeStyle=cfg.color; ctx.lineWidth=2; ctx.beginPath(); data.forEach((v,i)=>{ const x=(i/(data.length-1))*canvas.width; const y=canvas.height-(v/max)*canvas.height+4; i?ctx.lineTo(x,y):ctx.moveTo(x,y);}); ctx.stroke(); ctx.fillStyle=cfg.color+'22'; ctx.lineTo(canvas.width,canvas.height); ctx.lineTo(0,canvas.height); ctx.closePath(); ctx.fill(); });
+            if(document.getElementById('rateValue')) document.getElementById('rateValue').textContent=(Math.random()*120+40).toFixed(0);
+            if(document.getElementById('avgFraud')) document.getElementById('avgFraud').textContent=(Math.random()*50+10).toFixed(1)+'%';
+            if(document.getElementById('piiPerDoc')) document.getElementById('piiPerDoc').textContent=(Math.random()*20+5).toFixed(1);
+            if(document.getElementById('chainConf')) document.getElementById('chainConf').textContent=(Math.random()*6+3).toFixed(0);
+        }
+
+        function setupTheme(){ const root=document.documentElement; const toggle=document.getElementById('themeToggle'); if(!toggle)return; const icon=document.getElementById('themeIcon'); const label=document.getElementById('themeLabel'); const saved=localStorage.getItem('secureDocTheme'); if(saved==='dark') root.classList.add('theme-dark'); update(); toggle.addEventListener('click',switchTheme); document.addEventListener('keydown',e=>{ if(e.ctrlKey && e.key.toLowerCase()==='j') switchTheme(); }); function switchTheme(){ root.classList.toggle('theme-dark'); localStorage.setItem('secureDocTheme', root.classList.contains('theme-dark')?'dark':'light'); update(); } function update(){ const dark=root.classList.contains('theme-dark'); icon.className=dark?'fas fa-sun':'fas fa-moon'; label.textContent=dark?'Light':'Dark'; }}
+
+        function setupActivityFilters(){ const filterBar=document.getElementById('activityFilter'); const searchInput=document.getElementById('activitySearch'); if(!filterBar) return; filterBar.addEventListener('click',e=>{ const pill=e.target.closest('.filter-pill'); if(!pill)return; if(pill.dataset.type==='search'){ searchInput.style.display= searchInput.style.display==='none'?'block':'none'; if(searchInput.style.display==='block') searchInput.focus(); return;} filterBar.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active')); pill.classList.add('active'); applyActivityFilter(); }); if(searchInput) searchInput.addEventListener('input',applyActivityFilter); document.addEventListener('keydown',e=>{ if(e.key==='/' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); if(searchInput){ searchInput.style.display='block'; searchInput.focus(); } }}); }
+
+        function applyActivityFilter(){ const activeType=document.querySelector('.filter-pill.active')?.dataset.type||'all'; const q=(document.getElementById('activitySearch')?.value||'').toLowerCase(); document.querySelectorAll('.activity-item').forEach(item=>{ const text=item.textContent.toLowerCase(); const typeMatch=activeType==='all'|| text.includes(activeType); const queryMatch=!q|| text.includes(q); item.style.display=(typeMatch&&queryMatch)?'flex':'none'; }); }
+
+        function setupFraudStepExpansion(){ document.querySelectorAll('.fraud-step').forEach(step=>{ if(!step.querySelector('.fraud-detail')){ const d=document.createElement('div'); d.className='fraud-detail'; d.textContent='Detailed metrics: entropy score, anomaly index, hash verification latency, OCR consistency, and forensic cross-check.'; step.appendChild(d);} step.addEventListener('click',()=> step.classList.toggle('expanded')); }); }
+
+        function loadRecentActivity() {
+            if (document.getElementById('activityList').children.length === 0) {
+                const activities = [
+                    {
+                        type: 'success',
+                        icon: 'fas fa-file-check',
+                        title: 'Document Processed Successfully',
+                        meta: 'invoice_2024_Q3.pdf • Low Risk',
+                        time: '2 minutes ago'
+                    },
+                    {
+                        type: 'warning',
+                        icon: 'fas fa-exclamation-triangle',
+                        title: 'Potential Fraud Detected',
+                        meta: 'suspicious_contract.pdf • High Risk',
+                        time: '15 minutes ago'
+                    },
+                    {
+                        type: 'info',
+                        icon: 'fas fa-shield-alt',
+                        title: 'PII Data Redacted',
+                        meta: 'personal_document.png • 23 entities protected',
+                        time: '1 hour ago'
+                    },
+                    {
+                        type: 'success',
+                        icon: 'fas fa-link',
+                        title: 'Blockchain Record Created',
+                        meta: 'TX: 0x1a2b3c...7d8e9f • Confirmed',
+                        time: '2 hours ago'
+                    },
+                    {
+                        type: 'info',
+                        icon: 'fas fa-user-check',
+                        title: 'New User Registration',
+                        meta: 'user@example.com • Google Auth',
+                        time: '3 hours ago'
+                    }
+                ];
+
+                const activityList = document.getElementById('activityList');
+                activityList.innerHTML = activities.map(activity => `
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: ${getActivityColor(activity.type)};">
+                            <i class="${activity.icon}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">${activity.title}</div>
+                            <div class="activity-meta">${activity.meta}</div>
+                        </div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getActivityColor(type) {
+            const colors = {
+                success: '#48bb78',
+                warning: '#ed8936',
+                danger: '#f56565',
+                info: '#4299e1'
+            };
+            return colors[type] || colors.info;
+        }
+
+        function generateDates() {
+            const dates = [];
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                dates.push(date.toISOString());
+            }
+            return dates;
+        }
+
+        function animateCounters() {
+            const counters = [
+                { id: 'totalDocs', target: parseInt(document.getElementById('totalDocs').textContent.replace(/,/g, '')) || 1247, duration: 2000 },
+                { id: 'fraudDetected', target: parseInt(document.getElementById('fraudDetected').textContent) || 23, duration: 1500 },
+                { id: 'piiProtected', target: parseInt(document.getElementById('piiProtected').textContent.replace(/,/g, '')) || 8932, duration: 2500 },
+                { id: 'blockchainRecords', target: parseInt(document.getElementById('blockchainRecords').textContent.replace(/,/g, '')) || 1205, duration: 2000 }
+            ];
+
+            counters.forEach(counter => {
+                animateCounter(counter.id, counter.target, counter.duration);
+            });
+        }
+
+        function animateCounter(id, target, duration) {
+            const element = document.getElementById(id);
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 16);
+        }
+
+        function logout() {
+            // Add logout logic here
+            window.location.href = '/upload';
+        }
+
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to cards
+            const cards = document.querySelectorAll('.stat-card, .chart-card, .fraud-step');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

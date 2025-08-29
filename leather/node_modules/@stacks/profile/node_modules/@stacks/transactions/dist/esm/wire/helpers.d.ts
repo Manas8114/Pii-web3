@@ -1,0 +1,13 @@
+import { AddressHashMode, AddressVersion } from '../constants';
+import { AssetString } from '../types';
+import { AddressWire, AssetWire, CoinbasePayloadWire, ContractCallPayload, ContractPrincipalWire, PayloadWire, PoisonPayloadWire, PublicKeyWire, SmartContractPayloadWire, StandardPrincipalWire, TokenTransferPayloadWire } from './types';
+export declare function addressFromPublicKeys(version: AddressVersion, hashMode: AddressHashMode, numSigs: number, publicKeys: PublicKeyWire[]): AddressWire;
+export declare function addressFromVersionHash(version: AddressVersion, hash: string): AddressWire;
+export declare function addressToString(address: AddressWire): string;
+export declare function isTokenTransferPayload(p: PayloadWire): p is TokenTransferPayloadWire;
+export declare function isContractCallPayload(p: PayloadWire): p is ContractCallPayload;
+export declare function isSmartContractPayload(p: PayloadWire): p is SmartContractPayloadWire;
+export declare function isPoisonPayload(p: PayloadWire): p is PoisonPayloadWire;
+export declare function isCoinbasePayload(p: PayloadWire): p is CoinbasePayloadWire;
+export declare function parseAssetString(id: AssetString): AssetWire;
+export declare function parsePrincipalString(principalString: string): StandardPrincipalWire | ContractPrincipalWire;

@@ -1,0 +1,44 @@
+import { Hex, IntegerType, PrivateKey, PublicKey } from '@stacks/common';
+import { ChainId, NetworkParam, TransactionVersion } from '@stacks/network';
+import { BytesReader } from './BytesReader';
+import { Authorization, SpendingConditionOpts } from './authorization';
+import { AnchorMode, AuthType, PostConditionMode } from './constants';
+import { LengthPrefixedList, PayloadInput, PayloadWire, PostConditionWire, PublicKeyWire } from './wire';
+export declare class StacksTransactionWire {
+    transactionVersion: TransactionVersion;
+    chainId: ChainId;
+    auth: Authorization;
+    payload: PayloadWire;
+    postConditionMode: PostConditionMode;
+    postConditions: LengthPrefixedList<PostConditionWire>;
+    anchorMode: AnchorMode;
+    constructor({ auth, payload, postConditions, postConditionMode, transactionVersion, chainId, network, }: {
+        payload: PayloadInput;
+        auth: Authorization;
+        postConditions?: LengthPrefixedList<PostConditionWire>;
+        postConditionMode?: PostConditionMode;
+        transactionVersion?: TransactionVersion;
+        chainId?: ChainId;
+    } & NetworkParam);
+    signBegin(): string;
+    verifyBegin(): string;
+    verifyOrigin(): string;
+    signNextOrigin(sigHash: string, privateKey: PrivateKey): string;
+    signNextSponsor(sigHash: string, privateKey: PrivateKey): string;
+    appendPubkey(publicKey: PublicKey): void;
+    appendPubkey(publicKey: PublicKeyWire): void;
+    signAndAppend(condition: SpendingConditionOpts, curSigHash: string, authType: AuthType, privateKey: PrivateKey): string;
+    txid(): string;
+    setSponsor(sponsorSpendingCondition: SpendingConditionOpts): void;
+    setFee(amount: IntegerType): void;
+    setNonce(nonce: IntegerType): void;
+    setSponsorNonce(nonce: IntegerType): void;
+    serialize(): Hex;
+    serializeBytes(): Uint8Array;
+}
+export declare function deserializeTransaction(tx: string | Uint8Array | BytesReader): StacksTransactionWire;
+export declare function deriveNetworkFromTx(transaction: StacksTransactionWire): import("@stacks/network").StacksNetwork;
+export declare function estimateTransactionByteLength(transaction: StacksTransactionWire): number;
+export declare function serializeTransaction(transaction: StacksTransactionWire): Hex;
+export declare function serializeTransactionBytes(transaction: StacksTransactionWire): Uint8Array;
+export declare function transactionToHex(transaction: StacksTransactionWire): string;

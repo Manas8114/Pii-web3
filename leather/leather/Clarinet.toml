@@ -1,0 +1,11 @@
+[project]
+name = "pii-registry"
+authors = ["Harsh Sahu <hs3657@srmist.edu.in>"]
+description = "PII registry with hashed findings"
+license = "MIT"
+
+
+[contracts.pii-storage]
+path = "contracts/pii-storage.clar"
+clarity_version = 3
+epoch = 3.0

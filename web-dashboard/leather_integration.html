@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Leather Wallet Integration - PII to Blockchain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://unpkg.com/@stacks/connect/dist/connect.umd.js"></script>
+  <script src="https://unpkg.com/@stacks/transactions/dist/transactions.umd.js"></script>
+  <script src="https://unpkg.com/@stacks/network/dist/network.umd.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 24px; }
+    input, textarea, button { padding: 10px; margin: 6px 0; width: 100%; max-width: 720px; }
+    .row { max-width: 720px; }
+    .pill { display: inline-block; padding: 6px 10px; background: #eef; border-radius: 999px; margin: 0 4px 6px 0; }
+  </style>
+</head>
+<body>
+  <h2>Leather Wallet Integration: Send PII batch to Clarity</h2>
+  <div class="row">
+    <label>Contract Address</label>
+    <input id="contractAddress" placeholder="ST..." />
+    <label>Contract Name</label>
+    <input id="contractName" value="pii-storage-system" />
+    <label>Document Hash</label>
+    <input id="documentHash" placeholder="sha256 hash of document+text" />
+    <label>PII Batch (JSON list)</label>
+    <textarea id="piiBatch" rows="8" placeholder='[
+  {"safe-token":"token-123","entity-type":"PERSON","confidence-score":95,"is-sensitive":true,"metadata":"from script.py"}
+]'></textarea>
+    <button id="connectBtn">Connect Leather</button>
+    <button id="sendBtn">Send to Blockchain</button>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const { showConnect } = window.Connect;
+    const { openContractCall, ContractCallPayload } = window.Connect;
+    const tx = window.transactions;
+    const net = window.network;
+
+    let userSession;
+    let appConfig;
+
+    function setStatus(msg) {
+      document.getElementById('status').innerText = msg;
+    }
+
+    const network = new net.StacksTestnet();
+    // For devnet: new net.StacksMocknet({ url: 'http://localhost:3999' })
+
+    document.getElementById('connectBtn').onclick = () => {
+      const appDetails = { name: 'PII Bridge', icon: window.location.origin + '/favicon.ico' };
+      showConnect({
+        appDetails,
+        onFinish: () => setStatus('Connected to Leather (if popup completed).'),
+        onCancel: () => setStatus('User canceled connection.')
+      });
+    };
+
+    document.getElementById('sendBtn').onclick = async () => {
+      try {
+        const contractAddress = document.getElementById('contractAddress').value.trim();
+        const contractName = document.getElementById('contractName').value.trim();
+        const documentHash = document.getElementById('documentHash').value.trim();
+        const batchJson = document.getElementById('piiBatch').value.trim();
+
+        if (!contractAddress || !contractName || !documentHash || !batchJson) {
+          setStatus('Please fill all fields');
+          return;
+        }
+
+        const items = JSON.parse(batchJson);
+        // Convert to Clarity values
+        const cvDocumentHash = tx.stringAsciiCV(documentHash);
+        const cvList = tx.listCV(items.map(item => tx.tupleCV({
+          'safe-token': tx.stringAsciiCV(item['safe-token']),
+          'entity-type': tx.stringAsciiCV(item['entity-type']),
+          'confidence-score': tx.uintCV(item['confidence-score']),
+          'is-sensitive': item['is-sensitive'] ? tx.trueCV() : tx.falseCV(),
+          'metadata': tx.stringAsciiCV(item['metadata'] || '')
+        })));
+
+        const functionArgs = [cvDocumentHash, cvList];
+
+        await openContractCall({
+          network,
+          contractAddress,
+          contractName,
+          functionName: 'store-document-pii-batch',
+          functionArgs,
+          postConditionMode: 1,
+          onFinish: data => setStatus('Transaction submitted: ' + data.txId),
+          onCancel: () => setStatus('User canceled transaction')
+        });
+      } catch (e) {
+        console.error(e);
+        setStatus('Error: ' + e.message);
+      }
+    };
+  </script>
+</body>
+</html>
+

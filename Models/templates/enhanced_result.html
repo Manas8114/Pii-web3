@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Analysis Results - SecureDoc</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --danger: #f56565;
+            --info: #4299e1;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Analysis Header */
+        .analysis-header {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .file-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .file-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-meta {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Risk Score */
+        .risk-score-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .risk-score {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .risk-score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .risk-score-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .risk-score-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .risk-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .risk-low {
+            background: rgba(72, 187, 120, 0.1);
+            color: var(--success);
+            border: 2px solid var(--success);
+        }
+
+        .risk-medium {
+            background: rgba(237, 137, 54, 0.1);
+            color: var(--warning);
+            border: 2px solid var(--warning);
+        }
+
+        .risk-high {
+            background: rgba(245, 101, 101, 0.1);
+            color: var(--danger);
+            border: 2px solid var(--danger);
+        }
+
+        /* Analysis Grid */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Fraud Detection Steps */
+        .fraud-analysis {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .analysis-step {
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--step-color);
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--step-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+
+        .step-title {
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .step-score {
+            background: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .step-description {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-left: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-left: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--step-color);
+            border-radius: 3px;
+            transition: width 1s ease-out;
+        }
+
+        /* PII Protection */
+        .pii-section {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .pii-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pii-stat {
+            text-align: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .pii-stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .pii-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .pii-entities {
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .pii-entity {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .pii-entity:last-child {
+            border-bottom: none;
+        }
+
+        .entity-type {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Action Buttons */
+        .action-section {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .risk-score-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .main-content {
+                padding: 0 1rem;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .blockchain-status {
+            background: rgba(72, 187, 120, 0.1);
+            border: 1px solid var(--success);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .blockchain-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SecureDoc Analysis
+            </div>
+            <div class="header-actions">
+                <a href="/" class="btn btn-secondary">
+                    <i class="fas fa-chart-line"></i>
+                    Dashboard
+                </a>
+                <a href="/upload" class="btn btn-primary">
+                    <i class="fas fa-upload"></i>
+                    New Upload
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Analysis Header -->
+        <div class="analysis-header animate-fade-in">
+            <div class="file-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="file-name">{{ filename or "document_sample.pdf" }}</div>
+            <div class="file-meta">
+                Processed on {{ processed_date or "August 29, 2025" }} • 
+                File size: {{ file_size or "2.4 MB" }} • 
+                Processing time: {{ processing_time or "3.2s" }}
+            </div>
+
+            <!-- Risk Score -->
+            <div class="risk-score-container">
+                <div class="risk-score">
+                    <canvas id="riskScoreChart" width="120" height="120"></canvas>
+                    <div class="risk-score-text">
+                        <div class="risk-score-value" id="riskValue">{{ risk_score or "8.7" }}</div>
+                        <div class="risk-score-label">Risk Score</div>
+                    </div>
+                </div>
+                <div class="risk-badge risk-{{ risk_level or 'low' }}">
+                    <i class="fas fa-shield-alt"></i>
+                    {{ risk_level_text or "LOW RISK" }}
+                </div>
+            </div>
+
+            <!-- Blockchain Status -->
+            <div class="blockchain-status">
+                <div class="blockchain-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <div>
+                    <strong>Blockchain Verified</strong><br>
+                    <small>Document hash recorded on Stacks blockchain • TX: {{ tx_id or "0x1a2b3c...7d8e9f" }}</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Grid -->
+        <div class="analysis-grid">
+            <!-- Fraud Detection Analysis -->
+            <div class="fraud-analysis animate-fade-in">
+                <div class="section-title">
+                    <div class="section-icon" style="background: var(--danger);">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    AI Fraud Detection Analysis
+                </div>
+
+                {% if fraud_steps %}
+                    {% for step in fraud_steps %}
+                    <div class="analysis-step" style="--step-color: {% if step.score >= 90 %}#10b981{% elif step.score >= 75 %}#f59e0b{% else %}#ef4444{% endif %};">
+                        <div class="step-header">
+                            <div style="display: flex; align-items: center;">
+                                <div class="step-number">{{ step.step_number }}</div>
+                                <div class="step-title">{{ step.title }}</div>
+                            </div>
+                            <div class="step-score" style="color: {% if step.score >= 90 %}#10b981{% elif step.score >= 75 %}#f59e0b{% else %}#ef4444{% endif %};">{{ step.score }}%</div>
+                        </div>
+                        <div class="step-description">
+                            {{ step.description }}
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ step.score }}%; --step-color: {% if step.score >= 90 %}#10b981{% elif step.score >= 75 %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Fallback static steps -->
+                    <div class="analysis-step" style="--step-color: #4299e1;">
+                        <div class="step-header">
+                            <div style="display: flex; align-items: center;">
+                                <div class="step-number">1</div>
+                                <div class="step-title">Document Intake & Validation</div>
+                            </div>
+                            <div class="step-score" style="color: #4299e1;">98%</div>
+                        </div>
+                        <div class="step-description">
+                            Format validation, structure analysis, and file integrity check completed successfully.
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 98%;"></div>
+                        </div>
+                    </div>
+                    <!-- Additional fallback steps would go here -->
+                {% endif %}
+            </div>
+
+            <!-- PII Protection -->
+            <div class="pii-section animate-fade-in">
+                <div class="section-title">
+                    <div class="section-icon" style="background: var(--primary);">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    PII Protection Summary
+                </div>
+
+                <div class="pii-stats">
+                    <div class="pii-stat">
+                        <div class="pii-stat-value">{{ pii_entities_count or 23 }}</div>
+                        <div class="pii-stat-label">PII Entities</div>
+                    </div>
+                    <div class="pii-stat">
+                        <div class="pii-stat-value">{{ redacted_count or 23 }}</div>
+                        <div class="pii-stat-label">Redacted</div>
+                    </div>
+                    <div class="pii-stat">
+                        <div class="pii-stat-value">{{ tokenized_count or 23 }}</div>
+                        <div class="pii-stat-label">Tokenized</div>
+                    </div>
+                </div>
+
+                <div class="pii-entities">
+                    {% if sensitive_data %}
+                        {% for entity_text, details in sensitive_data.items() %}
+                        <div class="pii-entity">
+                            <span>{{ entity_text[:20] }}...</span>
+                            <span class="entity-type">{{ details.entity }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="pii-entity">
+                            <span>john.doe@example.com</span>
+                            <span class="entity-type">EMAIL</span>
+                        </div>
+                        <div class="pii-entity">
+                            <span>+1-555-123-4567</span>
+                            <span class="entity-type">PHONE</span>
+                        </div>
+                        <div class="pii-entity">
+                            <span>123-45-6789</span>
+                            <span class="entity-type">SSN</span>
+                        </div>
+                        <div class="pii-entity">
+                            <span>ABCDE1234F</span>
+                            <span class="entity-type">IN_PAN</span>
+                        </div>
+                        <div class="pii-entity">
+                            <span>1234 5678 9012</span>
+                            <span class="entity-type">IN_AADHAAR</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Section -->
+        <div class="action-section animate-fade-in">
+            <h3 style="margin-bottom: 1rem;">Document Actions</h3>
+            <div class="action-buttons">
+                <a href="/download/{{ filename }}" class="btn btn-primary btn-large">
+                    <i class="fas fa-download"></i>
+                    Download Processed
+                </a>
+                <button class="btn btn-secondary btn-large" onclick="viewReport()">
+                    <i class="fas fa-file-alt"></i>
+                    View Full Report
+                </button>
+                <button class="btn btn-secondary btn-large" onclick="shareDocument()">
+                    <i class="fas fa-share-alt"></i>
+                    Share Results
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            createRiskScoreChart();
+            animateProgressBars();
+        });
+
+        function createRiskScoreChart() {
+            const canvas = document.getElementById('riskScoreChart');
+            const ctx = canvas.getContext('2d');
+            const riskScore = parseFloat(document.getElementById('riskValue').textContent);
+            
+            // Calculate percentage (10 - riskScore) * 10 for visual representation
+            const percentage = ((10 - riskScore) / 10) * 100;
+            
+            // Create circular progress
+            const centerX = 60;
+            const centerY = 60;
+            const radius = 45;
+            const startAngle = -Math.PI / 2;
+            const endAngle = startAngle + (percentage / 100) * 2 * Math.PI;
+            
+            // Background circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+            
+            // Progress circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+            ctx.strokeStyle = riskScore <= 3 ? '#48bb78' : riskScore <= 6 ? '#ed8936' : '#f56565';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        function animateProgressBars() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach((bar, index) => {
+                setTimeout(() => {
+                    bar.style.width = bar.style.width;
+                }, index * 200);
+            });
+        }
+
+        function viewReport() {
+            alert('Full report functionality would be implemented here');
+        }
+
+        function shareDocument() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SecureDoc Analysis Results',
+                    text: 'Document analysis completed successfully',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback to copy link
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copied to clipboard!');
+            }
+        }
+    </script>
+</body>
+</html>
