@@ -58,11 +58,6 @@ ST2T3AST18YFFVFDN9Q3913803PP8BD42FFH6V4KB.pil-storage
 <img width="1920" height="1080" alt="{F24163D3-B899-4F7B-8AD8-DD47CE41FDA0}" src="https://github.com/user-attachments/assets/d708d909-94c8-4ced-a371-74f447ab2ad9" />
 
 
-<img width="385" height="394" alt="{31199EB8-C2AB-478A-A2D8-31F33C35BA13}" src="https://github.com/user-attachments/assets/22fca6ad-298e-44d2-b21c-5461e1fbfdc6" />
-
-
-<img width="385" height="394" alt="{71A28EAB-46E3-4283-8FC2-F4E6F6992429}" src="https://github.com/user-attachments/assets/3905f899-3490-41b8-8e12-ccc4d3b9e223" />
-
 ## Video 
 https://drive.google.com/file/d/1pXuNvgqj8NY1_HO07EdDpOtbQQtdQ0V7/view?usp=sharing
 
