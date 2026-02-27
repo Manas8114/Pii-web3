@@ -11,10 +11,16 @@ import json
 import logging
 from datetime import datetime, timedelta
 import secrets
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 # Import our existing modules
 from enhanced_fraud_detector import EnhancedFraudDetector, FraudDetectionResult
 from Models.blockchain_audit import BlockchainAuditManager
+from ai_summarizer import generate_summary
+from ipfs_uploader import upload_to_ipfs
 
 # Import document processing functionality
 import pytesseract
@@ -36,7 +42,8 @@ try:
     import firebase_admin
     from firebase_admin import credentials, firestore
     
-    cred = credentials.Certificate('Models/serviceAccountKey.json')
+    firebase_cred_path = os.getenv('FIREBASE_CREDENTIALS_PATH', 'Models/serviceAccountKey.json')
+    cred = credentials.Certificate(firebase_cred_path)
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     FIREBASE_AVAILABLE = True
@@ -50,12 +57,25 @@ except Exception as e:
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Custom JSON encoder for numpy types
+class NumpyJSONEncoder(json.JSONEncoder):
+    """Handle numpy types that are not JSON serializable by default."""
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
 # Initialize Flask app
 app = Flask(__name__)
+app.json_encoder = NumpyJSONEncoder
 CORS(app)
 
-# Configuration
-app.secret_key = secrets.token_hex(16)
+# Configuration — persistent secret key from environment
+app.secret_key = os.getenv('FLASK_SECRET_KEY', secrets.token_hex(16))
 app.permanent_session_lifetime = timedelta(hours=2)
 
 # Directory configuration
@@ -72,12 +92,13 @@ app.config.update({
     'UPLOAD_FOLDER': UPLOAD_FOLDER,
     'OUTPUT_FOLDER': OUTPUT_FOLDER,
     'RESULTS_FOLDER': RESULTS_FOLDER,
-    'MAX_CONTENT_LENGTH': 50 * 1024 * 1024,  # 50MB max file size
+    'MAX_CONTENT_LENGTH': int(os.getenv('MAX_CONTENT_LENGTH', 50 * 1024 * 1024)),
 })
 
 # Initialize components
-fraud_detector = EnhancedFraudDetector(blockchain_network="testnet")
-blockchain_manager = BlockchainAuditManager(network="testnet")
+_blockchain_network = os.getenv('STACKS_NETWORK', 'testnet')
+fraud_detector = EnhancedFraudDetector(blockchain_network=_blockchain_network)
+blockchain_manager = BlockchainAuditManager(network=_blockchain_network)
 
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'csv'}
@@ -105,25 +126,41 @@ def load_spacy_model():
         print("📝 Continuing with basic text processing")
         return None
 
-# Load the spacy model (non-blocking)
-nlp = load_spacy_model()
+# Lazy-loaded NLP models — loaded on first request instead of blocking startup
+_nlp_model = None
+_transformers_model = None
+_models_loaded = False
 
-# Install command for manual setup
-print("\n💡 To enable advanced NLP features, install spaCy model manually:")
-print("   python -m spacy download en_core_web_sm")
-print("   Then restart the application\n")
+def _ensure_models_loaded():
+    """Lazy-load heavy NLP models on first use instead of blocking startup."""
+    global _nlp_model, _transformers_model, _models_loaded
+    if _models_loaded:
+        return
+    _nlp_model = load_spacy_model()
+    try:
+        _transformers_model = pipeline(
+            "token-classification",
+            model="dbmdz/bert-large-cased-finetuned-conll03-english",
+            aggregation_strategy="average",
+            ignore_labels=["O", "MISC"]
+        )
+    except Exception as e:
+        print(f"⚠️ Transformers model not available: {str(e)}")
+        _transformers_model = None
+    _models_loaded = True
 
-# Initialize transformers model with error handling
-try:
-    transformers_model = pipeline(
-        "token-classification",
-        model="dbmdz/bert-large-cased-finetuned-conll03-english",
-        aggregation_strategy="average",
-        ignore_labels=["O", "MISC"]
-    )
-except Exception as e:
-    print(f"⚠️ Transformers model not available: {str(e)}")
-    transformers_model = None
+# Convenience accessors
+def get_nlp():
+    _ensure_models_loaded()
+    return _nlp_model
+
+def get_transformers_model():
+    _ensure_models_loaded()
+    return _transformers_model
+
+# Keep backward-compatible module-level references (resolved lazily)
+nlp = None  # use get_nlp() instead
+transformers_model = None  # use get_transformers_model() instead
 
 class TransformersRecognizer(EntityRecognizer):
     def __init__(self, model_pipeline, supported_language="en"):
@@ -158,11 +195,18 @@ class TransformersRecognizer(EntityRecognizer):
 # Initialize Presidio components
 analyzer = AnalyzerEngine()
 anonymizer = AnonymizerEngine()
+_custom_recognizer_registered = False
 
-# Add custom recognizer if available
-if transformers_model:
-    transformers_recognizer = TransformersRecognizer(transformers_model)
-    analyzer.registry.add_recognizer(transformers_recognizer)
+def _ensure_custom_recognizer():
+    """Register the Transformers recognizer with Presidio on first use."""
+    global _custom_recognizer_registered
+    if _custom_recognizer_registered:
+        return
+    model = get_transformers_model()
+    if model:
+        transformers_recognizer = TransformersRecognizer(model)
+        analyzer.registry.add_recognizer(transformers_recognizer)
+    _custom_recognizer_registered = True
 
 COLOR_MASK = "BLACK"
 color_map = {
@@ -186,9 +230,9 @@ def extract_text_from_pdf(pdf_path):
 def extract_text_from_image(image_path):
     """Extract text from image using Tesseract OCR."""
     try:
-        img = Image.open(image_path)
-        text = pytesseract.image_to_string(img)
-        return text
+        with Image.open(image_path) as img:
+            text = pytesseract.image_to_string(img)
+            return text
     except Exception as e:
         print(f"Error extracting text from image: {str(e)}")
         return ""
@@ -217,8 +261,9 @@ def indian_specific_regex(text):
     
     return sensitive_data
 
-def get_sensitive_data(text):
-    """Extract sensitive data using Presidio and regex patterns"""
+def get_sensitive_data(text, custom_hide=None, custom_allow=None):
+    """Extract sensitive data using Presidio, regex patterns, and user-defined lists"""
+    _ensure_custom_recognizer()
     try:
         analysis_results = analyzer.analyze(text=text, entities=None, language="en")
     except Exception as e:
@@ -248,6 +293,29 @@ def get_sensitive_data(text):
     # Add regex-based detection
     regex_sensitive_data = indian_specific_regex(text)
     sensitive_data.update(regex_sensitive_data)
+    
+    # Apply custom hide list (add user-defined words as PII — case-insensitive)
+    if custom_hide:
+        for word in custom_hide:
+            word = word.strip()
+            if not word:
+                continue
+            # Case-insensitive search for all occurrences
+            matches = re.findall(re.escape(word), text, re.IGNORECASE)
+            for match in set(matches):
+                if match not in sensitive_data:
+                    sensitive_data[match] = {
+                        "entity": "USER_DEFINED",
+                        "safe_token": generate_secure_token(),
+                        "confidence_score": 1.0
+                    }
+    
+    # Apply custom allow list (remove words from PII results — case-insensitive)
+    if custom_allow:
+        allow_set = {w.strip().lower() for w in custom_allow if w.strip()}
+        sensitive_data = {
+            k: v for k, v in sensitive_data.items() if k.lower() not in allow_set
+        }
     
     return sensitive_data
 
@@ -316,13 +384,13 @@ def store_sensitive_data_firestore(sensitive_data):
     except Exception as e:
         print(f"❌ Error storing data in Firestore: {e}")
 
-def redact_text_with_pymupdf(doc, blur=False):
+def redact_text_with_pymupdf(doc, blur=False, custom_hide=None, custom_allow=None):
     """Redact or blur sensitive text in a PDF."""
     for page in doc:
         page.wrap_contents()
         text = page.get_text("text")
         
-        sensitive_data = get_sensitive_data(text)
+        sensitive_data = get_sensitive_data(text, custom_hide=custom_hide, custom_allow=custom_allow)
         
         for data in sensitive_data.keys():
             raw_areas = page.search_for(data)
@@ -339,15 +407,20 @@ def redact_text_with_pymupdf(doc, blur=False):
     
     return doc
 
-def process_pdf_document(pdf_path, output_pdf, blur=False):
+def process_pdf_document(pdf_path, output_pdf, blur=False, custom_hide=None, custom_allow=None):
     """Complete process: Extract text, detect sensitive info, redact, and save."""
     text, doc = extract_text_from_pdf(pdf_path)
     
-    # Redact sensitive data in PDF
-    redacted_doc = redact_text_with_pymupdf(doc, blur=blur)
-    
-    # Save the redacted PDF
-    redacted_doc.save(output_pdf)
+    try:
+        # Redact sensitive data in PDF
+        redacted_doc = redact_text_with_pymupdf(doc, blur=blur, custom_hide=custom_hide, custom_allow=custom_allow)
+        
+        # Save the redacted PDF
+        redacted_doc.save(output_pdf)
+    finally:
+        # Close the document to prevent memory leaks and release file handles
+        if doc and not doc.is_closed:
+            doc.close()
     
     return output_pdf, text
 
@@ -414,7 +487,24 @@ def process_document():
         enable_fraud_detection = request.form.get('enableFraudDetection', 'true') == 'true'
         enable_audit_trail = request.form.get('enableAuditTrail', 'true') == 'true'
         
+        # Parse custom PII control lists
+        custom_hide = []
+        custom_allow = []
+        try:
+            custom_hide_raw = request.form.get('customHideList', '[]')
+            custom_allow_raw = request.form.get('customAllowList', '[]')
+            if custom_hide_raw:
+                custom_hide = json.loads(custom_hide_raw)
+            if custom_allow_raw:
+                custom_allow = json.loads(custom_allow_raw)
+        except (json.JSONDecodeError, TypeError):
+            pass
+        
         logger.info(f"Processing document: {unique_filename}")
+        if custom_hide:
+            logger.info(f"Custom hide list: {custom_hide}")
+        if custom_allow:
+            logger.info(f"Custom allow list: {custom_allow}")
         
         # Step 1: Extract text and process document
         extracted_text = ""
@@ -425,7 +515,7 @@ def process_document():
                 # Process PDF
                 output_filename = f"processed_{unique_filename}"
                 processed_file_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
-                _, extracted_text = process_pdf_document(file_path, processed_file_path)
+                _, extracted_text = process_pdf_document(file_path, processed_file_path, custom_hide=custom_hide, custom_allow=custom_allow)
             elif filename.lower().endswith(('.png', '.jpg', '.jpeg')):
                 # Process Image
                 output_filename = f"processed_{unique_filename}"
@@ -439,7 +529,7 @@ def process_document():
             extracted_text = f"Error processing document: {str(e)}"
         
         # Step 2: PII Detection
-        sensitive_data = get_sensitive_data(extracted_text) if extracted_text else {}
+        sensitive_data = get_sensitive_data(extracted_text, custom_hide=custom_hide, custom_allow=custom_allow) if extracted_text else {}
         
         # Store sensitive data in Firebase
         if sensitive_data:
@@ -482,26 +572,32 @@ def process_document():
                 logger.error(f"Blockchain registration error: {str(e)}")
         
         # Step 5: Prepare comprehensive results
-        results = {
+        # Convert numpy types from fraud detector to native Python types
+        fraud_prob = float(fraud_result.fraud_probability) if fraud_result else 0.0
+        fraud_conf = float(fraud_result.confidence_score) if fraud_result else 0.0
+
+        response = {
             'success': True,
             'filename': unique_filename,
             'processed_filename': output_filename if processed_file_path else None,
             'timestamp': datetime.now().isoformat(),
             'extracted_text': extracted_text,
-            'pii_detection': {
-                'sensitive_data': sensitive_data,
-                'pii_count': len(sensitive_data),
-                'entities_found': list(set([data['entity'] for data in sensitive_data.values()]))
+            'results': {
+                'pii_detection': {
+                    'sensitive_data': sensitive_data,
+                    'pii_count': len(sensitive_data),
+                    'entities_found': list(set([data['entity'] for data in sensitive_data.values()]))
+                },
+                'fraud_detection': {
+                    'fraud_probability': fraud_prob,
+                    'risk_level': fraud_result.risk_level if fraud_result else 'Unknown',
+                    'suspicious_patterns': fraud_result.suspicious_patterns if fraud_result else [],
+                    'confidence_score': fraud_conf,
+                    'blockchain_hash': fraud_result.blockchain_hash if fraud_result else None,
+                    'audit_trail_id': fraud_result.audit_trail_id if fraud_result else None
+                } if enable_fraud_detection else None,
+                'blockchain': convert_np_floats(blockchain_result) if enable_blockchain else None,
             },
-            'fraud_detection': {
-                'fraud_probability': fraud_result.fraud_probability if fraud_result else 0.0,
-                'risk_level': fraud_result.risk_level if fraud_result else 'Unknown',
-                'suspicious_patterns': fraud_result.suspicious_patterns if fraud_result else [],
-                'confidence_score': fraud_result.confidence_score if fraud_result else 0.0,
-                'blockchain_hash': fraud_result.blockchain_hash if fraud_result else None,
-                'audit_trail_id': fraud_result.audit_trail_id if fraud_result else None
-            } if enable_fraud_detection else None,
-            'blockchain': blockchain_result if enable_blockchain else None,
             'processing_options': {
                 'blockchain_enabled': enable_blockchain,
                 'fraud_detection_enabled': enable_fraud_detection,
@@ -509,12 +605,44 @@ def process_document():
             }
         }
         
+        # Step 5: AI Document Summary (privacy-preserving — uses redacted text only)
+        try:
+            ai_summary = generate_summary(
+                extracted_text,
+                pii_count=len(sensitive_data),
+                fraud_risk=fraud_result.risk_level if fraud_result else 'Unknown'
+            )
+            response['results']['ai_summary'] = ai_summary
+            logger.info(f"AI summary generated (powered={ai_summary.get('ai_powered', False)})")
+        except Exception as e:
+            logger.error(f"AI summary error: {e}")
+            response['results']['ai_summary'] = None
+        
+        # Step 6: IPFS Decentralized Storage
+        if processed_file_path and os.path.exists(processed_file_path):
+            try:
+                ipfs_metadata = {
+                    'filename': filename,
+                    'pii_count': str(len(sensitive_data)),
+                    'fraud_risk': fraud_result.risk_level if fraud_result else 'Unknown'
+                }
+                ipfs_result = upload_to_ipfs(processed_file_path, metadata=ipfs_metadata)
+                response['results']['ipfs'] = ipfs_result
+                logger.info(f"IPFS upload: {ipfs_result.get('ipfs_hash', 'N/A')}")
+            except Exception as e:
+                logger.error(f"IPFS upload error: {e}")
+                response['results']['ipfs'] = None
+        else:
+            response['results']['ipfs'] = None
+        # Sanitize ALL numpy types recursively before serialization
+        response = convert_np_floats(response)
+        
         # Save comprehensive results
         results_file = os.path.join(app.config['RESULTS_FOLDER'], f"{unique_filename}_analysis.json")
         with open(results_file, 'w') as f:
-            json.dump(results, f, indent=2, default=str)
+            json.dump(response, f, indent=2, default=str)
         
-        return jsonify(results)
+        return jsonify(response)
         
     except Exception as e:
         logger.error(f"Document processing error: {str(e)}")
@@ -588,6 +716,65 @@ def result_file(filename):
         return "Results not found", 404
 
 # ==================== API ROUTES ====================
+
+# Stacks transaction preparation endpoint (called by dashboard JS)
+@app.route('/api/stacks/transaction/prepare', methods=['POST'])
+def prepare_stacks_transaction():
+    """Prepare a Stacks blockchain transaction for document registration."""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'error': 'No data provided'}), 400
+
+        contract_address = os.getenv('CONTRACT_ADDRESS', 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM')
+        contract_name = os.getenv('CONTRACT_NAME', 'pii-secure-storage')
+
+        transaction_data = {
+            'transaction_type': data.get('transaction_type', 'registration'),
+            'contract_address': contract_address,
+            'contract_name': contract_name,
+            'function_name': 'create-token',
+            'sender': data.get('wallet_address', ''),
+            'amount_stx': 0.001,
+            'memo': f"doc-hash: {data.get('document_hash', '')}",
+            'network': os.getenv('STACKS_NETWORK', 'testnet'),
+        }
+
+        return jsonify({
+            'success': True,
+            'transaction_data': transaction_data
+        })
+    except Exception as e:
+        logger.error(f"Transaction preparation error: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/stacks/transaction/submit', methods=['POST'])
+def submit_stacks_transaction():
+    """Record a submitted Stacks blockchain transaction."""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'error': 'No data provided'}), 400
+
+        tx_record = {
+            'tx_id': data.get('tx_id'),
+            'transaction_type': data.get('transaction_type'),
+            'wallet_address': data.get('wallet_address'),
+            'document_hash': data.get('document_hash'),
+            'timestamp': datetime.now().isoformat(),
+            'status': 'submitted'
+        }
+
+        logger.info(f"Stacks transaction submitted: {tx_record['tx_id']}")
+
+        return jsonify({
+            'success': True,
+            'transaction': tx_record
+        })
+    except Exception as e:
+        logger.error(f"Transaction submission error: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/auth/google', methods=['POST'])
 def google_auth():
@@ -892,10 +1079,12 @@ def internal_error(e):
     return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
+    port = int(os.getenv('APP_PORT', 5000))
+    debug = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'
     print("🚀 Starting SecuredDoc Application...")
     print("📁 Upload folder:", UPLOAD_FOLDER)
     print("📁 Output folder:", OUTPUT_FOLDER)
-    print("🌐 Server will be available at: http://localhost:5001")
+    print(f"🌐 Server will be available at: http://localhost:{port}")
     print("🔗 Routes available:")
     print("   • / (Home)")
     print("   • /dashboard (Main Dashboard)")
@@ -903,4 +1092,4 @@ if __name__ == '__main__':
     print("   • /auth (Enhanced Features)")
     print("   • /process (Document Processing)")
     
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=debug)

@@ -8,4 +8,8 @@ __pycache__/
 .env
 *.pyc
 .DS_Store
+<<<<<<< HEAD
 .agent 
+=======
+.agent
+>>>>>>> b05c081 (feat: AI Document Summary, IPFS Storage integration, and Custom PII Control enhancement)

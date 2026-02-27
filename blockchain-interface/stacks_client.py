@@ -3,6 +3,9 @@ import time
 import threading
 import requests
 from typing import Dict, Any, List, Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Simple Stacks API client for querying contract transactions and events
 # Works with Hiro Stacks API endpoints. You can switch between mainnet/testnet/custom devnet.
@@ -64,8 +67,11 @@ def extract_clarity_events(tx: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 
 class TxMonitor:
-    def __init__(self, poll_interval: float = 3.0, history_size: int = 200):
-        self.poll_interval = poll_interval
+    def __init__(self, poll_interval: float = None, history_size: int = 200):
+        self.base_interval = poll_interval or float(os.getenv('TX_POLL_INTERVAL', '10'))
+        self.max_interval = float(os.getenv('TX_POLL_MAX_INTERVAL', '60'))
+        self.backoff_factor = float(os.getenv('TX_POLL_BACKOFF_FACTOR', '1.5'))
+        self.poll_interval = self.base_interval
         self.history_size = history_size
         self._seen: set[str] = set()
         self._subs: List = []
@@ -88,6 +94,7 @@ class TxMonitor:
             self._thread.join(timeout=2)
 
     def _run(self):
+        current_interval = self.base_interval
         while self._running:
             try:
                 txs = get_contract_transactions(limit=50)
@@ -112,14 +119,14 @@ class TxMonitor:
                             except Exception:
                                 pass
                     self._seen.add(txid)
-                    # cap history
                     if len(self._seen) > self.history_size:
-                        # remove oldest items
                         self._seen = set(list(self._seen)[-self.history_size:])
+                # Success — reset to base interval
+                current_interval = self.base_interval
             except Exception:
-                # swallow to keep loop running
-                pass
-            time.sleep(self.poll_interval)
+                # Exponential backoff on error
+                current_interval = min(current_interval * self.backoff_factor, self.max_interval)
+            time.sleep(current_interval)
 
 
 if __name__ == "__main__":

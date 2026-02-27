@@ -1,60 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - SecuredDoc</title>
-    
+
     <!-- External Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <!-- Stacks Connect for Leather Wallet -->
     <script src="https://unpkg.com/@stacks/connect@20.0.0/dist/index.umd.js"></script>
     <script src="https://unpkg.com/@stacks/transactions@4.3.5/dist/index.umd.js"></script>
-    
+
     <style>
+        :root {
+            --bg-primary: #0F172A;
+            --bg-surface: #1E293B;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-amber: #F59E0B;
+            --accent-violet: #8B5CF6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Exo 2', sans-serif;
+            background: var(--bg-primary);
+            color: #F8FAFC;
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Orbitron', sans-serif;
         }
+
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+        }
+
         .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .drag-area {
-            border: 3px dashed #cbd5e0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
         }
+
+        .glass-card:hover {
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .drag-area {
+            border: 3px dashed rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            border-radius: 16px;
+        }
+
         .drag-area.dragover {
-            border-color: #4299e1;
-            background-color: #ebf8ff;
+            border-color: var(--accent-amber);
+            background: rgba(245, 158, 11, 0.05);
             transform: scale(1.02);
         }
+
         .processing-animation {
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
+
         .progress-ring {
             transform: rotate(-90deg);
         }
+
         .progress-ring-circle {
-            stroke-dasharray: 283; /* 2 * PI * 45 */
+            stroke-dasharray: 283;
             stroke-dashoffset: 283;
             transition: stroke-dashoffset 0.5s ease;
         }
-        .risk-high { color: #dc2626; }
-        .risk-medium { color: #f59e0b; }
-        .risk-low { color: #059669; }
+
+        .risk-high {
+            color: #EF4444;
+        }
+
+        .risk-medium {
+            color: #F59E0B;
+        }
+
+        .risk-low {
+            color: #10B981;
+        }
+
         .notification {
             position: fixed;
             top: 20px;
@@ -62,52 +125,112 @@
             z-index: 1000;
             max-width: 400px;
         }
+
         .sidebar {
             transition: transform 0.3s ease;
         }
+
         .sidebar.collapsed {
             transform: translateX(-200px);
         }
+
+        .icon-glow-amber {
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+        }
+
+        .icon-glow-violet {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8B5CF6;
+        }
+
+        .icon-glow-blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3B82F6;
+        }
+
+        .icon-glow-emerald {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+        }
+
+        .icon-glow-rose {
+            background: rgba(244, 63, 94, 0.15);
+            color: #F43F5E;
+        }
+
+        .text-gradient-amber {
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .grid-bg {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-surface);
+            border-radius: 4px;
+        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <!-- Navigation -->
-    <nav class="gradient-bg shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+
+<body class="min-h-screen grid-bg">
+    <!-- Floating Navigation -->
+    <nav class="glass-nav fixed top-4 left-4 right-4 z-50 mx-auto max-w-7xl">
+        <div class="px-6 py-3">
+            <div class="flex justify-between items-center">
                 <div class="flex items-center">
-                    <button id="sidebarToggle" class="text-white mr-4 md:hidden">
+                    <button id="sidebarToggle" class="text-gray-400 mr-4 md:hidden cursor-pointer"
+                        title="Toggle sidebar">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <a href="/" class="flex items-center">
-                        <i class="fas fa-shield-alt text-white text-2xl mr-3"></i>
-                        <h1 class="text-white text-xl font-bold">SecuredDoc</h1>
+                    <a href="/" class="flex items-center space-x-3 cursor-pointer">
+                        <div class="w-9 h-9 rounded-lg icon-glow-amber flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-lg"></i>
+                        </div>
+                        <h1 class="text-lg font-bold tracking-wider">SecuredDoc</h1>
                     </a>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <!-- System Status -->
-                    <div id="systemStatus" class="flex items-center text-white text-sm">
-                        <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                <div class="flex items-center space-x-5">
+                    <div id="systemStatus" class="flex items-center text-sm text-gray-400">
+                        <div class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
                         <span>System Online</span>
                     </div>
-                    <!-- User Menu -->
                     <div class="relative">
-                        <button id="userMenuBtn" class="flex items-center text-white hover:text-blue-200 transition duration-200">
-                            <i class="fas fa-user-circle text-2xl mr-2"></i>
-                            <span id="currentUser">User</span>
-                            <i class="fas fa-chevron-down ml-2"></i>
+                        <button id="userMenuBtn"
+                            class="flex items-center text-gray-400 hover:text-white transition duration-200 cursor-pointer"
+                            title="User menu">
+                            <i class="fas fa-user-circle text-xl mr-2"></i>
+                            <span id="currentUser" class="text-sm">User</span>
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
                         </button>
-                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
-                            <a href="#" id="connectLeatherBtn" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-52 glass-card py-2"
+                            style="background: var(--bg-surface);">
+                            <a href="#" id="connectLeatherBtn"
+                                class="block px-4 py-2 text-gray-400 hover:text-amber-400 transition text-sm cursor-pointer">
                                 <i class="fas fa-wallet mr-2"></i>Connect Leather Wallet
                             </a>
-                            <div id="walletStatus" class="hidden px-4 py-2 text-sm text-green-600">
+                            <div id="walletStatus" class="hidden px-4 py-2 text-sm text-green-400">
                                 <i class="fas fa-check-circle mr-2"></i>Wallet Connected
                             </div>
-                            <a href="/auth" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <a href="/auth"
+                                class="block px-4 py-2 text-gray-400 hover:text-amber-400 transition text-sm cursor-pointer">
                                 <i class="fas fa-cog mr-2"></i>Enhanced Features
                             </a>
-                            <a href="/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                            <a href="/"
+                                class="block px-4 py-2 text-gray-400 hover:text-amber-400 transition text-sm cursor-pointer">
                                 <i class="fas fa-home mr-2"></i>Home
                             </a>
                         </div>
@@ -117,22 +240,27 @@
         </div>
     </nav>
 
-    <div class="flex">
+    <div class="flex pt-20">
         <!-- Sidebar -->
-        <div id="sidebar" class="sidebar w-64 bg-white shadow-lg h-screen fixed left-0 top-16 z-40 md:relative md:top-0">
-            <div class="p-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-6">Dashboard Menu</h2>
+        <div id="sidebar" class="sidebar w-64 h-screen fixed left-0 top-20 z-40 md:relative md:top-0 p-4"
+            style="background: var(--bg-surface); border-right: 1px solid var(--glass-border);">
+            <div class="p-4">
+                <h2 class="text-sm font-bold text-gray-400 mb-6 uppercase tracking-wider">Dashboard Menu</h2>
                 <nav class="space-y-2">
-                    <a href="#upload" class="flex items-center px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition duration-200">
+                    <a href="#upload"
+                        class="flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer">
                         <i class="fas fa-upload mr-3"></i>Upload Document
                     </a>
-                    <a href="#analysis" class="flex items-center px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition duration-200">
+                    <a href="#analysis"
+                        class="flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer">
                         <i class="fas fa-chart-line mr-3"></i>Analysis Results
                     </a>
-                    <a href="#blockchain" class="flex items-center px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition duration-200">
+                    <a href="#blockchain"
+                        class="flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer">
                         <i class="fas fa-cube mr-3"></i>Blockchain
                     </a>
-                    <a href="#history" class="flex items-center px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition duration-200">
+                    <a href="#history"
+                        class="flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer">
                         <i class="fas fa-history mr-3"></i>Processing History
                     </a>
                 </nav>
@@ -143,22 +271,26 @@
         <div class="flex-1 md:ml-0 p-6">
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Document Security Dashboard</h1>
-                <p class="text-gray-600 mt-2">Process documents with AI-powered fraud detection and blockchain verification</p>
+                <h1 class="text-2xl font-bold">Document Security <span class="text-gradient-amber">Dashboard</span></h1>
+                <p class="text-gray-500 mt-2 text-sm">Process documents with AI-powered fraud detection and blockchain
+                    verification</p>
             </div>
 
             <!-- Wallet Connection Section -->
-            <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg shadow-lg p-6 mb-8 text-white">
+            <div class="glass-card p-6 mb-8" style="border-left: 3px solid var(--accent-violet);">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-xl font-bold mb-2">🔗 Stacks Wallet Connection</h3>
-                        <p class="text-purple-100" id="walletConnectionText">Connect your Leather wallet to enable blockchain features and STX payments</p>
+                        <h3 class="text-lg font-bold mb-2"><i class="fas fa-link mr-2 text-violet-400"></i>Stacks Wallet
+                            Connection</h3>
+                        <p class="text-gray-500 text-sm" id="walletConnectionText">Connect your Leather wallet to enable
+                            blockchain features and STX payments</p>
                     </div>
                     <div class="text-right">
-                        <button id="mainConnectBtn" class="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-purple-50 transition duration-200 shadow-lg">
+                        <button id="mainConnectBtn"
+                            class="bg-gradient-to-r from-violet-600 to-violet-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition duration-200 cursor-pointer text-sm">
                             <i class="fas fa-wallet mr-2"></i>Connect Leather Wallet
                         </button>
-                        <div id="mainWalletStatus" class="hidden mt-2 text-purple-100">
+                        <div id="mainWalletStatus" class="hidden mt-2 text-green-400 text-sm">
                             <i class="fas fa-check-circle mr-2"></i>
                             <span id="connectedAddress">Wallet Connected</span>
                         </div>
@@ -168,47 +300,54 @@
 
             <!-- Quick Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <div class="text-2xl font-bold text-blue-600" id="totalProcessed">0</div>
-                    <div class="text-gray-600 text-sm">Documents Processed</div>
+                <div class="glass-card p-6 text-center">
+                    <div class="text-2xl font-bold text-blue-400" id="totalProcessed"
+                        style="font-family:'Orbitron',sans-serif;">0</div>
+                    <div class="text-gray-500 text-sm mt-1">Documents Processed</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <div class="text-2xl font-bold text-red-600" id="fraudDetected">0</div>
-                    <div class="text-gray-600 text-sm">Fraud Cases Detected</div>
+                <div class="glass-card p-6 text-center">
+                    <div class="text-2xl font-bold text-rose-400" id="fraudDetected"
+                        style="font-family:'Orbitron',sans-serif;">0</div>
+                    <div class="text-gray-500 text-sm mt-1">Fraud Cases Detected</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <div class="text-2xl font-bold text-green-600" id="piiProtected">0</div>
-                    <div class="text-gray-600 text-sm">PII Items Protected</div>
+                <div class="glass-card p-6 text-center">
+                    <div class="text-2xl font-bold text-emerald-400" id="piiProtected"
+                        style="font-family:'Orbitron',sans-serif;">0</div>
+                    <div class="text-gray-500 text-sm mt-1">PII Items Protected</div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <div class="text-2xl font-bold text-purple-600" id="blockchainRecords">0</div>
-                    <div class="text-gray-600 text-sm">Blockchain Records</div>
+                <div class="glass-card p-6 text-center">
+                    <div class="text-2xl font-bold text-violet-400" id="blockchainRecords"
+                        style="font-family:'Orbitron',sans-serif;">0</div>
+                    <div class="text-gray-500 text-sm mt-1">Blockchain Records</div>
                 </div>
             </div>
 
             <!-- File Upload Section -->
-            <div id="upload" class="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">
-                    <i class="fas fa-upload mr-2 text-indigo-600"></i>Upload Document for Analysis
+            <div id="upload" class="glass-card p-6 mb-8">
+                <h2 class="text-xl font-bold mb-6">
+                    <i class="fas fa-upload mr-2 text-amber-400"></i>Upload Document for Analysis
                 </h2>
-                
+
                 <!-- File Upload Area -->
-                <div id="dropArea" class="drag-area border-3 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6">
-                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
-                    <p class="text-lg text-gray-600 mb-2">Drag & drop your document here</p>
-                    <p class="text-sm text-gray-500 mb-4">or</p>
-                    <label for="fileInput" class="bg-blue-600 text-white px-6 py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition duration-200 inline-block">
+                <div id="dropArea" class="drag-area p-8 text-center mb-6">
+                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-500 mb-4"></i>
+                    <p class="text-base text-gray-400 mb-2">Drag & drop your document here</p>
+                    <p class="text-sm text-gray-600 mb-4">or</p>
+                    <label for="fileInput"
+                        class="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 px-6 py-3 rounded-lg cursor-pointer hover:shadow-lg transition duration-200 inline-block font-semibold text-sm">
                         Choose File
                     </label>
                     <input type="file" id="fileInput" class="hidden" accept=".pdf,.png,.jpg,.jpeg,.csv">
-                    <p class="text-xs text-gray-500 mt-4">Supported: PDF, PNG, JPG, JPEG, CSV (Max: 50MB)</p>
-                    
+                    <p class="text-xs text-gray-600 mt-4">Supported: PDF, PNG, JPG, JPEG, CSV (Max: 50MB)</p>
+
                     <!-- File Info Display -->
-                    <div id="fileInfo" class="mt-4 p-4 bg-blue-50 rounded-lg hidden">
+                    <div id="fileInfo" class="mt-4 p-4 rounded-lg hidden"
+                        style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);">
                         <div class="flex items-center justify-center">
-                            <i class="fas fa-file text-blue-600 mr-2"></i>
-                            <span id="fileName" class="font-medium text-blue-800"></span>
-                            <button id="removeFile" class="ml-2 text-red-500 hover:text-red-700">
+                            <i class="fas fa-file text-amber-400 mr-2"></i>
+                            <span id="fileName" class="font-medium text-amber-300 text-sm"></span>
+                            <button id="removeFile" class="ml-2 text-red-400 hover:text-red-300 cursor-pointer"
+                                title="Remove file">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
@@ -217,59 +356,138 @@
 
                 <!-- Processing Options -->
                 <div class="grid md:grid-cols-3 gap-4 mb-6">
-                    <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center p-4 rounded-lg"
+                        style="background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.15);">
                         <input type="checkbox" id="enableBlockchain" class="mr-3" checked>
-                        <label for="enableBlockchain" class="text-sm text-gray-700">
-                            <i class="fas fa-cube text-purple-600 mr-2"></i>Blockchain Registration
+                        <label for="enableBlockchain" class="text-sm text-gray-300">
+                            <i class="fas fa-cube text-violet-400 mr-2"></i>Blockchain Registration
                         </label>
                     </div>
-                    <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center p-4 rounded-lg"
+                        style="background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.15);">
                         <input type="checkbox" id="enableFraudDetection" class="mr-3" checked>
-                        <label for="enableFraudDetection" class="text-sm text-gray-700">
-                            <i class="fas fa-shield-virus text-red-600 mr-2"></i>Fraud Detection
+                        <label for="enableFraudDetection" class="text-sm text-gray-300">
+                            <i class="fas fa-shield-virus text-rose-400 mr-2"></i>Fraud Detection
                         </label>
                     </div>
-                    <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center p-4 rounded-lg"
+                        style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);">
                         <input type="checkbox" id="enableAuditTrail" class="mr-3" checked>
-                        <label for="enableAuditTrail" class="text-sm text-gray-700">
-                            <i class="fas fa-history text-green-600 mr-2"></i>Audit Trail
+                        <label for="enableAuditTrail" class="text-sm text-gray-300">
+                            <i class="fas fa-history text-emerald-400 mr-2"></i>Audit Trail
                         </label>
+                    </div>
+                </div>
+
+                <!-- Custom PII Control Panel -->
+                <div class="mb-6">
+                    <button id="toggleCustomPII" type="button"
+                        class="w-full flex items-center justify-between p-4 rounded-lg cursor-pointer transition text-sm"
+                        style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.15);">
+                        <div class="flex items-center">
+                            <i class="fas fa-user-shield text-amber-400 mr-2"></i>
+                            <span class="text-gray-300 font-semibold">Custom PII Control</span>
+                            <span class="ml-2 text-xs text-gray-500">(User-defined protection)</span>
+                        </div>
+                        <i id="customPIIChevron"
+                            class="fas fa-chevron-down text-amber-400 transition-transform duration-200"></i>
+                    </button>
+
+                    <div id="customPIIPanel" class="hidden mt-3 p-5 rounded-lg space-y-5"
+                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+
+                        <!-- Enable toggle -->
+                        <div class="flex items-center justify-between">
+                            <label for="enableCustomPII" class="text-sm text-gray-300">
+                                <i class="fas fa-toggle-on text-amber-400 mr-2"></i>Enable custom PII rules
+                            </label>
+                            <input type="checkbox" id="enableCustomPII" class="mr-1" checked>
+                        </div>
+
+                        <!-- Hide List -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-400 mb-2">
+                                <i class="fas fa-eye-slash text-rose-400 mr-1"></i>Hide List
+                                <span class="text-xs text-gray-600 ml-1">(words to always redact)</span>
+                            </label>
+                            <div class="flex gap-2">
+                                <input type="text" id="hideListInput" placeholder="Type word and press Enter or comma"
+                                    class="flex-1 text-sm px-3 py-2 rounded-lg outline-none"
+                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F8FAFC;">
+                                <button type="button" id="addHideWord" title="Add word to hide list"
+                                    class="px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer"
+                                    style="background: rgba(244,63,94,0.15); border: 1px solid rgba(244,63,94,0.3); color: #FB7185;">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div id="hideListTags" class="flex flex-wrap gap-2 mt-2"></div>
+                        </div>
+
+                        <!-- Allow List -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-400 mb-2">
+                                <i class="fas fa-eye text-emerald-400 mr-1"></i>Allow List
+                                <span class="text-xs text-gray-600 ml-1">(words to never redact)</span>
+                            </label>
+                            <div class="flex gap-2">
+                                <input type="text" id="allowListInput" placeholder="Type word and press Enter or comma"
+                                    class="flex-1 text-sm px-3 py-2 rounded-lg outline-none"
+                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F8FAFC;">
+                                <button type="button" id="addAllowWord" title="Add word to allow list"
+                                    class="px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer"
+                                    style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399;">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div id="allowListTags" class="flex flex-wrap gap-2 mt-2"></div>
+                        </div>
+
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            <i class="fas fa-info-circle text-gray-500 mr-1"></i>
+                            Hide list words will be redacted even if not auto-detected. Allow list words will never be
+                            redacted even if auto-detected.
+                        </p>
                     </div>
                 </div>
 
                 <!-- Process Button -->
                 <div class="text-center">
-                    <button id="processBtn" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-semibold" disabled>
+                    <button id="processBtn"
+                        class="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 px-8 py-3 rounded-lg hover:shadow-lg transition duration-200 disabled:opacity-30 disabled:cursor-not-allowed font-semibold cursor-pointer text-sm"
+                        disabled>
                         <i class="fas fa-cog mr-2"></i>Process Document
                     </button>
                 </div>
             </div>
 
             <!-- Processing Status -->
-            <div id="processingStatus" class="bg-white rounded-lg shadow-md p-6 mb-8 hidden">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">
-                    <i class="fas fa-spinner fa-spin mr-2 text-blue-600"></i>Processing Document
+            <div id="processingStatus" class="glass-card p-6 mb-8 hidden">
+                <h3 class="text-lg font-bold mb-4">
+                    <i class="fas fa-spinner fa-spin mr-2 text-amber-400"></i>Processing Document
                 </h3>
                 <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span id="processingText">Uploading document...</span>
-                        <span id="processingPercentage">0%</span>
+                    <div class="flex justify-between items-center text-sm">
+                        <span id="processingText" class="text-gray-400">Uploading document...</span>
+                        <span id="processingPercentage" class="text-amber-400 font-bold">0%</span>
                     </div>
-                    <div class="bg-gray-200 rounded-full h-3">
-                        <div id="progressBar" class="bg-blue-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    <div class="rounded-full h-2" style="background: rgba(255,255,255,0.1);">
+                        <div id="progressBar"
+                            class="bg-gradient-to-r from-amber-500 to-yellow-400 h-2 rounded-full transition-all duration-300"
+                            style="width: 0%"></div>
                     </div>
                     <div id="processingSteps" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                        <div class="processing-step p-3 bg-gray-50 rounded-lg" data-step="upload">
-                            <i class="fas fa-upload text-gray-400 mr-2"></i>
-                            <span>Upload</span>
+                        <div class="processing-step p-3 rounded-lg text-sm" data-step="upload"
+                            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                            <i class="fas fa-upload text-gray-600 mr-2"></i><span class="text-gray-400">Upload</span>
                         </div>
-                        <div class="processing-step p-3 bg-gray-50 rounded-lg" data-step="analysis">
-                            <i class="fas fa-brain text-gray-400 mr-2"></i>
-                            <span>AI Analysis</span>
+                        <div class="processing-step p-3 rounded-lg text-sm" data-step="analysis"
+                            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                            <i class="fas fa-brain text-gray-600 mr-2"></i><span class="text-gray-400">AI
+                                Analysis</span>
                         </div>
-                        <div class="processing-step p-3 bg-gray-50 rounded-lg" data-step="blockchain">
-                            <i class="fas fa-cube text-gray-400 mr-2"></i>
-                            <span>Blockchain</span>
+                        <div class="processing-step p-3 rounded-lg text-sm" data-step="blockchain"
+                            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                            <i class="fas fa-cube text-gray-600 mr-2"></i><span class="text-gray-400">Blockchain</span>
                         </div>
                     </div>
                 </div>
@@ -278,86 +496,87 @@
             <!-- Analysis Results Section -->
             <div id="analysis" class="grid md:grid-cols-2 gap-6 mb-8 hidden">
                 <!-- PII Detection Results -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">
-                        <i class="fas fa-user-secret mr-2 text-blue-600"></i>PII Detection Results
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold mb-4">
+                        <i class="fas fa-user-secret mr-2 text-blue-400"></i>PII Detection Results
                     </h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Total PII Found:</span>
-                            <span id="totalPII" class="text-2xl font-bold text-blue-600">0</span>
+                            <span class="text-gray-400 text-sm">Total PII Found:</span>
+                            <span id="totalPII" class="text-2xl font-bold text-blue-400"
+                                style="font-family:'Orbitron',sans-serif;">0</span>
                         </div>
-                        <div id="piiBreakdown" class="space-y-2">
-                            <!-- PII entities will be populated here -->
-                        </div>
+                        <div id="piiBreakdown" class="space-y-2"></div>
                         <canvas id="piiChart" width="400" height="200"></canvas>
                     </div>
                 </div>
 
                 <!-- Fraud Detection Results -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">
-                        <i class="fas fa-shield-virus mr-2 text-red-600"></i>Fraud Analysis
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold mb-4">
+                        <i class="fas fa-shield-virus mr-2 text-rose-400"></i>Fraud Analysis
                     </h3>
                     <div class="text-center mb-6">
                         <div class="relative inline-flex items-center justify-center">
                             <svg class="progress-ring w-24 h-24" viewBox="0 0 100 100">
-                                <circle cx="50" cy="50" r="45" stroke="#e5e7eb" stroke-width="8" fill="none"></circle>
-                                <circle id="fraudScoreCircle" class="progress-ring-circle" cx="50" cy="50" r="45" stroke="#dc2626" stroke-width="8" fill="none"></circle>
+                                <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.1)" stroke-width="8"
+                                    fill="none"></circle>
+                                <circle id="fraudScoreCircle" class="progress-ring-circle" cx="50" cy="50" r="45"
+                                    stroke="#EF4444" stroke-width="8" fill="none"></circle>
                             </svg>
                             <div class="absolute inset-0 flex items-center justify-center">
-                                <span id="fraudScoreText" class="text-2xl font-bold text-red-600">0%</span>
+                                <span id="fraudScoreText" class="text-2xl font-bold text-rose-400"
+                                    style="font-family:'Orbitron',sans-serif;">0%</span>
                             </div>
                         </div>
-                        <div id="riskLevel" class="text-lg font-semibold mt-2">Risk Level: Unknown</div>
+                        <div id="riskLevel" class="text-base font-semibold mt-2">Risk Level: Unknown</div>
                     </div>
-                    <div id="fraudIndicators" class="space-y-2">
-                        <!-- Fraud indicators will be populated here -->
-                    </div>
+                    <div id="fraudIndicators" class="space-y-2"></div>
                 </div>
             </div>
 
             <!-- Blockchain Information -->
-            <div id="blockchain" class="bg-white rounded-lg shadow-md p-6 mb-8 hidden">
-                <h3 class="text-xl font-bold text-gray-900 mb-6">
-                    <i class="fas fa-cube mr-2 text-purple-600"></i>Blockchain Registration
+            <div id="blockchain" class="glass-card p-6 mb-8 hidden">
+                <h3 class="text-lg font-bold mb-6">
+                    <i class="fas fa-cube mr-2 text-violet-400"></i>Blockchain Registration
                 </h3>
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-4">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Transaction Hash:</span>
-                            <span id="txHash" class="font-mono text-sm text-blue-600">-</span>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Transaction Hash:</span>
+                            <span id="txHash" class="font-mono text-blue-400">-</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Document Hash:</span>
-                            <span id="docHash" class="font-mono text-sm text-green-600">-</span>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Document Hash:</span>
+                            <span id="docHash" class="font-mono text-emerald-400">-</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Block Height:</span>
-                            <span id="blockHeight" class="text-purple-600">-</span>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Block Height:</span>
+                            <span id="blockHeight" class="text-violet-400">-</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Network:</span>
-                            <span class="text-gray-900">Stacks Testnet</span>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Network:</span>
+                            <span class="text-gray-300">Stacks Testnet</span>
                         </div>
                     </div>
                     <div class="space-y-4">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Registration Cost:</span>
-                            <span id="registrationCost" class="text-green-600">-</span>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Registration Cost:</span>
+                            <span id="registrationCost" class="text-amber-400">-</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Timestamp:</span>
-                            <span id="registrationTime" class="text-gray-900">-</span>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Timestamp:</span>
+                            <span id="registrationTime" class="text-gray-300">-</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Status:</span>
-                            <span id="blockchainStatus" class="text-green-600">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Status:</span>
+                            <span id="blockchainStatus" class="text-emerald-400">
                                 <i class="fas fa-check-circle mr-1"></i>Confirmed
                             </span>
                         </div>
                         <div class="mt-4">
-                            <button id="viewAuditTrail" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition duration-200 w-full">
+                            <button id="viewAuditTrail"
+                                class="bg-gradient-to-r from-violet-600 to-violet-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition duration-200 w-full cursor-pointer text-sm font-semibold">
                                 <i class="fas fa-history mr-2"></i>View Audit Trail
                             </button>
                         </div>
@@ -365,46 +584,131 @@
                 </div>
             </div>
 
+            <!-- AI Document Summary -->
+            <div id="aiSummary" class="glass-card p-6 mb-8 hidden">
+                <h3 class="text-lg font-bold mb-4">
+                    <i class="fas fa-robot mr-2 text-cyan-400"></i>AI Document Summary
+                    <span id="aiPoweredBadge" class="ml-2 text-xs px-2 py-1 rounded-full hidden"
+                        style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); color: #22D3EE;">
+                        <i class="fas fa-bolt mr-1"></i>Gemini Powered
+                    </span>
+                </h3>
+                <div class="grid md:grid-cols-3 gap-4 mb-4">
+                    <div class="p-3 rounded-lg"
+                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                        <span class="text-xs text-gray-500 block mb-1">Document Type</span>
+                        <span id="aiDocType" class="text-cyan-400 font-semibold text-sm">—</span>
+                    </div>
+                    <div class="p-3 rounded-lg col-span-2"
+                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                        <span class="text-xs text-gray-500 block mb-1">Risk Assessment</span>
+                        <span id="aiRiskAssess" class="text-amber-400 text-sm">—</span>
+                    </div>
+                </div>
+                <div class="p-4 rounded-lg mb-4"
+                    style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                    <span class="text-xs text-gray-500 block mb-2">Summary</span>
+                    <p id="aiSummaryText" class="text-gray-300 text-sm leading-relaxed">—</p>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-500 block mb-2">Key Findings</span>
+                    <ul id="aiKeyFindings" class="space-y-2 text-sm"></ul>
+                </div>
+            </div>
+
+            <!-- IPFS Decentralized Storage -->
+            <div id="ipfsStorage" class="glass-card p-6 mb-8 hidden">
+                <h3 class="text-lg font-bold mb-4">
+                    <i class="fas fa-cloud-upload-alt mr-2 text-teal-400"></i>IPFS Decentralized Storage
+                    <span id="ipfsStatusBadge" class="ml-2 text-xs px-2 py-1 rounded-full"
+                        style="background: rgba(20,184,166,0.15); border: 1px solid rgba(20,184,166,0.3); color: #2DD4BF;">
+                        <i class="fas fa-check mr-1"></i>Pinned
+                    </span>
+                </h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Content ID (CID):</span>
+                            <span id="ipfsCID" class="font-mono text-teal-400 text-xs truncate max-w-xs"
+                                title="">—</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Pin Size:</span>
+                            <span id="ipfsPinSize" class="text-gray-300">—</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Storage:</span>
+                            <span id="ipfsStorageType" class="text-gray-300">—</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Gateway URL:</span>
+                            <a id="ipfsGatewayLink" href="#" target="_blank"
+                                class="text-teal-400 hover:text-teal-300 text-xs truncate max-w-xs">—</a>
+                        </div>
+                        <div class="mt-4">
+                            <a id="ipfsViewBtn" href="#" target="_blank"
+                                class="inline-block bg-gradient-to-r from-teal-600 to-teal-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition duration-200 text-sm font-semibold cursor-pointer">
+                                <i class="fas fa-external-link-alt mr-2"></i>View on IPFS
+                            </a>
+                        </div>
+                        <p id="ipfsDemoNote" class="text-xs text-gray-600 hidden">
+                            <i class="fas fa-info-circle mr-1"></i>Demo mode — set PINATA_API_KEY for real IPFS uploads
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Processing History -->
-            <div id="history" class="bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-bold text-gray-900 mb-6">
-                    <i class="fas fa-history mr-2 text-green-600"></i>Recent Processing History
+            <div id="history" class="glass-card p-6">
+                <h3 class="text-lg font-bold mb-6">
+                    <i class="fas fa-history mr-2 text-emerald-400"></i>Recent Processing History
                 </h3>
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead>
-                            <tr class="border-b">
-                                <th class="text-left py-3 text-gray-600 font-medium">Document</th>
-                                <th class="text-left py-3 text-gray-600 font-medium">Risk Level</th>
-                                <th class="text-left py-3 text-gray-600 font-medium">PII Count</th>
-                                <th class="text-left py-3 text-gray-600 font-medium">Processed</th>
-                                <th class="text-left py-3 text-gray-600 font-medium">Actions</th>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+                                <th class="text-left py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">
+                                    Document</th>
+                                <th class="text-left py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">
+                                    Risk Level</th>
+                                <th class="text-left py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">
+                                    PII Count</th>
+                                <th class="text-left py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">
+                                    Processed</th>
+                                <th class="text-left py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">
+                                    Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="historyTableBody">
-                            <!-- History entries will be populated here -->
-                        </tbody>
+                        <tbody id="historyTableBody"></tbody>
                     </table>
-                    <div id="noHistory" class="text-center py-8 text-gray-500">
+                    <div id="noHistory" class="text-center py-8 text-gray-600">
                         <i class="fas fa-inbox text-3xl mb-2"></i>
-                        <p>No documents processed yet. Upload your first document to get started!</p>
+                        <p class="text-sm">No documents processed yet. Upload your first document to get started!</p>
                     </div>
                 </div>
             </div>
 
             <!-- Download Section -->
-            <div id="downloadSection" class="bg-white rounded-lg shadow-md p-6 mt-8 hidden">
-                <h3 class="text-xl font-bold text-gray-900 mb-6">
-                    <i class="fas fa-download mr-2 text-indigo-600"></i>Download Results
+            <div id="downloadSection" class="glass-card p-6 mt-8 hidden">
+                <h3 class="text-lg font-bold mb-6">
+                    <i class="fas fa-download mr-2 text-amber-400"></i>Download Results
                 </h3>
                 <div class="grid md:grid-cols-3 gap-4">
-                    <button id="downloadProcessed" class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition duration-200 w-full">
+                    <button id="downloadProcessed"
+                        class="px-4 py-3 rounded-lg transition duration-200 w-full cursor-pointer text-sm font-semibold"
+                        style="background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: #60A5FA;">
                         <i class="fas fa-file-pdf mr-2"></i>Download Processed Document
                     </button>
-                    <button id="downloadReport" class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition duration-200 w-full">
+                    <button id="downloadReport"
+                        class="px-4 py-3 rounded-lg transition duration-200 w-full cursor-pointer text-sm font-semibold"
+                        style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399;">
                         <i class="fas fa-chart-line mr-2"></i>Download Analysis Report
                     </button>
-                    <button id="downloadAudit" class="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition duration-200 w-full">
+                    <button id="downloadAudit"
+                        class="px-4 py-3 rounded-lg transition duration-200 w-full cursor-pointer text-sm font-semibold"
+                        style="background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #A78BFA;">
                         <i class="fas fa-cube mr-2"></i>Download Blockchain Receipt
                     </button>
                 </div>
@@ -416,22 +720,22 @@
     <div id="notificationContainer"></div>
 
     <!-- Modal for Audit Trail -->
-    <div id="auditModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div id="auditModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden">
         <div class="flex items-center justify-center h-full p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
-                <div class="p-6 border-b">
+            <div class="glass-card max-w-4xl w-full max-h-[80vh] overflow-y-auto"
+                style="background: var(--bg-surface);">
+                <div class="p-6" style="border-bottom: 1px solid rgba(255,255,255,0.08);">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-xl font-bold text-gray-900">
-                            <i class="fas fa-history mr-2 text-purple-600"></i>Document Audit Trail
+                        <h3 class="text-lg font-bold">
+                            <i class="fas fa-history mr-2 text-violet-400"></i>Document Audit Trail
                         </h3>
-                        <button id="closeAuditModal" class="text-gray-500 hover:text-gray-700">
+                        <button id="closeAuditModal" class="text-gray-500 hover:text-white cursor-pointer"
+                            title="Close">
                             <i class="fas fa-times text-xl"></i>
                         </button>
                     </div>
                 </div>
-                <div id="auditContent" class="p-6">
-                    <!-- Audit trail content will be populated here -->
-                </div>
+                <div id="auditContent" class="p-6"></div>
             </div>
         </div>
     </div>
@@ -442,7 +746,9 @@
             currentFile: null,
             processing: false,
             lastResults: null,
-            processingHistory: JSON.parse(localStorage.getItem('processingHistory') || '[]')
+            processingHistory: JSON.parse(localStorage.getItem('processingHistory') || '[]'),
+            customHideList: [],
+            customAllowList: []
         };
 
         // Configuration
@@ -451,11 +757,10 @@
         // Utility Functions
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
-            notification.className = `notification px-4 py-3 rounded-md text-white mb-2 ${
-                type === 'success' ? 'bg-green-500' : 
-                type === 'error' ? 'bg-red-500' : 
-                type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
-            }`;
+            notification.className = `notification px-4 py-3 rounded-md text-white mb-2 ${type === 'success' ? 'bg-green-500' :
+                type === 'error' ? 'bg-red-500' :
+                    type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+                }`;
             notification.innerHTML = `
                 <div class="flex items-center justify-between">
                     <span><i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : 'info'} mr-2"></i>${message}</span>
@@ -465,7 +770,7 @@
                 </div>
             `;
             document.getElementById('notificationContainer').appendChild(notification);
-            
+
             setTimeout(() => {
                 if (notification.parentElement) {
                     notification.remove();
@@ -491,13 +796,13 @@
         function updateHistoryTable() {
             const tbody = document.getElementById('historyTableBody');
             const noHistory = document.getElementById('noHistory');
-            
+
             if (dashboardState.processingHistory.length === 0) {
                 tbody.innerHTML = '';
                 noHistory.style.display = 'block';
                 return;
             }
-            
+
             noHistory.style.display = 'none';
             tbody.innerHTML = dashboardState.processingHistory.slice(-10).reverse().map(entry => `
                 <tr class="border-b hover:bg-gray-50">
@@ -508,11 +813,10 @@
                         </div>
                     </td>
                     <td class="py-3">
-                        <span class="px-2 py-1 text-xs rounded-full ${
-                            entry.risk_level === 'High' ? 'bg-red-100 text-red-800' :
-                            entry.risk_level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-green-100 text-green-800'
-                        }">
+                        <span class="px-2 py-1 text-xs rounded-full ${entry.risk_level === 'High' ? 'bg-red-100 text-red-800' :
+                    entry.risk_level === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-green-100 text-green-800'
+                }">
                             ${entry.risk_level || 'Unknown'}
                         </span>
                     </td>
@@ -594,7 +898,7 @@
             function validateFile(file) {
                 const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'text/csv'];
                 const maxSize = 50 * 1024 * 1024; // 50MB
-                
+
                 if (!allowedTypes.includes(file.type)) {
                     return false;
                 }
@@ -627,7 +931,7 @@
                 // Check if wallet is connected for blockchain features
                 const enableBlockchain = document.getElementById('enableBlockchain').checked;
                 const walletConnected = checkWalletConnection();
-                
+
                 if (enableBlockchain && !walletConnected) {
                     showNotification('Please connect your Leather wallet for blockchain features', 'warning');
                     // Continue without blockchain features
@@ -657,7 +961,7 @@
                     document.getElementById('processingText').textContent = steps[i];
                     document.getElementById('processingPercentage').textContent = `${Math.round((i + 1) * (100 / steps.length))}%`;
                     document.getElementById('progressBar').style.width = `${(i + 1) * (100 / steps.length)}%`;
-                    
+
                     // Update step indicators
                     const stepElements = document.querySelectorAll('.processing-step');
                     if (i < 3) {
@@ -665,12 +969,12 @@
                         stepElement.classList.add('bg-blue-100');
                         stepElement.querySelector('i').className = stepElement.querySelector('i').className.replace('text-gray-400', 'text-blue-600');
                     }
-                    
+
                     // Handle Stacks transaction step
                     if (i === 5 && enableBlockchain && walletConnected) {
                         await handleStacksTransaction();
                     }
-                    
+
                     await new Promise(resolve => setTimeout(resolve, 800));
                 }
 
@@ -680,12 +984,18 @@
                 formData.append('enableBlockchain', document.getElementById('enableBlockchain').checked);
                 formData.append('enableFraudDetection', document.getElementById('enableFraudDetection').checked);
                 formData.append('enableAuditTrail', document.getElementById('enableAuditTrail').checked);
-                
+
                 // Add wallet info if connected
                 if (walletConnected) {
                     const walletInfo = getWalletInfo();
                     formData.append('wallet_address', walletInfo.address);
                     formData.append('wallet_type', walletInfo.type);
+                }
+
+                // Add custom PII control lists
+                if (document.getElementById('enableCustomPII').checked) {
+                    formData.append('customHideList', JSON.stringify(dashboardState.customHideList));
+                    formData.append('customAllowList', JSON.stringify(dashboardState.customAllowList));
                 }
 
                 // Send to backend
@@ -699,7 +1009,7 @@
                 }
 
                 const results = await response.json();
-                
+
                 if (results.success) {
                     displayResults(results);
                     addToHistory(results);
@@ -725,7 +1035,7 @@
             if (results.results.pii_detection) {
                 const piiData = results.results.pii_detection;
                 document.getElementById('totalPII').textContent = piiData.pii_count || 0;
-                
+
                 // Update PII breakdown
                 const piiBreakdown = document.getElementById('piiBreakdown');
                 piiBreakdown.innerHTML = Object.entries(piiData.sensitive_data || {}).map(([text, info]) => `
@@ -740,23 +1050,23 @@
             if (results.results.fraud_detection) {
                 const fraudData = results.results.fraud_detection;
                 const fraudScore = Math.round(fraudData.fraud_probability * 100);
-                
+
                 document.getElementById('fraudScoreText').textContent = `${fraudScore}%`;
                 document.getElementById('riskLevel').textContent = `Risk Level: ${fraudData.risk_level}`;
                 document.getElementById('riskLevel').className = `text-lg font-semibold mt-2 risk-${fraudData.risk_level.toLowerCase()}`;
-                
+
                 // Update fraud score circle
                 const circle = document.getElementById('fraudScoreCircle');
                 const circumference = 283;
                 const offset = circumference - (fraudScore / 100) * circumference;
                 circle.style.strokeDashoffset = offset;
-                
+
                 // Update fraud indicators
                 const fraudIndicators = document.getElementById('fraudIndicators');
                 fraudIndicators.innerHTML = (fraudData.suspicious_patterns || []).map(pattern => `
-                    <div class="flex items-center p-2 bg-red-50 rounded">
-                        <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
-                        <span class="text-sm text-red-800">${pattern}</span>
+                    <div class="flex items-center p-2 rounded" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);">
+                        <i class="fas fa-exclamation-triangle text-rose-400 mr-2"></i>
+                        <span class="text-sm text-rose-300">${pattern}</span>
                     </div>
                 `).join('');
             }
@@ -764,15 +1074,67 @@
             // Display blockchain results
             if (results.results.blockchain) {
                 const blockchainData = results.results.blockchain;
-                
+
                 document.getElementById('txHash').textContent = blockchainData.transaction_hash || '-';
                 document.getElementById('docHash').textContent = blockchainData.document_hash || '-';
                 document.getElementById('blockHeight').textContent = blockchainData.block_height || '-';
                 document.getElementById('registrationCost').textContent = blockchainData.cost || '-';
-                document.getElementById('registrationTime').textContent = 
+                document.getElementById('registrationTime').textContent =
                     blockchainData.timestamp ? new Date(blockchainData.timestamp).toLocaleString() : '-';
-                
+
                 document.getElementById('blockchain').classList.remove('hidden');
+            }
+
+            // Display AI Summary results
+            if (results.results.ai_summary) {
+                const ai = results.results.ai_summary;
+                document.getElementById('aiDocType').textContent = ai.document_type || 'General Document';
+                document.getElementById('aiSummaryText').textContent = ai.summary || '—';
+                document.getElementById('aiRiskAssess').textContent = ai.risk_assessment || '—';
+
+                // Key findings
+                const findingsEl = document.getElementById('aiKeyFindings');
+                findingsEl.innerHTML = (ai.key_findings || []).map(f => `
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-cyan-400 mr-2 mt-0.5 text-xs"></i>
+                        <span class="text-gray-300">${f}</span>
+                    </li>
+                `).join('');
+
+                // Show/hide AI powered badge
+                if (ai.ai_powered) {
+                    document.getElementById('aiPoweredBadge').classList.remove('hidden');
+                }
+
+                document.getElementById('aiSummary').classList.remove('hidden');
+            }
+
+            // Display IPFS results
+            if (results.results.ipfs && results.results.ipfs.success) {
+                const ipfs = results.results.ipfs;
+                const shortCID = ipfs.ipfs_hash ? (ipfs.ipfs_hash.length > 24 ? ipfs.ipfs_hash.substring(0, 24) + '...' : ipfs.ipfs_hash) : '—';
+
+                document.getElementById('ipfsCID').textContent = shortCID;
+                document.getElementById('ipfsCID').title = ipfs.ipfs_hash || '';
+                document.getElementById('ipfsPinSize').textContent = ipfs.pin_size ? `${(ipfs.pin_size / 1024).toFixed(1)} KB` : '—';
+                document.getElementById('ipfsStorageType').textContent = ipfs.storage === 'ipfs_pinata' ? 'Pinata (IPFS)' : 'Simulated (Demo)';
+
+                if (ipfs.gateway_url) {
+                    document.getElementById('ipfsGatewayLink').href = ipfs.gateway_url;
+                    document.getElementById('ipfsGatewayLink').textContent = ipfs.gateway_url.substring(0, 40) + '...';
+                    document.getElementById('ipfsViewBtn').href = ipfs.gateway_url;
+                    document.getElementById('ipfsViewBtn').style.display = 'inline-block';
+                } else {
+                    document.getElementById('ipfsGatewayLink').textContent = 'N/A (Demo mode)';
+                    document.getElementById('ipfsGatewayLink').removeAttribute('href');
+                    document.getElementById('ipfsViewBtn').style.display = 'none';
+                }
+
+                if (ipfs.storage === 'demo_simulated') {
+                    document.getElementById('ipfsDemoNote').classList.remove('hidden');
+                }
+
+                document.getElementById('ipfsStorage').classList.remove('hidden');
             }
 
             // Show sections
@@ -790,70 +1152,101 @@
                 fraud_score: results.results.fraud_detection?.fraud_probability || 0,
                 blockchain_hash: results.results.blockchain?.document_hash || null
             };
-            
+
             dashboardState.processingHistory.push(entry);
             localStorage.setItem('processingHistory', JSON.stringify(dashboardState.processingHistory));
             updateUI();
         }
 
         function viewDetails(id) {
-            showNotification('Viewing details for processing entry: ' + id, 'info');
-            // Here you would implement detailed view functionality
+            const entry = dashboardState.processingHistory.find(h => h.id === id);
+            if (!entry) {
+                showNotification('Details not found', 'warning');
+                return;
+            }
+
+            const riskClass = entry.risk_level === 'High' ? 'text-rose-400' : entry.risk_level === 'Medium' ? 'text-amber-400' : 'text-emerald-400';
+
+            const modal = document.getElementById('auditModal');
+            document.getElementById('auditContent').innerHTML = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div><strong class="text-gray-500">Filename:</strong> <span class="text-gray-300">${entry.filename}</span></div>
+                        <div><strong class="text-gray-500">Date:</strong> <span class="text-gray-300">${new Date(entry.timestamp).toLocaleString()}</span></div>
+                        <div><strong class="text-gray-500">Risk Level:</strong> <span class="${riskClass} font-bold">${entry.risk_level}</span></div>
+                        <div><strong class="text-gray-500">PII Count:</strong> <span class="text-gray-300">${entry.pii_count}</span></div>
+                        <div><strong class="text-gray-500">Fraud Score:</strong> <span class="text-gray-300">${(entry.fraud_score * 100).toFixed(1)}%</span></div>
+                        <div><strong class="text-gray-500">Blockchain:</strong> <span class="text-gray-300">${entry.blockchain_hash ? '✅ Registered' : '❌ Not registered'}</span></div>
+                    </div>
+                    ${entry.blockchain_hash ? `<div class="mt-4"><strong class="text-gray-500">Document Hash:</strong><p class="font-mono text-sm p-2 rounded mt-1 text-blue-400" style="background: rgba(255,255,255,0.05);">${entry.blockchain_hash}</p></div>` : ''}
+                </div>
+            `;
+            modal.classList.remove('hidden');
         }
 
         // Event Listeners
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Initialize components
             setupFileUpload();
             updateUI();
 
             // Bind event listeners
             document.getElementById('processBtn').addEventListener('click', processDocument);
-            document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebarToggle').addEventListener('click', function () {
                 document.getElementById('sidebar').classList.toggle('collapsed');
             });
 
             // User menu toggle
-            document.getElementById('userMenuBtn').addEventListener('click', function() {
+            document.getElementById('userMenuBtn').addEventListener('click', function () {
                 document.getElementById('userMenu').classList.toggle('hidden');
             });
 
             // Close user menu when clicking outside
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (!e.target.closest('#userMenuBtn')) {
                     document.getElementById('userMenu').classList.add('hidden');
                 }
             });
 
             // Audit trail modal
-            document.getElementById('viewAuditTrail').addEventListener('click', function() {
+            document.getElementById('viewAuditTrail').addEventListener('click', function () {
                 document.getElementById('auditModal').classList.remove('hidden');
                 loadAuditTrail();
             });
 
-            document.getElementById('closeAuditModal').addEventListener('click', function() {
+            document.getElementById('closeAuditModal').addEventListener('click', function () {
                 document.getElementById('auditModal').classList.add('hidden');
             });
 
             // Download buttons
-            document.getElementById('downloadProcessed').addEventListener('click', function() {
-                if (dashboardState.lastResults) {
-                    showNotification('Downloading processed document...', 'info');
-                    // Implement download functionality
+            document.getElementById('downloadProcessed').addEventListener('click', function () {
+                if (dashboardState.lastResults && dashboardState.lastResults.processed_filename) {
+                    window.location.href = `/download/${dashboardState.lastResults.processed_filename}`;
+                } else {
+                    showNotification('No processed document available', 'warning');
                 }
             });
 
-            document.getElementById('downloadReport').addEventListener('click', function() {
-                if (dashboardState.lastResults) {
-                    showNotification('Downloading analysis report...', 'info');
-                    // Implement report download
+            document.getElementById('downloadReport').addEventListener('click', function () {
+                if (dashboardState.lastResults && dashboardState.lastResults.filename) {
+                    window.location.href = `/download/${dashboardState.lastResults.filename}_analysis.json`;
+                } else {
+                    showNotification('No analysis report available', 'warning');
                 }
             });
 
-            document.getElementById('downloadAudit').addEventListener('click', function() {
-                if (dashboardState.lastResults) {
-                    showNotification('Downloading blockchain receipt...', 'info');
-                    // Implement audit download
+            document.getElementById('downloadAudit').addEventListener('click', function () {
+                if (dashboardState.lastResults && dashboardState.lastResults.results && dashboardState.lastResults.results.blockchain) {
+                    // Generate a downloadable JSON of the blockchain receipt
+                    const blob = new Blob([JSON.stringify(dashboardState.lastResults.results.blockchain, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `blockchain_receipt_${dashboardState.lastResults.filename}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                } else {
+                    showNotification('No blockchain receipt available', 'warning');
                 }
             });
 
@@ -885,18 +1278,18 @@
             document.getElementById('auditContent').innerHTML = `
                 <div class="space-y-4">
                     <div class="mb-6">
-                        <h4 class="font-bold text-gray-900 mb-2">Document Hash</h4>
-                        <p class="font-mono text-sm bg-gray-100 p-2 rounded">${dashboardState.lastResults.results.blockchain.document_hash}</p>
+                        <h4 class="font-bold text-gray-300 mb-2">Document Hash</h4>
+                        <p class="font-mono text-sm p-2 rounded text-blue-400" style="background: rgba(255,255,255,0.05);">${dashboardState.lastResults.results.blockchain.document_hash}</p>
                     </div>
                     <div>
-                        <h4 class="font-bold text-gray-900 mb-4">Processing Timeline</h4>
+                        <h4 class="font-bold text-gray-300 mb-4">Processing Timeline</h4>
                         <div class="space-y-3">
                             ${auditSteps.map(step => `
-                                <div class="flex items-center p-3 bg-green-50 rounded-lg">
-                                    <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                                <div class="flex items-center p-3 rounded-lg" style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);">
+                                    <i class="fas fa-check-circle text-emerald-400 mr-3"></i>
                                     <div class="flex-1">
-                                        <div class="font-medium text-gray-900">${step.step}</div>
-                                        <div class="text-sm text-gray-500">${new Date(step.timestamp).toLocaleString()}</div>
+                                        <div class="font-medium text-gray-300 text-sm">${step.step}</div>
+                                        <div class="text-xs text-gray-500">${new Date(step.timestamp).toLocaleString()}</div>
                                     </div>
                                 </div>
                             `).join('')}
@@ -910,7 +1303,7 @@
             try {
                 const response = await fetch('/health');
                 const status = await response.json();
-                
+
                 const statusElement = document.getElementById('systemStatus');
                 if (status.status === 'healthy') {
                     statusElement.innerHTML = `
@@ -971,7 +1364,7 @@
                 });
 
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showNotification('Stacks transaction prepared for signing', 'info');
                     // In a real implementation, you would use Stacks Connect to sign the transaction
@@ -989,7 +1382,7 @@
         async function simulateStacksTransaction(transactionData) {
             // Simulate transaction signing and submission
             const simulatedTxId = 'stx_' + Math.random().toString(36).substr(2, 16);
-            
+
             // Submit transaction record
             const submitData = {
                 tx_id: simulatedTxId,
@@ -1020,65 +1413,56 @@
         }
 
         function showNotification(message, type = 'info') {
-            // Create notification element
             const notification = document.createElement('div');
-            notification.className = `notification bg-white border-l-4 p-4 shadow-lg rounded-r-lg transform transition-all duration-300 translate-x-full`;
-            
-            // Set border color based on type
+            notification.className = `notification p-4 shadow-lg rounded-lg transform transition-all duration-300 translate-x-full`;
+            notification.style.background = 'rgba(30, 41, 59, 0.95)';
+            notification.style.backdropFilter = 'blur(10px)';
+            notification.style.borderLeft = '3px solid';
+
             const borderColors = {
-                'success': 'border-green-500',
-                'error': 'border-red-500',
-                'warning': 'border-yellow-500',
-                'info': 'border-blue-500'
+                'success': '#10B981',
+                'error': '#EF4444',
+                'warning': '#F59E0B',
+                'info': '#3B82F6'
             };
-            
+
             const textColors = {
-                'success': 'text-green-800',
-                'error': 'text-red-800',
-                'warning': 'text-yellow-800',
-                'info': 'text-blue-800'
+                'success': 'text-emerald-400',
+                'error': 'text-rose-400',
+                'warning': 'text-amber-400',
+                'info': 'text-blue-400'
             };
-            
-            notification.classList.add(borderColors[type] || borderColors.info);
-            
+
+            notification.style.borderLeftColor = borderColors[type] || borderColors.info;
+
             notification.innerHTML = `
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} ${textColors[type] || textColors.info}"></i>
                     </div>
                     <div class="ml-3">
-                        <p class="text-sm ${textColors[type] || textColors.info}">${message}</p>
+                        <p class="text-sm text-gray-300">${message}</p>
                     </div>
                     <div class="ml-auto pl-3">
-                        <button class="text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.parentElement.remove()">
+                        <button class="text-gray-500 hover:text-white cursor-pointer" onclick="this.parentElement.parentElement.parentElement.remove()">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                 </div>
             `;
-            
+
             document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.classList.remove('translate-x-full');
-            }, 100);
-            
-            // Auto remove after 5 seconds
+            setTimeout(() => { notification.classList.remove('translate-x-full'); }, 100);
             setTimeout(() => {
                 notification.classList.add('translate-x-full');
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
+                setTimeout(() => { if (notification.parentNode) notification.parentNode.removeChild(notification); }, 300);
             }, 5000);
         }
 
         async function connectLeatherWallet() {
             try {
                 showNotification('Connecting to Leather wallet...', 'info');
-                
+
                 // Check if Stacks Connect is available
                 if (typeof StacksConnect !== 'undefined' && StacksConnect.showConnect) {
                     const authOptions = {
@@ -1096,9 +1480,9 @@
                                         } : null
                                     })
                                 });
-                                
+
                                 const result = await response.json();
-                                
+
                                 if (result.success) {
                                     // Update session storage
                                     const authState = {
@@ -1107,7 +1491,7 @@
                                         authenticated: true
                                     };
                                     sessionStorage.setItem('authState', JSON.stringify(authState));
-                                    
+
                                     showNotification('Leather wallet connected successfully!', 'success');
                                     updateWalletDisplay(result.wallet);
                                 } else {
@@ -1125,25 +1509,25 @@
                             icon: window.location.origin + '/favicon.ico'
                         }
                     };
-                    
+
                     StacksConnect.showConnect(authOptions);
                 } else {
                     showNotification('Stacks Connect not available. Connecting demo wallet...', 'warning');
-                    
+
                     // Fallback for demo mode
                     const demoWallet = {
                         type: 'leather',
                         address: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
                         network: 'testnet'
                     };
-                    
+
                     const authState = {
                         wallet: demoWallet,
                         user: { name: 'Demo User' },
                         authenticated: true
                     };
                     sessionStorage.setItem('authState', JSON.stringify(authState));
-                    
+
                     updateWalletDisplay(demoWallet);
                 }
             } catch (error) {
@@ -1161,18 +1545,18 @@
             const mainWalletStatus = document.getElementById('mainWalletStatus');
             const connectedAddress = document.getElementById('connectedAddress');
             const walletConnectionText = document.getElementById('walletConnectionText');
-            
+
             if (wallet) {
                 currentUser.textContent = `${wallet.address.substring(0, 8)}...`;
                 currentUser.title = wallet.address;
-                
+
                 // Hide connect button and show status in header menu
                 if (connectBtn) connectBtn.style.display = 'none';
                 if (walletStatus) {
                     walletStatus.classList.remove('hidden');
                     walletStatus.innerHTML = `<i class="fas fa-check-circle mr-2"></i>Connected: ${wallet.address.substring(0, 12)}...`;
                 }
-                
+
                 // Update main wallet section
                 if (mainConnectBtn) mainConnectBtn.style.display = 'none';
                 if (mainWalletStatus) {
@@ -1184,16 +1568,16 @@
                 if (walletConnectionText) {
                     walletConnectionText.textContent = 'Wallet connected! You can now use blockchain features and pay with STX tokens.';
                 }
-                
+
                 showNotification('Leather wallet connected successfully!', 'success');
             } else {
                 currentUser.textContent = 'User';
                 currentUser.title = '';
-                
+
                 // Show connect button and hide status in header menu
                 if (connectBtn) connectBtn.style.display = 'block';
                 if (walletStatus) walletStatus.classList.add('hidden');
-                
+
                 // Update main wallet section
                 if (mainConnectBtn) mainConnectBtn.style.display = 'block';
                 if (mainWalletStatus) mainWalletStatus.classList.add('hidden');
@@ -1205,25 +1589,25 @@
         }
 
         // Add wallet connection event listeners
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Connect wallet button events (both header and main section)
             const connectBtn = document.getElementById('connectLeatherBtn');
             const mainConnectBtn = document.getElementById('mainConnectBtn');
-            
+
             if (connectBtn) {
                 connectBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     connectLeatherWallet();
                 });
             }
-            
+
             if (mainConnectBtn) {
                 mainConnectBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     connectLeatherWallet();
                 });
             }
-            
+
             // Check if wallet is already connected on page load
             if (checkWalletConnection()) {
                 const walletInfo = getWalletInfo();
@@ -1231,8 +1615,90 @@
             }
         });
 
+        // ==================== CUSTOM PII CONTROL ====================
+        function addToList(listName, word) {
+            const trimmed = word.trim();
+            if (!trimmed || dashboardState[listName].includes(trimmed)) return;
+            dashboardState[listName].push(trimmed);
+            renderTags(listName);
+        }
+
+        function removeFromList(listName, index) {
+            dashboardState[listName].splice(index, 1);
+            renderTags(listName);
+        }
+
+        function renderTags(listName) {
+            const containerId = listName === 'customHideList' ? 'hideListTags' : 'allowListTags';
+            const container = document.getElementById(containerId);
+            const colorClass = listName === 'customHideList' ? 'rgba(244,63,94,0.15)' : 'rgba(16,185,129,0.15)';
+            const borderColor = listName === 'customHideList' ? 'rgba(244,63,94,0.3)' : 'rgba(16,185,129,0.3)';
+            const textClass = listName === 'customHideList' ? 'text-rose-300' : 'text-emerald-300';
+
+            container.innerHTML = dashboardState[listName].map((word, i) => `
+                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs ${textClass}" style="background: ${colorClass}; border: 1px solid ${borderColor};">
+                    ${word}
+                    <button type="button" class="ml-1 hover:text-white cursor-pointer" onclick="removeFromList('${listName}', ${i})" title="Remove ${word}">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </span>
+            `).join('');
+        }
+
+        function handleTagInput(inputId, listName) {
+            const input = document.getElementById(inputId);
+            const value = input.value;
+            if (value.includes(',')) {
+                value.split(',').forEach(w => addToList(listName, w));
+                input.value = '';
+            }
+        }
+
+        function setupCustomPIIControl() {
+            const toggleBtn = document.getElementById('toggleCustomPII');
+            const panel = document.getElementById('customPIIPanel');
+            const chevron = document.getElementById('customPIIChevron');
+
+            toggleBtn.addEventListener('click', () => {
+                panel.classList.toggle('hidden');
+                chevron.style.transform = panel.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+            });
+
+            // Hide list input
+            const hideInput = document.getElementById('hideListInput');
+            hideInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    addToList('customHideList', hideInput.value);
+                    hideInput.value = '';
+                }
+            });
+            hideInput.addEventListener('input', () => handleTagInput('hideListInput', 'customHideList'));
+            document.getElementById('addHideWord').addEventListener('click', () => {
+                addToList('customHideList', hideInput.value);
+                hideInput.value = '';
+            });
+
+            // Allow list input
+            const allowInput = document.getElementById('allowListInput');
+            allowInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    addToList('customAllowList', allowInput.value);
+                    allowInput.value = '';
+                }
+            });
+            allowInput.addEventListener('input', () => handleTagInput('allowListInput', 'customAllowList'));
+            document.getElementById('addAllowWord').addEventListener('click', () => {
+                addToList('customAllowList', allowInput.value);
+                allowInput.value = '';
+            });
+        }
+
         // Initialize
+        setupCustomPIIControl();
         updateUI();
     </script>
 </body>
+
 </html>

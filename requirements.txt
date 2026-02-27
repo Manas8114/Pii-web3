@@ -47,3 +47,12 @@ google-cloud-firestore==2.11.1
 python-dotenv==1.0.0
 gunicorn==21.2.0
 waitress==2.1.2
+
+# AI Summarization
+google-generativeai
+
+
+
+# GEMINI_API_KEY=your_key
+# PINATA_API_KEY=your_key
+# PINATA_API_SECRET=your_secret

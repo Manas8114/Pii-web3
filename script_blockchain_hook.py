@@ -10,10 +10,14 @@ import requests
 import json
 from datetime import datetime
 import threading
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class BlockchainHook:
     def __init__(self):
-        self.bridge_url = "http://localhost:5002"  # PII Bridge service
+        self.bridge_url = os.getenv('PII_BRIDGE_URL', 'http://localhost:5002')
         self.enabled = True
         
     def send_to_blockchain_async(self, document_id, pii_data):

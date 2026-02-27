@@ -1,55 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SecuredDoc</title>
-    
+    <meta name="description"
+        content="Connect your wallet or sign in to SecuredDoc for blockchain-powered document security.">
+
     <!-- External Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://apis.google.com/js/gsi/client" async defer></script>
     <script src="https://unpkg.com/@stacks/connect@latest/dist/index.js"></script>
     <script src="https://unpkg.com/@stacks/transactions@latest/dist/index.umd.js"></script>
     <script src="https://unpkg.com/@stacks/network@latest/dist/index.umd.js"></script>
-    
+
     <style>
+        :root {
+            --bg-primary: #0F172A;
+            --bg-surface: #1E293B;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-amber: #F59E0B;
+            --accent-violet: #8B5CF6;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Exo 2', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Orbitron', sans-serif;
         }
+
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+        }
+
         .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .wallet-card {
-            transition: all 0.3s ease;
-            transform: translateY(0);
-        }
-        .wallet-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        .wallet-button {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
         }
-        .wallet-button:hover {
+
+        .glass-card:hover {
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .text-gradient-amber {
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .wallet-btn {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .wallet-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        .connection-status {
-            animation: pulse 2s infinite;
+
+        .glow-amber:hover {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.3);
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+
+        .glow-violet:hover {
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
         }
+
+        .glow-orange:hover {
+            box-shadow: 0 0 25px rgba(234, 88, 12, 0.3);
+        }
+
+        .icon-glow-amber {
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+        }
+
+        .icon-glow-violet {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8B5CF6;
+        }
+
+        .icon-glow-blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3B82F6;
+        }
+
+        .icon-glow-emerald {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+        }
+
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
         .notification {
             position: fixed;
             top: 20px;
@@ -57,30 +134,39 @@
             z-index: 1000;
             max-width: 400px;
         }
-        .feature-highlight {
-            background: linear-gradient(45deg, #4f46e5, #7c3aed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-surface);
+            border-radius: 4px;
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <!-- Navigation -->
-    <nav class="gradient-bg shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="/" class="flex items-center">
-                        <i class="fas fa-shield-alt text-white text-2xl mr-3"></i>
-                        <h1 class="text-white text-xl font-bold">SecuredDoc</h1>
-                    </a>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="/" class="text-white hover:text-blue-200 transition duration-200">
+
+<body class="min-h-screen grid-bg">
+    <!-- Floating Navigation -->
+    <nav class="glass-nav fixed top-4 left-4 right-4 z-50 mx-auto max-w-7xl">
+        <div class="px-6 py-3">
+            <div class="flex justify-between items-center">
+                <a href="/" class="flex items-center space-x-3 cursor-pointer">
+                    <div class="w-9 h-9 rounded-lg icon-glow-amber flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-lg"></i>
+                    </div>
+                    <h1 class="text-lg font-bold tracking-wider">SecuredDoc</h1>
+                </a>
+                <div class="flex items-center space-x-6">
+                    <a href="/" class="text-sm text-gray-400 hover:text-white transition duration-200 cursor-pointer">
                         <i class="fas fa-home mr-1"></i>Home
                     </a>
-                    <a href="/dashboard" class="text-white hover:text-blue-200 transition duration-200">
+                    <a href="/dashboard"
+                        class="text-sm text-gray-400 hover:text-white transition duration-200 cursor-pointer">
                         <i class="fas fa-chart-bar mr-1"></i>Dashboard
                     </a>
                 </div>
@@ -88,181 +174,223 @@
         </div>
     </nav>
 
-    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-4xl w-full space-y-8">
+    <!-- Main Content -->
+    <div class="min-h-screen flex items-center justify-center py-24 px-4 sm:px-6 lg:px-8 relative">
+        <!-- Background orbs -->
+        <div class="absolute top-1/3 left-1/4 w-80 h-80 bg-amber-500 rounded-full opacity-5 blur-3xl"></div>
+        <div class="absolute bottom-1/3 right-1/4 w-80 h-80 bg-violet-500 rounded-full opacity-5 blur-3xl"></div>
+
+        <div class="max-w-4xl w-full space-y-8 relative z-10">
             <!-- Header -->
             <div class="text-center">
-                <h2 class="text-4xl font-bold text-gray-900">
-                    Connect to <span class="feature-highlight">SecuredDoc</span>
+                <h2 class="text-3xl lg:text-4xl font-bold">
+                    Connect to <span class="text-gradient-amber">SecuredDoc</span>
                 </h2>
-                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-                    Secure your documents with blockchain-powered verification. 
-                    Connect your wallet to get started with advanced fraud detection and PII protection.
+                <p class="mt-4 text-base text-gray-400 max-w-2xl mx-auto">
+                    Secure your documents with blockchain-powered verification.
+                    Connect your wallet to get started.
                 </p>
             </div>
 
             <!-- Authentication Methods -->
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="grid md:grid-cols-2 gap-6">
                 <!-- Wallet Connection Section -->
-                <div class="wallet-card bg-white rounded-xl shadow-lg p-8">
+                <div class="glass-card p-8">
                     <div class="text-center mb-6">
-                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-wallet text-2xl text-purple-600"></i>
+                        <div
+                            class="w-14 h-14 rounded-lg icon-glow-violet flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-wallet text-xl"></i>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900">Connect Wallet</h3>
-                        <p class="text-gray-600 mt-2">Connect your blockchain wallet for secure transactions</p>
+                        <h3 class="text-xl font-bold">Connect Wallet</h3>
+                        <p class="text-gray-500 mt-2 text-sm">Connect your blockchain wallet for secure transactions</p>
                     </div>
 
-                    <!-- Wallet Options -->
-                    <div class="space-y-4">
-                        <!-- Leather Wallet (Stacks) -->
-                        <button id="connectLeather" class="wallet-button w-full bg-orange-600 text-white px-6 py-4 rounded-lg hover:bg-orange-700 transition duration-200 flex items-center justify-center">
-                            <i class="fas fa-coins mr-3 text-xl"></i>
-                            <div class="text-left">
-                                <div class="font-semibold">Leather Wallet</div>
-                                <div class="text-sm opacity-90">Stacks Network</div>
+                    <div class="space-y-3">
+                        <!-- Leather Wallet -->
+                        <button id="connectLeather"
+                            class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center glow-orange"
+                            style="background: rgba(234, 88, 12, 0.15); border: 1px solid rgba(234, 88, 12, 0.3);">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4"
+                                style="background: rgba(234, 88, 12, 0.2);">
+                                <i class="fas fa-coins text-orange-400"></i>
                             </div>
+                            <div class="text-left">
+                                <div class="font-semibold text-sm">Leather Wallet</div>
+                                <div class="text-xs text-gray-500">Stacks Network</div>
+                            </div>
+                            <i class="fas fa-chevron-right ml-auto text-gray-600 text-sm"></i>
                         </button>
 
                         <!-- MetaMask -->
-                        <button id="connectMetaMask" class="wallet-button w-full bg-orange-500 text-white px-6 py-4 rounded-lg hover:bg-orange-600 transition duration-200 flex items-center justify-center">
-                            <i class="fab fa-ethereum mr-3 text-xl"></i>
-                            <div class="text-left">
-                                <div class="font-semibold">MetaMask</div>
-                                <div class="text-sm opacity-90">Ethereum Network</div>
+                        <button id="connectMetaMask"
+                            class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center glow-amber"
+                            style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4"
+                                style="background: rgba(245, 158, 11, 0.15);">
+                                <i class="fab fa-ethereum text-amber-400"></i>
                             </div>
+                            <div class="text-left">
+                                <div class="font-semibold text-sm">MetaMask</div>
+                                <div class="text-xs text-gray-500">Ethereum Network</div>
+                            </div>
+                            <i class="fas fa-chevron-right ml-auto text-gray-600 text-sm"></i>
                         </button>
 
                         <!-- Demo Mode -->
-                        <button id="demoMode" class="wallet-button w-full bg-gray-600 text-white px-6 py-4 rounded-lg hover:bg-gray-700 transition duration-200 flex items-center justify-center">
-                            <i class="fas fa-play mr-3 text-xl"></i>
-                            <div class="text-left">
-                                <div class="font-semibold">Demo Mode</div>
-                                <div class="text-sm opacity-90">Try without wallet</div>
+                        <button id="demoMode" class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center"
+                            style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4"
+                                style="background: rgba(255, 255, 255, 0.05);">
+                                <i class="fas fa-play text-gray-400"></i>
                             </div>
+                            <div class="text-left">
+                                <div class="font-semibold text-sm">Demo Mode</div>
+                                <div class="text-xs text-gray-500">Try without wallet</div>
+                            </div>
+                            <i class="fas fa-chevron-right ml-auto text-gray-600 text-sm"></i>
                         </button>
                     </div>
 
-                    <!-- Connection Status -->
-                    <div id="walletStatus" class="mt-6 p-4 bg-gray-50 rounded-lg hidden">
+                    <!-- Wallet Connection Status -->
+                    <div id="walletStatus" class="mt-5 p-4 rounded-lg hidden"
+                        style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);">
                         <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></span>
                             <div>
-                                <div class="font-medium text-gray-900">Wallet Connected</div>
-                                <div id="connectedWalletInfo" class="text-sm text-gray-600"></div>
+                                <div class="font-medium text-sm text-green-400">Wallet Connected</div>
+                                <div id="connectedWalletInfo" class="text-xs text-gray-500"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Traditional Authentication Section -->
-                <div class="wallet-card bg-white rounded-xl shadow-lg p-8">
+                <!-- Traditional Auth Section -->
+                <div class="glass-card p-8">
                     <div class="text-center mb-6">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-user-shield text-2xl text-blue-600"></i>
+                        <div class="w-14 h-14 rounded-lg icon-glow-blue flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-user-shield text-xl"></i>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900">Traditional Login</h3>
-                        <p class="text-gray-600 mt-2">Use standard authentication methods</p>
+                        <h3 class="text-xl font-bold">Traditional Login</h3>
+                        <p class="text-gray-500 mt-2 text-sm">Use standard authentication methods</p>
                     </div>
 
-                    <!-- Google Sign-In -->
-                    <div class="space-y-4">
-                        <div id="g_id_onload"
-                             data-client_id="YOUR_GOOGLE_CLIENT_ID"
-                             data-callback="handleGoogleSignIn">
+                    <div class="space-y-3">
+                        <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID" data-callback="handleGoogleSignIn">
                         </div>
-                        <button id="googleSignInBtn" class="wallet-button w-full bg-red-600 text-white px-6 py-4 rounded-lg hover:bg-red-700 transition duration-200 flex items-center justify-center">
-                            <i class="fab fa-google mr-3 text-xl"></i>
-                            <div class="text-left">
-                                <div class="font-semibold">Sign in with Google</div>
-                                <div class="text-sm opacity-90">Quick and secure</div>
+                        <!-- Google Sign-In -->
+                        <button id="googleSignInBtn" class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center"
+                            style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4"
+                                style="background: rgba(239, 68, 68, 0.15);">
+                                <i class="fab fa-google text-red-400"></i>
                             </div>
+                            <div class="text-left">
+                                <div class="font-semibold text-sm">Sign in with Google</div>
+                                <div class="text-xs text-gray-500">Quick and secure</div>
+                            </div>
+                            <i class="fas fa-chevron-right ml-auto text-gray-600 text-sm"></i>
                         </button>
 
                         <!-- Guest Access -->
-                        <button id="guestAccess" class="wallet-button w-full bg-gray-500 text-white px-6 py-4 rounded-lg hover:bg-gray-600 transition duration-200 flex items-center justify-center">
-                            <i class="fas fa-user-circle mr-3 text-xl"></i>
-                            <div class="text-left">
-                                <div class="font-semibold">Guest Access</div>
-                                <div class="text-sm opacity-90">Continue without account</div>
+                        <button id="guestAccess" class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center"
+                            style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4"
+                                style="background: rgba(255, 255, 255, 0.05);">
+                                <i class="fas fa-user-circle text-gray-400"></i>
                             </div>
+                            <div class="text-left">
+                                <div class="font-semibold text-sm">Guest Access</div>
+                                <div class="text-xs text-gray-500">Continue without account</div>
+                            </div>
+                            <i class="fas fa-chevron-right ml-auto text-gray-600 text-sm"></i>
                         </button>
                     </div>
 
                     <!-- Auth Status -->
-                    <div id="authStatus" class="mt-6 p-4 bg-gray-50 rounded-lg hidden">
+                    <div id="authStatus" class="mt-5 p-4 rounded-lg hidden"
+                        style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);">
                         <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></span>
                             <div>
-                                <div class="font-medium text-gray-900">Authentication Successful</div>
-                                <div id="authUserInfo" class="text-sm text-gray-600"></div>
+                                <div class="font-medium text-sm text-green-400">Authentication Successful</div>
+                                <div id="authUserInfo" class="text-xs text-gray-500"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Service Fees Information -->
-            <div id="serviceFeesSection" class="bg-white rounded-xl shadow-lg p-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-6 text-center">
-                    <i class="fas fa-coins mr-2 text-yellow-600"></i>Service Fees
+            <!-- Service Fees -->
+            <div id="serviceFeesSection" class="glass-card p-8">
+                <h3 class="text-lg font-bold mb-6 text-center">
+                    <i class="fas fa-coins mr-2 text-amber-400"></i>Service Fees
                 </h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="text-center p-4 bg-blue-50 rounded-lg">
-                        <div class="text-2xl font-bold text-blue-600" id="registrationFee">1.0 STX</div>
-                        <div class="text-sm text-gray-600">Registration</div>
+                    <div class="text-center p-4 rounded-lg"
+                        style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.15);">
+                        <div class="text-xl font-bold text-blue-400" id="registrationFee"
+                            style="font-family: 'Orbitron', sans-serif;">1.0 STX</div>
+                        <div class="text-xs text-gray-500 mt-1">Registration</div>
                     </div>
-                    <div class="text-center p-4 bg-green-50 rounded-lg">
-                        <div class="text-2xl font-bold text-green-600" id="verificationFee">0.5 STX</div>
-                        <div class="text-sm text-gray-600">Verification</div>
+                    <div class="text-center p-4 rounded-lg"
+                        style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.15);">
+                        <div class="text-xl font-bold text-emerald-400" id="verificationFee"
+                            style="font-family: 'Orbitron', sans-serif;">0.5 STX</div>
+                        <div class="text-xs text-gray-500 mt-1">Verification</div>
                     </div>
-                    <div class="text-center p-4 bg-purple-50 rounded-lg">
-                        <div class="text-2xl font-bold text-purple-600" id="accessFee">0.25 STX</div>
-                        <div class="text-sm text-gray-600">Access Grant</div>
+                    <div class="text-center p-4 rounded-lg"
+                        style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.15);">
+                        <div class="text-xl font-bold text-violet-400" id="accessFee"
+                            style="font-family: 'Orbitron', sans-serif;">0.25 STX</div>
+                        <div class="text-xs text-gray-500 mt-1">Access Grant</div>
                     </div>
-                    <div class="text-center p-4 bg-red-50 rounded-lg">
-                        <div class="text-2xl font-bold text-red-600" id="storageFee">2.0 STX</div>
-                        <div class="text-sm text-gray-600">Premium Storage</div>
+                    <div class="text-center p-4 rounded-lg"
+                        style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.15);">
+                        <div class="text-xl font-bold text-amber-400" id="storageFee"
+                            style="font-family: 'Orbitron', sans-serif;">2.0 STX</div>
+                        <div class="text-xs text-gray-500 mt-1">Premium Storage</div>
                     </div>
                 </div>
             </div>
 
             <!-- Features Preview -->
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-6 text-center">
-                    What You Get Access To
-                </h3>
+            <div class="glass-card p-8">
+                <h3 class="text-lg font-bold mb-6 text-center">What You Get Access To</h3>
                 <div class="grid md:grid-cols-3 gap-6">
                     <div class="text-center">
-                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-shield-virus text-blue-600"></i>
+                        <div class="w-12 h-12 rounded-lg icon-glow-blue flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-shield-virus"></i>
                         </div>
-                        <h4 class="font-semibold text-gray-900 mb-2">AI Fraud Detection</h4>
-                        <p class="text-sm text-gray-600">Advanced fraud analysis with 95%+ accuracy</p>
+                        <h4 class="font-semibold text-sm mb-2">AI Fraud Detection</h4>
+                        <p class="text-xs text-gray-500">Advanced fraud analysis with 95%+ accuracy</p>
                     </div>
                     <div class="text-center">
-                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-user-secret text-green-600"></i>
+                        <div
+                            class="w-12 h-12 rounded-lg icon-glow-emerald flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-user-secret"></i>
                         </div>
-                        <h4 class="font-semibold text-gray-900 mb-2">PII Protection</h4>
-                        <p class="text-sm text-gray-600">Automatic detection and anonymization</p>
+                        <h4 class="font-semibold text-sm mb-2">PII Protection</h4>
+                        <p class="text-xs text-gray-500">Automatic detection and anonymization</p>
                     </div>
                     <div class="text-center">
-                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-cube text-purple-600"></i>
+                        <div
+                            class="w-12 h-12 rounded-lg icon-glow-violet flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-cube"></i>
                         </div>
-                        <h4 class="font-semibold text-gray-900 mb-2">Blockchain Audit</h4>
-                        <p class="text-sm text-gray-600">Immutable verification on Stacks</p>
+                        <h4 class="font-semibold text-sm mb-2">Blockchain Audit</h4>
+                        <p class="text-xs text-gray-500">Immutable verification on Stacks</p>
                     </div>
                 </div>
             </div>
 
             <!-- Continue Button -->
             <div class="text-center">
-                <button id="continueBtn" class="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                <button id="continueBtn"
+                    class="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 px-8 py-4 rounded-lg font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition duration-300 cursor-pointer glow-amber"
+                    disabled style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">
                     <i class="fas fa-arrow-right mr-2"></i>Continue to Dashboard
                 </button>
-                <p class="text-sm text-gray-500 mt-2">You can always connect your wallet later</p>
+                <p class="text-xs text-gray-600 mt-3">You can always connect your wallet later</p>
             </div>
         </div>
     </div>
@@ -271,16 +399,20 @@
     <div id="notificationContainer"></div>
 
     <!-- Connection Status Modal -->
-    <div id="connectionModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div id="connectionModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden">
         <div class="flex items-center justify-center h-full p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="glass-card max-w-md w-full p-8" style="background: var(--bg-surface);">
                 <div class="text-center">
-                    <div id="connectionIcon" class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-spinner fa-spin text-2xl text-blue-600"></i>
+                    <div id="connectionIcon"
+                        class="w-16 h-16 rounded-lg icon-glow-amber flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-spinner fa-spin text-2xl"></i>
                     </div>
-                    <h3 id="connectionTitle" class="text-xl font-bold text-gray-900 mb-2">Connecting...</h3>
-                    <p id="connectionMessage" class="text-gray-600 mb-6">Please confirm the connection in your wallet</p>
-                    <button id="closeConnectionModal" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition duration-200">
+                    <h3 id="connectionTitle" class="text-xl font-bold mb-2">Connecting...</h3>
+                    <p id="connectionMessage" class="text-gray-400 text-sm mb-6">Please confirm the connection in your
+                        wallet</p>
+                    <button id="closeConnectionModal"
+                        class="px-6 py-2 rounded-lg text-sm font-medium transition duration-200 cursor-pointer"
+                        style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);">
                         Close
                     </button>
                 </div>
@@ -296,43 +428,40 @@
             authenticated: false
         };
 
-        // Configuration
         const CONFIG = {
-            GOOGLE_CLIENT_ID: "YOUR_GOOGLE_CLIENT_ID", // Replace with actual client ID
+            GOOGLE_CLIENT_ID: "YOUR_GOOGLE_CLIENT_ID",
             STACKS_NETWORK: "testnet",
             API_BASE_URL: window.location.origin
         };
 
-        // Utility Functions
         function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'rgba(16, 185, 129, 0.9)',
+                error: 'rgba(239, 68, 68, 0.9)',
+                warning: 'rgba(245, 158, 11, 0.9)',
+                info: 'rgba(59, 130, 246, 0.9)'
+            };
             const notification = document.createElement('div');
-            notification.className = `notification px-4 py-3 rounded-md text-white mb-2 ${
-                type === 'success' ? 'bg-green-500' : 
-                type === 'error' ? 'bg-red-500' : 
-                type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
-            }`;
+            notification.className = 'notification px-4 py-3 rounded-lg text-white mb-2';
+            notification.style.background = colors[type] || colors.info;
+            notification.style.backdropFilter = 'blur(10px)';
             notification.innerHTML = `
                 <div class="flex items-center justify-between">
-                    <span><i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : 'info'} mr-2"></i>${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white">
+                    <span class="text-sm"><i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation' : 'info'} mr-2"></i>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white cursor-pointer">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             `;
             document.getElementById('notificationContainer').appendChild(notification);
-            
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
-            }, 5000);
+            setTimeout(() => { if (notification.parentElement) notification.remove(); }, 5000);
         }
 
         function showConnectionModal(title, message, icon = 'spinner') {
             document.getElementById('connectionTitle').textContent = title;
             document.getElementById('connectionMessage').textContent = message;
             document.getElementById('connectionIcon').innerHTML = `
-                <i class="fas fa-${icon} ${icon === 'spinner' ? 'fa-spin' : ''} text-2xl text-blue-600"></i>
+                <i class="fas fa-${icon} ${icon === 'spinner' ? 'fa-spin' : ''} text-2xl"></i>
             `;
             document.getElementById('connectionModal').classList.remove('hidden');
         }
@@ -345,163 +474,94 @@
             const walletStatus = document.getElementById('walletStatus');
             const authStatus = document.getElementById('authStatus');
             const continueBtn = document.getElementById('continueBtn');
-            
-            // Update wallet status
+
             if (authState.wallet) {
                 walletStatus.classList.remove('hidden');
-                document.getElementById('connectedWalletInfo').textContent = 
+                document.getElementById('connectedWalletInfo').textContent =
                     `${authState.wallet.type.toUpperCase()}: ${authState.wallet.address.substring(0, 8)}...${authState.wallet.address.substring(authState.wallet.address.length - 6)}`;
             }
 
-            // Update auth status
             if (authState.user) {
                 authStatus.classList.remove('hidden');
-                document.getElementById('authUserInfo').textContent = 
+                document.getElementById('authUserInfo').textContent =
                     `Signed in as ${authState.user.name || authState.user.email || 'User'}`;
             }
 
-            // Enable continue button if authenticated or wallet connected
             continueBtn.disabled = !(authState.wallet || authState.user || authState.authenticated);
         }
 
-        // Wallet Connection Functions
         async function connectLeatherWallet() {
             try {
                 showConnectionModal('Connecting to Leather', 'Please confirm the connection in your Leather wallet');
-                
-                // Check for Stacks Connect (from the injected script)
                 if (typeof showConnect !== 'undefined') {
                     const authOptions = {
                         onFinish: async (authData) => {
                             try {
-                                // Send authentication data to backend
                                 const response = await fetch('/api/auth/stacks', {
                                     method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({
-                                        authData: authData,
-                                        userSession: authData.userSession ? {
-                                            userData: authData.userSession.loadUserData()
-                                        } : null
-                                    })
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ authData: authData, userSession: authData.userSession ? { userData: authData.userSession.loadUserData() } : null })
                                 });
-                                
                                 const result = await response.json();
-                                
                                 if (result.success) {
                                     authState.wallet = result.wallet;
                                     authState.user = result.user;
                                     authState.authenticated = true;
-                                    
                                     hideConnectionModal();
                                     showNotification('Leather wallet connected successfully!', 'success');
                                     updateUI();
-                                } else {
-                                    throw new Error(result.error || 'Authentication failed');
-                                }
+                                } else { throw new Error(result.error || 'Authentication failed'); }
                             } catch (error) {
                                 console.error('Backend authentication error:', error);
                                 hideConnectionModal();
                                 showNotification('Authentication failed: ' + error.message, 'error');
-                                // Fallback to demo mode
                                 simulateWalletConnection('leather', 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM');
                             }
                         },
-                        onCancel: () => {
-                            hideConnectionModal();
-                            showNotification('Wallet connection cancelled', 'warning');
-                        },
-                        appDetails: {
-                            name: 'SecuredDoc',
-                            icon: window.location.origin + '/favicon.ico',
-                        },
+                        onCancel: () => { hideConnectionModal(); showNotification('Wallet connection cancelled', 'warning'); },
+                        appDetails: { name: 'SecuredDoc', icon: window.location.origin + '/favicon.ico' },
                     };
-
                     showConnect(authOptions);
-                } else {
-                    // Alternative method for direct Leather wallet connection
-                    if (window.LeatherProvider) {
-                        try {
-                            const response = await window.LeatherProvider.request('stacks_getAddresses');
-                            if (response && response.addresses && response.addresses.length > 0) {
-                                const address = response.addresses[0].address;
-                                
-                                // Send wallet connection to backend
-                                const backendResponse = await fetch('/api/wallet/connect', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({
-                                        wallet_type: 'leather',
-                                        wallet_address: address,
-                                        network: 'testnet'
-                                    })
-                                });
-                                
-                                const result = await backendResponse.json();
-                                
-                                if (result.success) {
-                                    authState.wallet = {
-                                        type: 'leather',
-                                        address: address,
-                                        network: result.network
-                                    };
-                                    authState.authenticated = true;
-                                    
-                                    hideConnectionModal();
-                                    showNotification('Leather wallet connected successfully!', 'success');
-                                    updateUI();
-                                } else {
-                                    throw new Error(result.error);
-                                }
-                            }
-                        } catch (error) {
-                            throw error;
-                        }
-                    } else {
-                        // For demo, simulate connection after delay
-                        setTimeout(async () => {
-                            const response = await fetch('/api/wallet/connect', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    wallet_type: 'leather',
-                                    wallet_address: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
-                                    network: 'testnet'
-                                })
+                } else if (window.LeatherProvider) {
+                    try {
+                        const response = await window.LeatherProvider.request('stacks_getAddresses');
+                        if (response && response.addresses && response.addresses.length > 0) {
+                            const address = response.addresses[0].address;
+                            const backendResponse = await fetch('/api/wallet/connect', {
+                                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ wallet_type: 'leather', wallet_address: address, network: 'testnet' })
                             });
-                            
-                            simulateWalletConnection('leather', 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM');
-                            hideConnectionModal();
-                        }, 2000);
-                    }
+                            const result = await backendResponse.json();
+                            if (result.success) {
+                                authState.wallet = { type: 'leather', address: address, network: result.network };
+                                authState.authenticated = true;
+                                hideConnectionModal();
+                                showNotification('Leather wallet connected successfully!', 'success');
+                                updateUI();
+                            } else { throw new Error(result.error); }
+                        }
+                    } catch (error) { throw error; }
+                } else {
+                    setTimeout(async () => {
+                        await fetch('/api/wallet/connect', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ wallet_type: 'leather', wallet_address: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM', network: 'testnet' })
+                        });
+                        simulateWalletConnection('leather', 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM');
+                        hideConnectionModal();
+                    }, 2000);
                 }
             } catch (error) {
                 console.error('Leather wallet error:', error);
                 hideConnectionModal();
                 showNotification('Failed to connect Leather wallet. Using demo mode.', 'warning');
-                
-                // Fallback to demo connection
                 try {
-                    const response = await fetch('/api/wallet/connect', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            wallet_type: 'leather',
-                            wallet_address: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
-                            network: 'testnet'
-                        })
+                    await fetch('/api/wallet/connect', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ wallet_type: 'leather', wallet_address: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM', network: 'testnet' })
                     });
                     simulateWalletConnection('leather', 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM');
                 } catch (backendError) {
-                    console.error('Backend connection failed:', backendError);
                     simulateWalletConnection('leather', 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM');
                 }
             }
@@ -510,82 +570,56 @@
         async function connectMetaMask() {
             try {
                 showConnectionModal('Connecting to MetaMask', 'Please confirm the connection in your MetaMask wallet');
-                
                 if (typeof window.ethereum !== 'undefined') {
-                    const accounts = await window.ethereum.request({
-                        method: 'eth_requestAccounts'
-                    });
-                    
-                    authState.wallet = {
-                        type: 'metamask',
-                        address: accounts[0],
-                        network: 'ethereum'
-                    };
-
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    authState.wallet = { type: 'metamask', address: accounts[0], network: 'ethereum' };
+                    sessionStorage.setItem('authState', JSON.stringify(authState));
                     hideConnectionModal();
                     showNotification('MetaMask connected successfully!', 'success');
                     updateUI();
                 } else {
-                    throw new Error('MetaMask not found');
+                    hideConnectionModal();
+                    showNotification('MetaMask not detected. Using demo mode.', 'warning');
+                    simulateWalletConnection('metamask', '0x742d35Cc6635C0532925a3b8D45C27F0e4b7b6c9');
                 }
             } catch (error) {
                 console.error('MetaMask error:', error);
                 hideConnectionModal();
-                showNotification('Failed to connect MetaMask. Using demo mode.', 'warning');
-                simulateWalletConnection('metamask', '0x742d35Cc6635C0532925a3b8D45C27F0e4b7b6c9');
+                if (error.code === 4001) {
+                    showNotification('MetaMask connection rejected by user.', 'warning');
+                } else {
+                    showNotification('Failed to connect MetaMask. Using demo mode.', 'warning');
+                    simulateWalletConnection('metamask', '0x742d35Cc6635C0532925a3b8D45C27F0e4b7b6c9');
+                }
             }
         }
 
         function simulateWalletConnection(type, address) {
-            authState.wallet = {
-                type: type,
-                address: address,
-                network: type === 'leather' ? 'testnet' : 'ethereum'
-            };
-            
+            authState.wallet = { type: type, address: address, network: type === 'leather' ? 'testnet' : 'ethereum' };
+            sessionStorage.setItem('authState', JSON.stringify(authState));
             showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} wallet connected! (Demo Mode)`, 'success');
             updateUI();
         }
 
         function enableDemoMode() {
             authState.authenticated = true;
-            authState.user = {
-                name: 'Demo User',
-                email: 'demo@secureddoc.com',
-                type: 'demo'
-            };
-            
+            authState.user = { name: 'Demo User', email: 'demo@secureddoc.com', type: 'demo' };
             showNotification('Demo mode enabled! Full functionality available.', 'success');
             updateUI();
         }
 
         function enableGuestAccess() {
             authState.authenticated = true;
-            authState.user = {
-                name: 'Guest User',
-                email: 'guest@secureddoc.com',
-                type: 'guest'
-            };
-            
+            authState.user = { name: 'Guest User', email: 'guest@secureddoc.com', type: 'guest' };
             showNotification('Guest access enabled! Limited functionality available.', 'info');
             updateUI();
         }
 
-        // Google Sign-In Handler
         function handleGoogleSignIn(response) {
             try {
-                // Parse JWT token
                 const responsePayload = JSON.parse(atob(response.credential.split('.')[1]));
-                
-                authState.user = {
-                    name: responsePayload.name,
-                    email: responsePayload.email,
-                    picture: responsePayload.picture,
-                    type: 'google'
-                };
-                
+                authState.user = { name: responsePayload.name, email: responsePayload.email, picture: responsePayload.picture, type: 'google' };
                 authState.authenticated = true;
-                
                 showNotification('Google sign-in successful!', 'success');
                 updateUI();
             } catch (error) {
@@ -596,47 +630,30 @@
 
         function continueToDashboard() {
             if (authState.wallet || authState.user || authState.authenticated) {
-                // Store auth state in session storage
                 sessionStorage.setItem('authState', JSON.stringify(authState));
-                
-                // Redirect to dashboard
                 window.location.href = '/dashboard';
             } else {
                 showNotification('Please connect a wallet or sign in first', 'warning');
             }
         }
 
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load previous auth state if available
+        document.addEventListener('DOMContentLoaded', function () {
             const savedAuthState = sessionStorage.getItem('authState');
-            if (savedAuthState) {
-                Object.assign(authState, JSON.parse(savedAuthState));
-                updateUI();
-            }
+            if (savedAuthState) { Object.assign(authState, JSON.parse(savedAuthState)); updateUI(); }
 
-            // Bind wallet connection events
             document.getElementById('connectLeather').addEventListener('click', connectLeatherWallet);
             document.getElementById('connectMetaMask').addEventListener('click', connectMetaMask);
             document.getElementById('demoMode').addEventListener('click', enableDemoMode);
             document.getElementById('guestAccess').addEventListener('click', enableGuestAccess);
             document.getElementById('continueBtn').addEventListener('click', continueToDashboard);
-            
-            // Modal controls
             document.getElementById('closeConnectionModal').addEventListener('click', hideConnectionModal);
-            
-            // Close modal on outside click
-            document.getElementById('connectionModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    hideConnectionModal();
-                }
+            document.getElementById('connectionModal').addEventListener('click', function (e) {
+                if (e.target === this) hideConnectionModal();
             });
 
-            // Load service fees
             loadServiceFees();
         });
 
-        // Load service fees from API
         async function loadServiceFees() {
             try {
                 const response = await fetch('/api/fees');
@@ -649,32 +666,16 @@
                         document.getElementById('storageFee').textContent = data.fees.premium_storage?.display || '2.0 STX';
                     }
                 }
-            } catch (error) {
-                console.error('Failed to load service fees:', error);
-                // Keep default values displayed
-            }
+            } catch (error) { console.error('Failed to load service fees:', error); }
         }
 
-        // Initialize Google Sign-In when page loads
-        window.onload = function() {
+        window.onload = function () {
             if (typeof google !== 'undefined') {
-                google.accounts.id.initialize({
-                    client_id: CONFIG.GOOGLE_CLIENT_ID,
-                    callback: handleGoogleSignIn
-                });
-                
-                // Render the Google Sign-In button
-                google.accounts.id.renderButton(
-                    document.getElementById("googleSignInBtn"),
-                    {
-                        theme: "outline",
-                        size: "large",
-                        text: "signin_with",
-                        shape: "rectangular"
-                    }
-                );
+                google.accounts.id.initialize({ client_id: CONFIG.GOOGLE_CLIENT_ID, callback: handleGoogleSignIn });
+                google.accounts.id.renderButton(document.getElementById("googleSignInBtn"), { theme: "outline", size: "large", text: "signin_with", shape: "rectangular" });
             }
         };
     </script>
 </body>
+
 </html>

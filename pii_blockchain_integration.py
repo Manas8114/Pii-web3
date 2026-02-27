@@ -16,12 +16,15 @@ import hashlib
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class PIIBlockchainBridge:
     def __init__(self):
         self.db_path = "pii_blockchain.db"
-        self.blockchain_service_url = "http://localhost:5001"
-        self.script_service_url = "http://localhost:5000"  # Your script.py Flask app
+        self.blockchain_service_url = os.getenv('BLOCKCHAIN_SERVICE_URL', 'http://localhost:5001')
+        self.script_service_url = os.getenv('SCRIPT_SERVICE_URL', 'http://localhost:5000')
         self.init_database()
         
     def init_database(self):
@@ -254,4 +257,5 @@ if __name__ == '__main__':
     print("   GET  /pii-dashboard - View transactions")
     print("===================================")
     
-    app.run(host='localhost', port=5002, debug=True)
+    pii_bridge_port = int(os.getenv('PII_BRIDGE_PORT', 5002))
+    app.run(host='localhost', port=pii_bridge_port, debug=os.getenv('FLASK_DEBUG', 'false').lower() == 'true')

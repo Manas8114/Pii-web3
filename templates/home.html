@@ -1,76 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SecuredDoc - Blockchain Document Security & Fraud Detection</title>
-    
+    <meta name="description"
+        content="AI-powered PII detection, fraud analysis, and immutable blockchain verification for enterprise document security.">
+
     <!-- External Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <style>
+        :root {
+            --bg-primary: #0F172A;
+            --bg-surface: #1E293B;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-amber: #F59E0B;
+            --accent-violet: #8B5CF6;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Exo 2', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Orbitron', sans-serif;
         }
+
+        /* Floating Glass Nav */
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+        }
+
+        /* Glass Cards */
         .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
-            transform: translateY(0);
         }
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+        .glass-card:hover {
+            border-color: rgba(245, 158, 11, 0.3);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.08);
         }
-        .stats-number {
-            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+
+        /* Amber Gradient Text */
+        .text-gradient-amber {
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .hero-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        .problem-highlight {
-            background: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);
+
+        /* Violet Gradient Text */
+        .text-gradient-violet {
+            background: linear-gradient(135deg, #8B5CF6, #A78BFA);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        /* Red Gradient Text */
+        .text-gradient-red {
+            background: linear-gradient(135deg, #EF4444, #F87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Animated floating effect */
+        .hero-float {
+            animation: heroFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes heroFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Glowing border on hover */
+        .glow-amber:hover {
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .glow-violet:hover {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Stat number glow */
+        .stat-number {
+            color: var(--accent-amber);
+            text-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Subtle grid background */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* Feature card left border accents */
+        .border-accent-amber {
+            border-left: 3px solid var(--accent-amber);
+        }
+
+        .border-accent-violet {
+            border-left: 3px solid var(--accent-violet);
+        }
+
+        .border-accent-teal {
+            border-left: 3px solid #14B8A6;
+        }
+
+        .border-accent-rose {
+            border-left: 3px solid #F43F5E;
+        }
+
+        .border-accent-blue {
+            border-left: 3px solid #3B82F6;
+        }
+
+        .border-accent-emerald {
+            border-left: 3px solid #10B981;
+        }
+
+        /* Icon container glow */
+        .icon-glow-amber {
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+        }
+
+        .icon-glow-violet {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8B5CF6;
+        }
+
+        .icon-glow-teal {
+            background: rgba(20, 184, 166, 0.15);
+            color: #14B8A6;
+        }
+
+        .icon-glow-rose {
+            background: rgba(244, 63, 94, 0.15);
+            color: #F43F5E;
+        }
+
+        .icon-glow-blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3B82F6;
+        }
+
+        .icon-glow-emerald {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+        }
+
+        /* Process step connector */
+        .step-connector {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-amber), var(--accent-violet));
+        }
+
+        /* Smooth scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-surface);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Navigation -->
-    <nav class="gradient-bg shadow-lg fixed w-full top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <i class="fas fa-shield-alt text-white text-2xl mr-3"></i>
-                    <h1 class="text-white text-xl font-bold">SecuredDoc</h1>
-                </div>
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#problem" class="text-white hover:text-blue-200 transition duration-200">Problem</a>
-                    <a href="#solution" class="text-white hover:text-blue-200 transition duration-200">Solution</a>
-                    <a href="#features" class="text-white hover:text-blue-200 transition duration-200">Features</a>
-                    <a href="/dashboard" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition duration-200 font-medium">
+
+<body class="min-h-screen grid-bg">
+    <!-- Floating Navigation -->
+    <nav class="glass-nav fixed top-4 left-4 right-4 z-50 mx-auto max-w-7xl">
+        <div class="px-6 py-3">
+            <div class="flex justify-between items-center">
+                <a href="/" class="flex items-center space-x-3 cursor-pointer">
+                    <div class="w-9 h-9 rounded-lg icon-glow-amber flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-lg"></i>
+                    </div>
+                    <h1 class="text-lg font-bold tracking-wider" style="font-family: 'Orbitron', sans-serif;">SecuredDoc
+                    </h1>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#problem"
+                        class="text-sm text-gray-400 hover:text-white transition duration-200 cursor-pointer">Problem</a>
+                    <a href="#solution"
+                        class="text-sm text-gray-400 hover:text-white transition duration-200 cursor-pointer">Solution</a>
+                    <a href="#features"
+                        class="text-sm text-gray-400 hover:text-white transition duration-200 cursor-pointer">Features</a>
+                    <a href="/dashboard"
+                        class="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 px-5 py-2 rounded-lg hover:shadow-lg transition duration-300 font-semibold text-sm cursor-pointer glow-amber"
+                        style="font-family: 'Orbitron', sans-serif;">
                         Get Started
                     </a>
                 </div>
                 <div class="md:hidden">
-                    <button id="mobileMenuBtn" class="text-white">
+                    <button id="mobileMenuBtn" class="text-gray-400 hover:text-white transition cursor-pointer"
+                        title="Open menu">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                 </div>
@@ -79,49 +253,87 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="gradient-bg pt-20 pb-16 min-h-screen flex items-center">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="text-white">
-                    <h1 class="text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                        Secure Document Processing with 
-                        <span class="text-yellow-300">Blockchain Audit</span>
+    <section class="pt-28 pb-20 min-h-screen flex items-center relative overflow-hidden">
+        <!-- Background glow orbs -->
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500 rounded-full opacity-5 blur-3xl"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500 rounded-full opacity-5 blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <div class="inline-flex items-center glass-card px-4 py-2 mb-6">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                        <span class="text-sm text-gray-400">Powered by Stacks Blockchain</span>
+                    </div>
+                    <h1 class="text-4xl lg:text-6xl font-bold leading-tight mb-6"
+                        style="font-family: 'Orbitron', sans-serif;">
+                        Secure Documents with
+                        <span class="text-gradient-amber">Blockchain Audit</span>
                     </h1>
-                    <p class="text-xl mb-8 text-blue-100 leading-relaxed">
-                        Advanced AI-powered PII detection, fraud analysis, and immutable blockchain verification 
+                    <p class="text-lg mb-8 text-gray-400 leading-relaxed" style="font-family: 'Exo 2', sans-serif;">
+                        Advanced AI-powered PII detection, fraud analysis, and immutable blockchain verification
                         for enterprise document security.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="/dashboard" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition duration-200 text-center">
+                        <a href="/dashboard"
+                            class="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition duration-300 text-center cursor-pointer glow-amber"
+                            style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">
                             <i class="fas fa-rocket mr-2"></i>Start Processing
                         </a>
-                        <a href="#problem" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-200 text-center">
+                        <a href="#problem"
+                            class="glass-card px-8 py-4 rounded-lg font-semibold hover:border-white transition duration-300 text-center cursor-pointer text-gray-300"
+                            style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">
                             <i class="fas fa-play mr-2"></i>Learn More
                         </a>
                     </div>
                 </div>
                 <div class="relative">
-                    <div class="hero-animation">
-                        <div class="glass-card p-8 text-white">
-                            <div class="flex items-center mb-6">
-                                <i class="fas fa-file-alt text-3xl text-yellow-300 mr-4"></i>
+                    <div class="hero-float">
+                        <div class="glass-card p-8">
+                            <div class="flex items-center mb-6 pb-6"
+                                style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                <div class="w-12 h-12 rounded-lg icon-glow-amber flex items-center justify-center mr-4">
+                                    <i class="fas fa-file-alt text-xl"></i>
+                                </div>
                                 <div>
-                                    <h3 class="text-xl font-semibold">Document Upload</h3>
-                                    <p class="text-blue-100">PDF, Images, CSV</p>
+                                    <h3 class="font-semibold"
+                                        style="font-family: 'Orbitron', sans-serif; font-size: 0.95rem;">Document Upload
+                                    </h3>
+                                    <p class="text-sm text-gray-500">PDF, Images, CSV</p>
+                                </div>
+                                <div class="ml-auto">
+                                    <span class="w-3 h-3 bg-green-400 rounded-full inline-block animate-pulse"></span>
                                 </div>
                             </div>
-                            <div class="flex items-center mb-6">
-                                <i class="fas fa-brain text-3xl text-green-300 mr-4"></i>
+                            <div class="flex items-center mb-6 pb-6"
+                                style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                <div
+                                    class="w-12 h-12 rounded-lg icon-glow-emerald flex items-center justify-center mr-4">
+                                    <i class="fas fa-brain text-xl"></i>
+                                </div>
                                 <div>
-                                    <h3 class="text-xl font-semibold">AI Analysis</h3>
-                                    <p class="text-blue-100">PII Detection + Fraud Check</p>
+                                    <h3 class="font-semibold"
+                                        style="font-family: 'Orbitron', sans-serif; font-size: 0.95rem;">AI Analysis
+                                    </h3>
+                                    <p class="text-sm text-gray-500">PII Detection + Fraud Check</p>
+                                </div>
+                                <div class="ml-auto">
+                                    <span class="w-3 h-3 bg-amber-400 rounded-full inline-block animate-pulse"></span>
                                 </div>
                             </div>
                             <div class="flex items-center">
-                                <i class="fas fa-cube text-3xl text-purple-300 mr-4"></i>
+                                <div
+                                    class="w-12 h-12 rounded-lg icon-glow-violet flex items-center justify-center mr-4">
+                                    <i class="fas fa-cube text-xl"></i>
+                                </div>
                                 <div>
-                                    <h3 class="text-xl font-semibold">Blockchain Audit</h3>
-                                    <p class="text-blue-100">Immutable Verification</p>
+                                    <h3 class="font-semibold"
+                                        style="font-family: 'Orbitron', sans-serif; font-size: 0.95rem;">Blockchain
+                                        Audit</h3>
+                                    <p class="text-sm text-gray-500">Immutable Verification</p>
+                                </div>
+                                <div class="ml-auto">
+                                    <span class="w-3 h-3 bg-violet-400 rounded-full inline-block animate-pulse"></span>
                                 </div>
                             </div>
                         </div>
@@ -132,89 +344,105 @@
     </section>
 
     <!-- Problem Statement Section -->
-    <section id="problem" class="py-20 bg-white">
+    <section id="problem" class="py-20 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-6">
-                    The <span class="problem-highlight">Critical Problem</span> We're Solving
+                <h2 class="text-3xl lg:text-4xl font-bold mb-6" style="font-family: 'Orbitron', sans-serif;">
+                    The <span class="text-gradient-red">Critical Problem</span> We Solve
                 </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    In today's digital world, document fraud and data breaches cost organizations billions annually. 
+                <p class="text-lg text-gray-400 max-w-3xl mx-auto">
+                    Document fraud and data breaches cost organizations billions annually.
                     Traditional verification methods are insufficient for modern threats.
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8 mb-16">
+            <div class="grid md:grid-cols-3 gap-6 mb-16">
                 <!-- Problem 1 -->
-                <div class="feature-card bg-red-50 p-8 rounded-xl border border-red-100">
-                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
+                <div class="glass-card p-8 border-accent-rose">
+                    <div class="w-14 h-14 rounded-lg icon-glow-rose flex items-center justify-center mb-6">
+                        <i class="fas fa-exclamation-triangle text-xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Document Fraud</h3>
-                    <p class="text-gray-600 mb-4">
-                        $3.2 trillion lost annually to document fraud globally. Traditional verification 
-                        methods can't detect sophisticated forgeries and manipulations.
+                    <h3 class="text-xl font-bold mb-4" style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem;">
+                        Document Fraud</h3>
+                    <p class="text-gray-400 mb-4 text-sm">
+                        $3.2 trillion lost annually to document fraud globally. Traditional verification
+                        can't detect sophisticated forgeries.
                     </p>
-                    <ul class="text-sm text-gray-500 space-y-1">
-                        <li>• Image manipulation</li>
-                        <li>• Metadata tampering</li>
-                        <li>• Content fabrication</li>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="w-1 h-1 bg-rose-400 rounded-full mr-2"></span>Image
+                            manipulation</li>
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-rose-400 rounded-full mr-2"></span>Metadata tampering</li>
+                        <li class="flex items-center"><span class="w-1 h-1 bg-rose-400 rounded-full mr-2"></span>Content
+                            fabrication</li>
                     </ul>
                 </div>
 
                 <!-- Problem 2 -->
-                <div class="feature-card bg-orange-50 p-8 rounded-xl border border-orange-100">
-                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-user-secret text-2xl text-orange-600"></i>
+                <div class="glass-card p-8 border-accent-amber">
+                    <div class="w-14 h-14 rounded-lg icon-glow-amber flex items-center justify-center mb-6">
+                        <i class="fas fa-user-secret text-xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">PII Exposure</h3>
-                    <p class="text-gray-600 mb-4">
-                        Sensitive personal data scattered across documents creates privacy risks and 
-                        regulatory compliance challenges for organizations.
+                    <h3 class="text-xl font-bold mb-4" style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem;">
+                        PII Exposure</h3>
+                    <p class="text-gray-400 mb-4 text-sm">
+                        Sensitive personal data scattered across documents creates privacy risks
+                        and regulatory compliance challenges.
                     </p>
-                    <ul class="text-sm text-gray-500 space-y-1">
-                        <li>• GDPR violations</li>
-                        <li>• Identity theft risks</li>
-                        <li>• Regulatory penalties</li>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="w-1 h-1 bg-amber-400 rounded-full mr-2"></span>GDPR
+                            violations</li>
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-amber-400 rounded-full mr-2"></span>Identity theft risks</li>
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-amber-400 rounded-full mr-2"></span>Regulatory penalties</li>
                     </ul>
                 </div>
 
                 <!-- Problem 3 -->
-                <div class="feature-card bg-blue-50 p-8 rounded-xl border border-blue-100">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-search text-2xl text-blue-600"></i>
+                <div class="glass-card p-8 border-accent-blue">
+                    <div class="w-14 h-14 rounded-lg icon-glow-blue flex items-center justify-center mb-6">
+                        <i class="fas fa-search text-xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Audit Challenges</h3>
-                    <p class="text-gray-600 mb-4">
-                        Lack of transparent, tamper-proof audit trails makes it difficult to verify 
-                        document processing history and maintain compliance.
+                    <h3 class="text-xl font-bold mb-4" style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem;">
+                        Audit Challenges</h3>
+                    <p class="text-gray-400 mb-4 text-sm">
+                        Lack of transparent, tamper-proof audit trails makes it difficult to
+                        verify document processing history.
                     </p>
-                    <ul class="text-sm text-gray-500 space-y-1">
-                        <li>• No immutable records</li>
-                        <li>• Limited transparency</li>
-                        <li>• Trust issues</li>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="w-1 h-1 bg-blue-400 rounded-full mr-2"></span>No
+                            immutable records</li>
+                        <li class="flex items-center"><span class="w-1 h-1 bg-blue-400 rounded-full mr-2"></span>Limited
+                            transparency</li>
+                        <li class="flex items-center"><span class="w-1 h-1 bg-blue-400 rounded-full mr-2"></span>Trust
+                            issues</li>
                     </ul>
                 </div>
             </div>
 
             <!-- Statistics -->
-            <div class="glass-card p-8 bg-gradient-to-r from-blue-600 to-purple-600">
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center text-white">
+            <div class="glass-card p-8">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
                     <div>
-                        <div class="text-4xl font-bold mb-2">$3.2T</div>
-                        <div class="text-blue-100">Annual Fraud Losses</div>
+                        <div class="stat-number text-4xl font-bold mb-2" style="font-family: 'Orbitron', sans-serif;">
+                            $3.2T</div>
+                        <div class="text-gray-500 text-sm">Annual Fraud Losses</div>
                     </div>
                     <div>
-                        <div class="text-4xl font-bold mb-2">83%</div>
-                        <div class="text-blue-100">Organizations Affected</div>
+                        <div class="stat-number text-4xl font-bold mb-2" style="font-family: 'Orbitron', sans-serif;">
+                            83%</div>
+                        <div class="text-gray-500 text-sm">Organizations Affected</div>
                     </div>
                     <div>
-                        <div class="text-4xl font-bold mb-2">45%</div>
-                        <div class="text-blue-100">Increase in Digital Fraud</div>
+                        <div class="stat-number text-4xl font-bold mb-2" style="font-family: 'Orbitron', sans-serif;">
+                            45%</div>
+                        <div class="text-gray-500 text-sm">Increase in Digital Fraud</div>
                     </div>
                     <div>
-                        <div class="text-4xl font-bold mb-2">6M</div>
-                        <div class="text-blue-100">PII Records Breached Daily</div>
+                        <div class="stat-number text-4xl font-bold mb-2" style="font-family: 'Orbitron', sans-serif;">6M
+                        </div>
+                        <div class="text-gray-500 text-sm">PII Records Breached Daily</div>
                     </div>
                 </div>
             </div>
@@ -222,188 +450,206 @@
     </section>
 
     <!-- Solution Section -->
-    <section id="solution" class="py-20 bg-gray-50">
+    <section id="solution" class="py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-6">
-                    Our <span class="text-blue-600">Comprehensive Solution</span>
+                <h2 class="text-3xl lg:text-4xl font-bold mb-6" style="font-family: 'Orbitron', sans-serif;">
+                    Our <span class="text-gradient-amber">Comprehensive Solution</span>
                 </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    SecuredDoc combines cutting-edge AI, blockchain technology, and advanced security 
-                    practices to create the most robust document verification system available.
+                <p class="text-lg text-gray-400 max-w-3xl mx-auto">
+                    SecuredDoc combines cutting-edge AI, blockchain technology, and advanced security
+                    practices to create the most robust document verification system.
                 </p>
             </div>
 
-            <!-- Solution Process -->
-            <div class="relative">
-                <!-- Process Flow -->
-                <div class="flex flex-col lg:flex-row items-center justify-between space-y-8 lg:space-y-0 lg:space-x-4">
-                    <!-- Step 1 -->
-                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg w-full lg:w-1/4 text-center">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-upload text-2xl text-blue-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">1. Upload Document</h3>
-                        <p class="text-gray-600 text-sm">
-                            Secure upload of PDFs, images, or CSV files with advanced file validation
-                        </p>
+            <!-- Process Flow -->
+            <div class="flex flex-col lg:flex-row items-center justify-between space-y-8 lg:space-y-0 lg:space-x-4">
+                <!-- Step 1 -->
+                <div class="glass-card p-6 w-full lg:w-1/4 text-center">
+                    <div class="w-14 h-14 rounded-lg icon-glow-blue flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-upload text-xl"></i>
                     </div>
+                    <h3 class="font-bold mb-3" style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">1. Upload
+                        Document</h3>
+                    <p class="text-gray-500 text-sm">
+                        Secure upload of PDFs, images, or CSV files with advanced validation
+                    </p>
+                </div>
 
-                    <div class="hidden lg:block text-gray-300">
-                        <i class="fas fa-arrow-right text-2xl"></i>
-                    </div>
+                <div class="hidden lg:block step-connector"></div>
 
-                    <!-- Step 2 -->
-                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg w-full lg:w-1/4 text-center">
-                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-brain text-2xl text-green-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">2. AI Analysis</h3>
-                        <p class="text-gray-600 text-sm">
-                            Multi-layer AI analysis for PII detection, fraud patterns, and authenticity verification
-                        </p>
+                <!-- Step 2 -->
+                <div class="glass-card p-6 w-full lg:w-1/4 text-center">
+                    <div class="w-14 h-14 rounded-lg icon-glow-emerald flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-brain text-xl"></i>
                     </div>
+                    <h3 class="font-bold mb-3" style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">2. AI
+                        Analysis</h3>
+                    <p class="text-gray-500 text-sm">
+                        Multi-layer AI analysis for PII detection, fraud patterns, and authenticity
+                    </p>
+                </div>
 
-                    <div class="hidden lg:block text-gray-300">
-                        <i class="fas fa-arrow-right text-2xl"></i>
-                    </div>
+                <div class="hidden lg:block step-connector"></div>
 
-                    <!-- Step 3 -->
-                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg w-full lg:w-1/4 text-center">
-                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-cube text-2xl text-purple-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">3. Blockchain Registry</h3>
-                        <p class="text-gray-600 text-sm">
-                            Immutable registration on Stacks blockchain with complete audit trail
-                        </p>
+                <!-- Step 3 -->
+                <div class="glass-card p-6 w-full lg:w-1/4 text-center">
+                    <div class="w-14 h-14 rounded-lg icon-glow-violet flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-cube text-xl"></i>
                     </div>
+                    <h3 class="font-bold mb-3" style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">3.
+                        Blockchain Registry</h3>
+                    <p class="text-gray-500 text-sm">
+                        Immutable registration on Stacks blockchain with complete audit trail
+                    </p>
+                </div>
 
-                    <div class="hidden lg:block text-gray-300">
-                        <i class="fas fa-arrow-right text-2xl"></i>
-                    </div>
+                <div class="hidden lg:block step-connector"></div>
 
-                    <!-- Step 4 -->
-                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg w-full lg:w-1/4 text-center">
-                        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-certificate text-2xl text-yellow-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-3">4. Secure Output</h3>
-                        <p class="text-gray-600 text-sm">
-                            Privacy-protected documents with comprehensive security reports and verification
-                        </p>
+                <!-- Step 4 -->
+                <div class="glass-card p-6 w-full lg:w-1/4 text-center">
+                    <div class="w-14 h-14 rounded-lg icon-glow-amber flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-certificate text-xl"></i>
                     </div>
+                    <h3 class="font-bold mb-3" style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">4. Secure
+                        Output</h3>
+                    <p class="text-gray-500 text-sm">
+                        Privacy-protected documents with comprehensive security reports
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-20 bg-white">
+    <section id="features" class="py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-6">
-                    Powerful <span class="text-purple-600">Features</span>
+                <h2 class="text-3xl lg:text-4xl font-bold mb-6" style="font-family: 'Orbitron', sans-serif;">
+                    Powerful <span class="text-gradient-violet">Features</span>
                 </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                <p class="text-lg text-gray-400 max-w-3xl mx-auto">
                     Comprehensive document security powered by cutting-edge technology
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Feature 1 -->
-                <div class="feature-card bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl">
-                    <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-robot text-white text-xl"></i>
+                <div class="glass-card p-8 border-accent-blue cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg icon-glow-blue flex items-center justify-center mb-6">
+                        <i class="fas fa-robot text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Advanced PII Detection</h3>
-                    <p class="text-gray-600 mb-4">
-                        AI-powered detection of personally identifiable information using Presidio and Transformers models.
+                    <h3 class="text-lg font-bold mb-4" style="font-family: 'Orbitron', sans-serif;">Advanced PII
+                        Detection</h3>
+                    <p class="text-gray-400 mb-4 text-sm">
+                        AI-powered detection of personally identifiable information using Presidio and Transformers.
                     </p>
-                    <ul class="text-sm text-gray-500 space-y-1">
-                        <li>• Names, SSN, Credit Cards</li>
-                        <li>• Custom entity recognition</li>
-                        <li>• Multi-language support</li>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="w-1 h-1 bg-blue-400 rounded-full mr-2"></span>Names,
+                            SSN, Credit Cards</li>
+                        <li class="flex items-center"><span class="w-1 h-1 bg-blue-400 rounded-full mr-2"></span>Custom
+                            entity recognition</li>
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-blue-400 rounded-full mr-2"></span>Multi-language support</li>
                     </ul>
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="feature-card bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-xl">
-                    <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-shield-virus text-white text-xl"></i>
+                <div class="glass-card p-8 border-accent-emerald cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg icon-glow-emerald flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-virus text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Fraud Detection</h3>
-                    <p class="text-gray-600 mb-4">
+                    <h3 class="text-lg font-bold mb-4" style="font-family: 'Orbitron', sans-serif;">Fraud Detection</h3>
+                    <p class="text-gray-400 mb-4 text-sm">
                         Multi-layer analysis detecting document manipulation, forgeries, and suspicious patterns.
                     </p>
-                    <ul class="text-sm text-gray-500 space-y-1">
-                        <li>• Image manipulation detection</li>
-                        <li>• Metadata forensics</li>
-                        <li>• Statistical analysis</li>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-emerald-400 rounded-full mr-2"></span>Image manipulation detection
+                        </li>
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-emerald-400 rounded-full mr-2"></span>Metadata forensics</li>
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-emerald-400 rounded-full mr-2"></span>Statistical analysis</li>
                     </ul>
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="feature-card bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-xl">
-                    <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-link text-white text-xl"></i>
+                <div class="glass-card p-8 border-accent-violet cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg icon-glow-violet flex items-center justify-center mb-6">
+                        <i class="fas fa-link text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Blockchain Audit</h3>
-                    <p class="text-gray-600 mb-4">
+                    <h3 class="text-lg font-bold mb-4" style="font-family: 'Orbitron', sans-serif;">Blockchain Audit
+                    </h3>
+                    <p class="text-gray-400 mb-4 text-sm">
                         Immutable audit trails on Stacks blockchain ensuring document integrity and compliance.
                     </p>
-                    <ul class="text-sm text-gray-500 space-y-1">
-                        <li>• Tamper-proof records</li>
-                        <li>• Complete audit history</li>
-                        <li>• Regulatory compliance</li>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-violet-400 rounded-full mr-2"></span>Tamper-proof records</li>
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-violet-400 rounded-full mr-2"></span>Complete audit history</li>
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-violet-400 rounded-full mr-2"></span>Regulatory compliance</li>
                     </ul>
                 </div>
 
                 <!-- Feature 4 -->
-                <div class="feature-card bg-gradient-to-br from-yellow-50 to-yellow-100 p-8 rounded-xl">
-                    <div class="w-12 h-12 bg-yellow-600 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-mask text-white text-xl"></i>
+                <div class="glass-card p-8 border-accent-amber cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg icon-glow-amber flex items-center justify-center mb-6">
+                        <i class="fas fa-mask text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Privacy Protection</h3>
-                    <p class="text-gray-600 mb-4">
+                    <h3 class="text-lg font-bold mb-4" style="font-family: 'Orbitron', sans-serif;">Privacy Protection
+                    </h3>
+                    <p class="text-gray-400 mb-4 text-sm">
                         Advanced anonymization and redaction techniques protecting sensitive information.
                     </p>
-                    <ul class="text-sm text-gray-500 space-y-1">
-                        <li>• Smart redaction</li>
-                        <li>• Blur effects</li>
-                        <li>• Data tokenization</li>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="w-1 h-1 bg-amber-400 rounded-full mr-2"></span>Smart
+                            redaction</li>
+                        <li class="flex items-center"><span class="w-1 h-1 bg-amber-400 rounded-full mr-2"></span>Blur
+                            effects</li>
+                        <li class="flex items-center"><span class="w-1 h-1 bg-amber-400 rounded-full mr-2"></span>Data
+                            tokenization</li>
                     </ul>
                 </div>
 
                 <!-- Feature 5 -->
-                <div class="feature-card bg-gradient-to-br from-indigo-50 to-indigo-100 p-8 rounded-xl">
-                    <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-chart-line text-white text-xl"></i>
+                <div class="glass-card p-8 border-accent-teal cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg icon-glow-teal flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Risk Assessment</h3>
-                    <p class="text-gray-600 mb-4">
+                    <h3 class="text-lg font-bold mb-4" style="font-family: 'Orbitron', sans-serif;">Risk Assessment</h3>
+                    <p class="text-gray-400 mb-4 text-sm">
                         Comprehensive scoring system with detailed risk analysis and actionable recommendations.
                     </p>
-                    <ul class="text-sm text-gray-500 space-y-1">
-                        <li>• Real-time risk scoring</li>
-                        <li>• Pattern analysis</li>
-                        <li>• Compliance reports</li>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-teal-400 rounded-full mr-2"></span>Real-time risk scoring</li>
+                        <li class="flex items-center"><span class="w-1 h-1 bg-teal-400 rounded-full mr-2"></span>Pattern
+                            analysis</li>
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-teal-400 rounded-full mr-2"></span>Compliance reports</li>
                     </ul>
                 </div>
 
                 <!-- Feature 6 -->
-                <div class="feature-card bg-gradient-to-br from-pink-50 to-pink-100 p-8 rounded-xl">
-                    <div class="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-wallet text-white text-xl"></i>
+                <div class="glass-card p-8 border-accent-rose cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg icon-glow-rose flex items-center justify-center mb-6">
+                        <i class="fas fa-wallet text-xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Wallet Integration</h3>
-                    <p class="text-gray-600 mb-4">
+                    <h3 class="text-lg font-bold mb-4" style="font-family: 'Orbitron', sans-serif;">Wallet Integration
+                    </h3>
+                    <p class="text-gray-400 mb-4 text-sm">
                         Seamless integration with Leather (Stacks) and MetaMask wallets for blockchain operations.
                     </p>
-                    <ul class="text-sm text-gray-500 space-y-1">
-                        <li>• Leather wallet support</li>
-                        <li>• MetaMask integration</li>
-                        <li>• Secure transactions</li>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="w-1 h-1 bg-rose-400 rounded-full mr-2"></span>Leather
+                            wallet support</li>
+                        <li class="flex items-center"><span
+                                class="w-1 h-1 bg-rose-400 rounded-full mr-2"></span>MetaMask integration</li>
+                        <li class="flex items-center"><span class="w-1 h-1 bg-rose-400 rounded-full mr-2"></span>Secure
+                            transactions</li>
                     </ul>
                 </div>
             </div>
@@ -411,64 +657,74 @@
     </section>
 
     <!-- Technology Stack -->
-    <section class="py-20 bg-gray-50">
+    <section class="py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-6">
-                    Powered by <span class="text-indigo-600">Cutting-Edge Technology</span>
+                <h2 class="text-3xl lg:text-4xl font-bold mb-6" style="font-family: 'Orbitron', sans-serif;">
+                    Powered by <span class="text-gradient-amber">Cutting-Edge Tech</span>
                 </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                <p class="text-lg text-gray-400 max-w-3xl mx-auto">
                     Built on enterprise-grade technologies for maximum security and performance
                 </p>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- AI/ML -->
-                <div class="bg-white p-6 rounded-lg text-center shadow-md">
-                    <i class="fas fa-brain text-3xl text-blue-600 mb-4"></i>
-                    <h4 class="font-bold text-gray-900 mb-2">AI & Machine Learning</h4>
-                    <p class="text-gray-600 text-sm">Presidio, Transformers, spaCy, OpenCV</p>
+                <div class="glass-card p-6 text-center cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg icon-glow-blue flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-brain text-xl"></i>
+                    </div>
+                    <h4 class="font-bold mb-2" style="font-family: 'Orbitron', sans-serif; font-size: 0.85rem;">AI & ML
+                    </h4>
+                    <p class="text-gray-500 text-sm">Presidio, Transformers, spaCy, OpenCV</p>
                 </div>
-
-                <!-- Blockchain -->
-                <div class="bg-white p-6 rounded-lg text-center shadow-md">
-                    <i class="fas fa-cube text-3xl text-purple-600 mb-4"></i>
-                    <h4 class="font-bold text-gray-900 mb-2">Blockchain</h4>
-                    <p class="text-gray-600 text-sm">Stacks Network, Smart Contracts</p>
+                <div class="glass-card p-6 text-center cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg icon-glow-violet flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-cube text-xl"></i>
+                    </div>
+                    <h4 class="font-bold mb-2" style="font-family: 'Orbitron', sans-serif; font-size: 0.85rem;">
+                        Blockchain</h4>
+                    <p class="text-gray-500 text-sm">Stacks Network, Smart Contracts</p>
                 </div>
-
-                <!-- Security -->
-                <div class="bg-white p-6 rounded-lg text-center shadow-md">
-                    <i class="fas fa-shield-alt text-3xl text-green-600 mb-4"></i>
-                    <h4 class="font-bold text-gray-900 mb-2">Security</h4>
-                    <p class="text-gray-600 text-sm">Cryptography, Digital Signatures</p>
+                <div class="glass-card p-6 text-center cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg icon-glow-emerald flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-xl"></i>
+                    </div>
+                    <h4 class="font-bold mb-2" style="font-family: 'Orbitron', sans-serif; font-size: 0.85rem;">Security
+                    </h4>
+                    <p class="text-gray-500 text-sm">Cryptography, Digital Signatures</p>
                 </div>
-
-                <!-- Web Tech -->
-                <div class="bg-white p-6 rounded-lg text-center shadow-md">
-                    <i class="fas fa-code text-3xl text-orange-600 mb-4"></i>
-                    <h4 class="font-bold text-gray-900 mb-2">Web Technologies</h4>
-                    <p class="text-gray-600 text-sm">Flask, JavaScript, Web3</p>
+                <div class="glass-card p-6 text-center cursor-pointer">
+                    <div class="w-12 h-12 rounded-lg icon-glow-amber flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-code text-xl"></i>
+                    </div>
+                    <h4 class="font-bold mb-2" style="font-family: 'Orbitron', sans-serif; font-size: 0.85rem;">Web
+                        Technologies</h4>
+                    <p class="text-gray-500 text-sm">Flask, JavaScript, Web3</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Call to Action -->
-    <section class="gradient-bg py-20">
-        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <h2 class="text-4xl font-bold text-white mb-6">
+    <section class="py-20 relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-amber-500 to-violet-600 opacity-5"></div>
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
+            <h2 class="text-3xl lg:text-4xl font-bold mb-6" style="font-family: 'Orbitron', sans-serif;">
                 Ready to Secure Your Documents?
             </h2>
-            <p class="text-xl text-blue-100 mb-8 leading-relaxed">
-                Join the future of document security with blockchain-verified fraud detection 
+            <p class="text-lg text-gray-400 mb-8 leading-relaxed">
+                Join the future of document security with blockchain-verified fraud detection
                 and AI-powered privacy protection.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/dashboard" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-blue-50 transition duration-200 text-center">
+                <a href="/dashboard"
+                    class="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition duration-300 text-center cursor-pointer glow-amber"
+                    style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">
                     <i class="fas fa-rocket mr-2"></i>Start Processing Now
                 </a>
-                <a href="/login" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-200 text-center">
+                <a href="/login"
+                    class="glass-card px-8 py-4 rounded-lg font-semibold transition duration-300 text-center cursor-pointer text-gray-300 glow-violet"
+                    style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">
                     <i class="fas fa-wallet mr-2"></i>Connect Wallet
                 </a>
             </div>
@@ -476,118 +732,132 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
+    <footer class="py-12" style="background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(255,255,255,0.05);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-8">
                 <div class="col-span-2">
                     <div class="flex items-center mb-4">
-                        <i class="fas fa-shield-alt text-2xl mr-3"></i>
-                        <h3 class="text-xl font-bold">SecuredDoc</h3>
+                        <div class="w-9 h-9 rounded-lg icon-glow-amber flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="text-lg font-bold" style="font-family: 'Orbitron', sans-serif;">SecuredDoc</h3>
                     </div>
-                    <p class="text-gray-400 mb-4">
-                        Next-generation document security platform combining AI fraud detection 
+                    <p class="text-gray-500 mb-4 text-sm">
+                        Next-generation document security platform combining AI fraud detection
                         with blockchain verification for enterprise-grade protection.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
-                            <i class="fab fa-github text-xl"></i>
+                        <a href="#" class="text-gray-500 hover:text-amber-400 transition duration-200 cursor-pointer">
+                            <i class="fab fa-github text-lg"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
-                            <i class="fab fa-linkedin text-xl"></i>
+                        <a href="#" class="text-gray-500 hover:text-amber-400 transition duration-200 cursor-pointer">
+                            <i class="fab fa-linkedin text-lg"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-200">
-                            <i class="fab fa-twitter text-xl"></i>
+                        <a href="#" class="text-gray-500 hover:text-amber-400 transition duration-200 cursor-pointer">
+                            <i class="fab fa-twitter text-lg"></i>
                         </a>
                     </div>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">Features</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition duration-200">Fraud Detection</a></li>
-                        <li><a href="#" class="hover:text-white transition duration-200">PII Protection</a></li>
-                        <li><a href="#" class="hover:text-white transition duration-200">Blockchain Audit</a></li>
-                        <li><a href="#" class="hover:text-white transition duration-200">Risk Assessment</a></li>
+                    <h4 class="text-sm font-semibold mb-4 text-gray-400 uppercase tracking-wider"
+                        style="font-family: 'Orbitron', sans-serif;">Features</h4>
+                    <ul class="space-y-2 text-gray-500 text-sm">
+                        <li><a href="#" class="hover:text-amber-400 transition duration-200 cursor-pointer">Fraud
+                                Detection</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition duration-200 cursor-pointer">PII
+                                Protection</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition duration-200 cursor-pointer">Blockchain
+                                Audit</a></li>
+                        <li><a href="#" class="hover:text-amber-400 transition duration-200 cursor-pointer">Risk
+                                Assessment</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="/dashboard" class="hover:text-white transition duration-200">Dashboard</a></li>
-                        <li><a href="/login" class="hover:text-white transition duration-200">Login</a></li>
-                        <li><a href="/auth" class="hover:text-white transition duration-200">Enhanced Features</a></li>
-                        <li><a href="/health" class="hover:text-white transition duration-200">System Status</a></li>
+                    <h4 class="text-sm font-semibold mb-4 text-gray-400 uppercase tracking-wider"
+                        style="font-family: 'Orbitron', sans-serif;">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-500 text-sm">
+                        <li><a href="/dashboard"
+                                class="hover:text-amber-400 transition duration-200 cursor-pointer">Dashboard</a></li>
+                        <li><a href="/login"
+                                class="hover:text-amber-400 transition duration-200 cursor-pointer">Login</a></li>
+                        <li><a href="/auth" class="hover:text-amber-400 transition duration-200 cursor-pointer">Enhanced
+                                Features</a></li>
+                        <li><a href="/health" class="hover:text-amber-400 transition duration-200 cursor-pointer">System
+                                Status</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <div class="mt-8 pt-8 text-center text-gray-600 text-sm"
+                style="border-top: 1px solid rgba(255,255,255,0.05);">
                 <p>&copy; 2025 SecuredDoc. Built for Standard Chartered Hackathon. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <!-- Mobile Menu -->
-    <div id="mobileMenu" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-        <div class="fixed right-0 top-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 translate-x-full">
+    <div id="mobileMenu" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden">
+        <div class="fixed right-0 top-0 h-full w-72 transform transition-transform duration-300 translate-x-full"
+            style="background: var(--bg-surface); border-left: 1px solid var(--glass-border);">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-8">
-                    <h3 class="text-xl font-bold text-gray-900">Menu</h3>
-                    <button id="closeMobileMenu" class="text-gray-500">
+                    <h3 class="text-lg font-bold" style="font-family: 'Orbitron', sans-serif;">Menu</h3>
+                    <button id="closeMobileMenu" class="text-gray-400 hover:text-white transition cursor-pointer"
+                        title="Close menu">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
                 <nav class="space-y-4">
-                    <a href="#problem" class="block text-gray-700 hover:text-blue-600 transition duration-200">Problem</a>
-                    <a href="#solution" class="block text-gray-700 hover:text-blue-600 transition duration-200">Solution</a>
-                    <a href="#features" class="block text-gray-700 hover:text-blue-600 transition duration-200">Features</a>
-                    <a href="/dashboard" class="block bg-blue-600 text-white px-4 py-2 rounded-lg text-center">Get Started</a>
+                    <a href="#problem"
+                        class="block text-gray-400 hover:text-amber-400 transition duration-200 cursor-pointer">Problem</a>
+                    <a href="#solution"
+                        class="block text-gray-400 hover:text-amber-400 transition duration-200 cursor-pointer">Solution</a>
+                    <a href="#features"
+                        class="block text-gray-400 hover:text-amber-400 transition duration-200 cursor-pointer">Features</a>
+                    <a href="/dashboard"
+                        class="block bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 px-4 py-3 rounded-lg text-center font-semibold cursor-pointer"
+                        style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">Get Started</a>
                 </nav>
             </div>
         </div>
     </div>
 
     <script>
-        // Mobile menu functionality
-        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+        // Mobile menu
+        document.getElementById('mobileMenuBtn').addEventListener('click', function () {
             const mobileMenu = document.getElementById('mobileMenu');
             const menuPanel = mobileMenu.querySelector('div > div');
             mobileMenu.classList.remove('hidden');
-            setTimeout(() => {
-                menuPanel.classList.remove('translate-x-full');
-            }, 10);
+            setTimeout(() => { menuPanel.classList.remove('translate-x-full'); }, 10);
         });
 
-        document.getElementById('closeMobileMenu').addEventListener('click', function() {
+        document.getElementById('closeMobileMenu').addEventListener('click', function () {
             const mobileMenu = document.getElementById('mobileMenu');
             const menuPanel = mobileMenu.querySelector('div > div');
             menuPanel.classList.add('translate-x-full');
-            setTimeout(() => {
-                mobileMenu.classList.add('hidden');
-            }, 300);
+            setTimeout(() => { mobileMenu.classList.add('hidden'); }, 300);
         });
 
-        // Smooth scrolling for anchor links
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
 
-        // Add scroll effect to navbar
-        window.addEventListener('scroll', function() {
+        // Nav scroll effect
+        window.addEventListener('scroll', function () {
             const nav = document.querySelector('nav');
             if (window.scrollY > 50) {
-                nav.style.backgroundColor = 'rgba(102, 126, 234, 0.95)';
+                nav.style.background = 'rgba(15, 23, 42, 0.95)';
             } else {
-                nav.style.backgroundColor = '';
+                nav.style.background = 'rgba(15, 23, 42, 0.8)';
             }
         });
     </script>
 </body>
+
 </html>

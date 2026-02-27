@@ -1,0 +1,151 @@
+{
+  "success": true,
+  "filename": "20260227_132337_Resume.pdf",
+  "processed_filename": "processed_20260227_132337_Resume.pdf",
+  "timestamp": "2026-02-27T13:25:49.748567",
+  "extracted_text": "MANAS SHARMA\nB.Tech Data Science Undergraduate \u2014 AI & Machine Learning Researcher\nResearch Focus: Explainable Reinforcement Learning for Intelligent Systems\nPhone: +91 6265586868\nEmail: ms9580@srmist.edu.in\nGitHub: github.com/Manas8114\nLinkedIn: linkedin.com/in/Manas8114\nIELTS: Overall 6.5 (All Bands 6.5)\nRESEARCH INTERESTS\nReinforcement Learning, Explainable Arti\ufb01cial Intelligence (XAI), Machine Learning Systems, Intelligent Network Opti-\nmization, AI-Native Communication Systems\nEDUCATION\nB.Tech in Data Science\nSRM Institute of Science and Technology, India\nCGPA: 8.33 / 10\nExpected Graduation: May 2026\nRESEARCH EXPERIENCE\nAI-Native Network Optimization Research\n\u2022 Designed reinforcement learning-based framework for adaptive resource allocation in intelligent communication net-\nworks.\n\u2022 Investigated optimization strategies for bandwidth prioritization using intent-driven automation.\n\u2022 Conducted experimental evaluation of intelligent decision-making models for next-generation infrastructure systems.\nExplainable Machine Learning Systems\n\u2022 Developed interpretable machine learning models using SHAP-based feature attribution techniques.\n\u2022 Studied transparency and trust mechanisms in AI-driven decision-making pipelines.\nPUBLICATIONS\nSharma, M. \u201cReevaluating CNN Filter Dimensions: Experimental Findings on CIFAR-10 and Fashion-MNIST\u201d\nICICV 2026 \u2014 Accepted for Oral Presentation\nSharma, M. \u201cIntent-Driven AI-Native Network Slicing for Rural Broadcasting over ATSC 3.0/B2X\u201d\nWOCC 2026 \u2014 Under Review (EDAS)\nRESEARCH & INDUSTRY EXPERIENCE\nMachine Learning Intern 1Stop, Chennai\nJun 2024 \u2013 Jul 2024\n\u2022 Developed supervised learning models (Random Forest, XGBoost) on datasets exceeding 10k records.\n\u2022 Improved predictive performance through feature engineering and hyperparameter optimization.\n\u2022 Evaluated models using cross-validation, precision, recall, and statistical performance metrics.\nSELECTED RESEARCH PROJECTS\nIntent-Driven ATSC Network Slicing (IIT Delhi Winner)\n\u2022 Proposed reinforcement learning-based adaptive bandwidth allocation framework.\n\u2022 Designed AI-native telecom slicing architecture for intelligent broadcasting systems.\n6G Intelligent Network Management System\n\u2022 Developed analytics-driven architecture enabling adaptive resource orchestration in next-generation networks.\nExplainable AI Loan Prediction System\n\u2022 Implemented interpretable machine learning framework using SHAP for transparent decision analysis.\nAI Tra\ufb03c Management System\n\u2022 Developed OpenCV-based real-time tra\ufb03c congestion detection and density estimation pipeline.\n1\n\nTECHNICAL SKILLS\nProgramming: Python, SQL\nMachine Learning: Scikit-learn, XGBoost, Ensemble Learning\nDeep Learning: Neural Networks, Computer Vision, NLP, Reinforcement Learning\nData Science: Pandas, NumPy, Statistical Analysis, Visualization\nTools: Git, Docker, MongoDB, FastAPI, Linux\nConcepts: Optimization Algorithms, Model Deployment, REST APIs\nACHIEVEMENTS\n\u2022 1st Prize \u2014 Build-a-thon 3.0, ITU IIT Delhi\n\u2022 1st Prize \u2014 Build-a-thon 4.0, ITU\n\u2022 2nd Prize \u2014 AI Agentic Battle\nLANGUAGES\nHindi (Native), English (Professional), German (Beginner)\n2\n",
+  "pii_detection": {
+    "sensitive_data": {
+      "ms9580@srmist.edu.in": {
+        "entity": "EMAIL_ADDRESS",
+        "safe_token": "fa64fc77-1d69-40e0-9505-628c1adbc8e1",
+        "confidence_score": 1.0
+      },
+      "Sharma": {
+        "entity": "PERSON",
+        "safe_token": "765dd341-fd92-48ed-9a23-c389874875d5",
+        "confidence_score": "0.9985701"
+      },
+      "India": {
+        "entity": "LOCATION",
+        "safe_token": "50bf8e58-a8c2-4f4b-b939-8f96b94d10e3",
+        "confidence_score": "0.935417"
+      },
+      "SRM Institute of Science and Technology": {
+        "entity": "ORGANIZATION",
+        "safe_token": "d3d5235f-764f-4046-9b7e-2c93667d6069",
+        "confidence_score": "0.93378776"
+      },
+      "linkedin.com/in/Manas8114": {
+        "entity": "URL",
+        "safe_token": "f0fc7bf5-0887-4e44-90f2-a225fd643e9e",
+        "confidence_score": 0.85
+      },
+      "May 2026": {
+        "entity": "DATE_TIME",
+        "safe_token": "7dfd5c7e-4908-4d43-9b59-1f53b9a362f1",
+        "confidence_score": 0.85
+      },
+      "Chennai": {
+        "entity": "LOCATION",
+        "safe_token": "636b59a4-cf0c-4684-ad48-4ed5f32f43df",
+        "confidence_score": 0.85
+      },
+      "Ensemble Learning\nDeep Learning: Neural Networks": {
+        "entity": "LOCATION",
+        "safe_token": "7328d5c9-3165-4b44-bd4e-e5b461f63850",
+        "confidence_score": 0.85
+      },
+      "Docker": {
+        "entity": "PERSON",
+        "safe_token": "e638e940-6494-4db9-bc2d-cb0be4126ddc",
+        "confidence_score": 0.85
+      },
+      "German": {
+        "entity": "NRP",
+        "safe_token": "a850e7d8-fc63-436f-bf8e-970b61c5af45",
+        "confidence_score": 0.85
+      },
+      "Beginner": {
+        "entity": "NRP",
+        "safe_token": "b8ca8afa-5805-4d75-a657-65c48c9e6482",
+        "confidence_score": 0.85
+      },
+      "+91 6265586868": {
+        "entity": "PHONE_NUMBER",
+        "safe_token": "cd81d2d7-9686-45cb-a844-8913834c7c8c",
+        "confidence_score": 0.75
+      },
+      "SHARMA": {
+        "entity": "ORGANIZATION",
+        "safe_token": "109d1bb0-3973-49f1-a854-cecfbd287e6c",
+        "confidence_score": "0.7210904"
+      },
+      "Communication": {
+        "entity": "ORGANIZATION",
+        "safe_token": "cbbf8d08-f57c-4818-906a-bd0c0665f52d",
+        "confidence_score": "0.6121817"
+      },
+      "Machine Learning": {
+        "entity": "ORGANIZATION",
+        "safe_token": "2640a1d1-8c9e-4965-86e9-74e8e1dd4eb6",
+        "confidence_score": "0.52052146"
+      },
+      "Learning": {
+        "entity": "ORGANIZATION",
+        "safe_token": "bf5767d2-1e92-4027-b894-cb6843fb41b2",
+        "confidence_score": "0.514799"
+      },
+      "B.Tech": {
+        "entity": "URL",
+        "safe_token": "c2d55a22-1650-45a2-a762-b04b85a2e222",
+        "confidence_score": 0.5
+      },
+      "srmist.edu.in": {
+        "entity": "URL",
+        "safe_token": "41117dd8-0ec3-4d24-a4e8-209c14aa2d1d",
+        "confidence_score": 0.5
+      },
+      "github.com/Manas8114": {
+        "entity": "URL",
+        "safe_token": "c623aaf0-956a-40a6-89b7-c2614b2b6fb2",
+        "confidence_score": 0.5
+      },
+      "Data": {
+        "entity": "ORGANIZATION",
+        "safe_token": "8add05c4-a28b-450b-be12-134c6b661e54",
+        "confidence_score": "0.43697935"
+      },
+      "ms9580": {
+        "entity": "US_DRIVER_LICENSE",
+        "safe_token": "3a226696-b704-4a72-882c-946a79f7caa2",
+        "confidence_score": 0.3
+      },
+      "6265586868": {
+        "entity": "IN_PHONE_WITHOUT_CODE",
+        "safe_token": "bfb04d34-7e9b-4caa-9614-5fcb2666fe16",
+        "confidence_score": 1.0
+      }
+    },
+    "pii_count": 22,
+    "entities_found": [
+      "LOCATION",
+      "EMAIL_ADDRESS",
+      "DATE_TIME",
+      "NRP",
+      "PERSON",
+      "PHONE_NUMBER",
+      "ORGANIZATION",
+      "URL",
+      "US_DRIVER_LICENSE",
+      "IN_PHONE_WITHOUT_CODE"
+    ]
+  },
+  "fraud_detection": {
+    "fraud_probability": 0.1936,
+    "risk_level": "Low",
+    "suspicious_patterns": [
+      "no_digital_signature",
+      "suspicious_modifications"
+    ],
+    "confidence_score": 0.7549999999999999,
+    "blockchain_hash": "0e134d806b8a822a98c1b86729f172502644950855e3ec12eb447a4a02368e47",
+    "audit_trail_id": "0x795b69b3e735f3847fd994ff1ec634cdc3f839b5544915dd7303cd041e84"
+  },
+  "blockchain": null,
+  "processing_options": {
+    "blockchain_enabled": false,
+    "fraud_detection_enabled": true,
+    "audit_trail_enabled": true
+  }
+}

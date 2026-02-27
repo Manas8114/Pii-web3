@@ -13,6 +13,7 @@
 (define-constant err-token-not-found (err u102))
 (define-constant err-unauthorized (err u103))
 (define-constant err-invalid-amount (err u104))
+(define-constant err-contract-paused (err u105))
 
 ;; Data structures
 (define-map tokens 
@@ -50,6 +51,9 @@
 ;; Global counters
 (define-data-var token-counter uint u0)
 (define-data-var transaction-counter uint u0)
+
+;; Pause state — when true, transfer/mint/burn are blocked
+(define-data-var is-paused bool false)
 
 ;; Events for real-time monitoring
 (define-public (emit-token-created (token-id uint) (name (string-ascii 100)) (symbol (string-ascii 10)))
@@ -137,6 +141,7 @@
         (
             (sender-balance (default-to u0 (get balance (map-get? balances { token-id: token-id, holder: tx-sender }))))
         )
+        (asserts! (not (var-get is-paused)) err-contract-paused)
         (asserts! (>= sender-balance amount) err-insufficient-balance)
         (asserts! (> amount u0) err-invalid-amount)
         
@@ -182,6 +187,7 @@
         (
             (token-info (unwrap! (map-get? tokens { token-id: token-id }) err-token-not-found))
         )
+        (asserts! (not (var-get is-paused)) err-contract-paused)
         (asserts! (is-eq tx-sender (get owner token-info)) err-unauthorized)
         
         (begin
@@ -227,6 +233,7 @@
             (sender-balance (default-to u0 (get balance (map-get? balances { token-id: token-id, holder: tx-sender }))))
             (token-info (unwrap! (map-get? tokens { token-id: token-id }) err-token-not-found))
         )
+        (asserts! (not (var-get is-paused)) err-contract-paused)
         (asserts! (>= sender-balance amount) err-insufficient-balance)
         
         (begin
@@ -361,9 +368,23 @@
 (define-public (emergency-pause)
     (begin
         (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (var-set is-paused true)
         (print { event: "emergency-pause", timestamp: block-timestamp })
         (ok true)
     )
+)
+
+(define-public (emergency-unpause)
+    (begin
+        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (var-set is-paused false)
+        (print { event: "emergency-unpause", timestamp: block-timestamp })
+        (ok true)
+    )
+)
+
+(define-read-only (get-paused)
+    (var-get is-paused)
 )
 
 ;; Contract initialization

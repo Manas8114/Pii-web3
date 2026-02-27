@@ -5,11 +5,23 @@ Combines AI-powered fraud detection with blockchain audit trails
 
 import json
 import logging
+import os
+import hashlib
 from datetime import datetime
 from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
 from dataclasses import dataclass
 from Models.blockchain_audit import BlockchainAuditManager
+
+try:
+    import fitz  # PyMuPDF
+except ImportError:
+    fitz = None
+
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -138,170 +150,349 @@ class EnhancedFraudDetector:
             raise
     
     def _analyze_structure(self, file_path: str) -> Dict[str, Any]:
-        """Analyze document structure for anomalies"""
+        """Analyze document structure for anomalies using PyMuPDF."""
         try:
-            # Simulated structural analysis
-            # In a real implementation, this would analyze PDF structure, fonts, layouts, etc.
-            
+            ext = os.path.splitext(file_path)[1].lower()
+            anomalies: List[str] = []
+
+            if ext == '.pdf' and fitz:
+                doc = fitz.open(file_path)
+
+                # --- Font consistency ---
+                all_fonts: set = set()
+                for page in doc:
+                    for f in page.get_fonts(full=True):
+                        all_fonts.add(f[3])  # font name
+                unique_font_count = len(all_fonts)
+                font_consistency = max(0.0, 1.0 - (unique_font_count - 1) * 0.15)
+                if unique_font_count > 5:
+                    anomalies.append("inconsistent_fonts")
+
+                # --- Layout regularity (page-size variance) ---
+                widths = [p.rect.width for p in doc]
+                heights = [p.rect.height for p in doc]
+                size_variance = float(np.std(widths) + np.std(heights))
+                layout_regularity = max(0.0, 1.0 - size_variance / 100.0)
+                if size_variance > 20:
+                    anomalies.append("irregular_layout")
+
+                # --- Formatting (annotation count as proxy) ---
+                total_annots = sum(len(list(p.annots() or [])) for p in doc)
+                formatting_consistency = max(0.0, 1.0 - total_annots * 0.05)
+                if total_annots > 10:
+                    anomalies.append("formatting_inconsistencies")
+
+                # --- Element alignment (text-block vertical alignment) ---
+                alignment_scores: List[float] = []
+                for page in doc:
+                    blocks = page.get_text("blocks")
+                    if len(blocks) > 1:
+                        x0s = [b[0] for b in blocks]
+                        alignment_scores.append(max(0.0, 1.0 - float(np.std(x0s)) / 50.0))
+                element_alignment = float(np.mean(alignment_scores)) if alignment_scores else 0.8
+
+                doc.close()
+            else:
+                # For images or unsupported types give neutral scores
+                font_consistency = 0.8
+                layout_regularity = 0.8
+                formatting_consistency = 0.8
+                element_alignment = 0.8
+
             structural_scores = {
-                "font_consistency": np.random.uniform(0.1, 0.9),
-                "layout_regularity": np.random.uniform(0.2, 0.8),
-                "formatting_consistency": np.random.uniform(0.1, 0.7),
-                "element_alignment": np.random.uniform(0.3, 0.9)
+                "font_consistency": round(font_consistency, 3),
+                "layout_regularity": round(layout_regularity, 3),
+                "formatting_consistency": round(formatting_consistency, 3),
+                "element_alignment": round(element_alignment, 3),
             }
-            
-            # Check for structural anomalies
-            anomalies = []
-            if structural_scores["font_consistency"] < 0.3:
-                anomalies.append("inconsistent_fonts")
-            if structural_scores["layout_regularity"] < 0.4:
-                anomalies.append("irregular_layout")
-            if structural_scores["formatting_consistency"] < 0.3:
-                anomalies.append("formatting_inconsistencies")
-            
-            overall_score = np.mean(list(structural_scores.values()))
-            
+            overall_score = float(np.mean(list(structural_scores.values())))
+
             return {
                 "scores": structural_scores,
                 "anomalies": anomalies,
-                "overall_score": overall_score,
-                "analysis_method": "structural_analysis_v2.1"
+                "overall_score": round(overall_score, 3),
+                "analysis_method": "structural_analysis_v3.0_real",
             }
-            
         except Exception as e:
             logger.error(f"Error in structural analysis: {str(e)}")
             return {"error": str(e), "overall_score": 0.5}
     
     def _analyze_content(self, file_path: str) -> Dict[str, Any]:
-        """Analyze document content for suspicious patterns"""
+        """Analyze document content for suspicious patterns using real text extraction."""
         try:
-            # Simulated content analysis
-            content_scores = {
-                "text_authenticity": np.random.uniform(0.2, 0.9),
-                "logical_flow": np.random.uniform(0.3, 0.8),
-                "language_consistency": np.random.uniform(0.4, 0.9),
-                "content_coherence": np.random.uniform(0.1, 0.8)
-            }
-            
-            # Detect suspicious content patterns
-            suspicious_content = []
-            if content_scores["text_authenticity"] < 0.4:
+            ext = os.path.splitext(file_path)[1].lower()
+            text = ""
+
+            if ext == '.pdf' and fitz:
+                doc = fitz.open(file_path)
+                text = "\n".join(page.get_text() for page in doc)
+                doc.close()
+
+            # --- Text authenticity (ratio of printable chars) ---
+            if text:
+                printable_ratio = sum(c.isprintable() or c.isspace() for c in text) / max(len(text), 1)
+                text_authenticity = round(printable_ratio, 3)
+            else:
+                text_authenticity = 0.8
+
+            # --- Logical flow (average sentence length variance) ---
+            sentences = [s.strip() for s in text.replace('\n', ' ').split('.') if s.strip()]
+            if len(sentences) > 2:
+                lengths = [len(s.split()) for s in sentences]
+                cv = float(np.std(lengths)) / max(float(np.mean(lengths)), 1)
+                logical_flow = round(max(0.0, 1.0 - cv * 0.5), 3)
+            else:
+                logical_flow = 0.8
+
+            # --- Language consistency (unique-word ratio) ---
+            words = text.lower().split()
+            if words:
+                language_consistency = round(min(1.0, len(set(words)) / max(len(words), 1) * 2), 3)
+            else:
+                language_consistency = 0.8
+
+            # --- Content coherence (presence of repeated long phrases) ---
+            from collections import Counter
+            trigrams = [' '.join(words[i:i+3]) for i in range(len(words)-2)]
+            trigram_counts = Counter(trigrams)
+            repeated = sum(1 for c in trigram_counts.values() if c > 3)
+            content_coherence = round(max(0.0, 1.0 - repeated * 0.05), 3)
+
+            suspicious_content: List[str] = []
+            if text_authenticity < 0.4:
                 suspicious_content.append("potential_text_manipulation")
-            if content_scores["logical_flow"] < 0.5:
+            if logical_flow < 0.5:
                 suspicious_content.append("illogical_content_flow")
-            
-            overall_score = np.mean(list(content_scores.values()))
-            
+            if repeated > 5:
+                suspicious_content.append("duplicate_text")
+
+            content_scores = {
+                "text_authenticity": text_authenticity,
+                "logical_flow": logical_flow,
+                "language_consistency": language_consistency,
+                "content_coherence": content_coherence,
+            }
+            overall_score = float(np.mean(list(content_scores.values())))
+
             return {
                 "scores": content_scores,
                 "suspicious_patterns": suspicious_content,
-                "overall_score": overall_score,
-                "text_analysis_confidence": np.random.uniform(0.6, 0.95),
-                "analysis_method": "nlp_content_analysis_v3.0"
+                "overall_score": round(overall_score, 3),
+                "text_analysis_confidence": round(min(1.0, len(text) / 500), 3),
+                "analysis_method": "nlp_content_analysis_v4.0_real",
             }
-            
         except Exception as e:
             logger.error(f"Error in content analysis: {str(e)}")
             return {"error": str(e), "overall_score": 0.5}
     
     def _analyze_metadata(self, file_path: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
-        """Analyze document metadata for inconsistencies"""
+        """Analyze document metadata for inconsistencies using real file metadata."""
         try:
-            # Simulated metadata analysis
+            ext = os.path.splitext(file_path)[1].lower()
+            metadata_anomalies: List[str] = []
+
+            creation_date_validity = 0.8
+            author_consistency = 0.8
+            modification_history = 0.8
+            tool_authenticity = 0.8
+
+            if ext == '.pdf' and fitz:
+                doc = fitz.open(file_path)
+                pdf_meta = doc.metadata or {}
+                doc.close()
+
+                # Creation date validity
+                creation = pdf_meta.get('creationDate', '')
+                mod_date = pdf_meta.get('modDate', '')
+                if creation and mod_date and creation > mod_date:
+                    creation_date_validity = 0.3
+                    metadata_anomalies.append("suspicious_creation_date")
+                elif not creation:
+                    creation_date_validity = 0.5
+
+                # Author consistency
+                author = pdf_meta.get('author', '')
+                producer = pdf_meta.get('producer', '')
+                creator = pdf_meta.get('creator', '')
+                if author and creator and author.lower() != creator.lower():
+                    author_consistency = 0.5
+                    metadata_anomalies.append("author_inconsistency")
+                if not author:
+                    author_consistency = 0.6
+
+                # Modification history
+                if creation and mod_date and creation != mod_date:
+                    modification_history = 0.7
+                elif not mod_date:
+                    modification_history = 0.6
+                    metadata_anomalies.append("suspicious_modifications")
+
+                # Tool authenticity
+                suspicious_tools = ['phantomjs', 'wkhtmltopdf', 'unknown']
+                if any(t in producer.lower() for t in suspicious_tools):
+                    tool_authenticity = 0.4
+                    metadata_anomalies.append("suspicious_tool_used")
+
             metadata_scores = {
-                "creation_date_validity": np.random.uniform(0.5, 1.0),
-                "author_consistency": np.random.uniform(0.3, 0.9),
-                "modification_history": np.random.uniform(0.2, 0.8),
-                "tool_authenticity": np.random.uniform(0.4, 0.9)
+                "creation_date_validity": round(creation_date_validity, 3),
+                "author_consistency": round(author_consistency, 3),
+                "modification_history": round(modification_history, 3),
+                "tool_authenticity": round(tool_authenticity, 3),
             }
-            
-            # Check for metadata anomalies
-            metadata_anomalies = []
-            if metadata_scores["creation_date_validity"] < 0.6:
-                metadata_anomalies.append("suspicious_creation_date")
-            if metadata_scores["author_consistency"] < 0.5:
-                metadata_anomalies.append("author_inconsistency")
-            if metadata_scores["modification_history"] < 0.4:
-                metadata_anomalies.append("suspicious_modifications")
-            
-            overall_score = np.mean(list(metadata_scores.values()))
-            
+            overall_score = float(np.mean(list(metadata_scores.values())))
+
             return {
                 "scores": metadata_scores,
                 "anomalies": metadata_anomalies,
-                "overall_score": overall_score,
+                "overall_score": round(overall_score, 3),
                 "metadata_available": len(metadata) > 0,
-                "analysis_method": "metadata_forensics_v2.3"
+                "analysis_method": "metadata_forensics_v3.0_real",
             }
-            
         except Exception as e:
             logger.error(f"Error in metadata analysis: {str(e)}")
             return {"error": str(e), "overall_score": 0.5}
     
     def _statistical_analysis(self, file_path: str) -> Dict[str, Any]:
-        """Perform statistical analysis for anomaly detection"""
+        """Perform statistical analysis using real file properties."""
         try:
-            # Simulated statistical analysis
-            statistical_scores = {
-                "file_size_analysis": np.random.uniform(0.3, 0.9),
-                "compression_ratio": np.random.uniform(0.4, 0.8),
-                "pixel_distribution": np.random.uniform(0.2, 0.9),
-                "frequency_analysis": np.random.uniform(0.1, 0.7)
+            stat = os.stat(file_path)
+            file_size = stat.st_size
+            ext = os.path.splitext(file_path)[1].lower()
+            outliers: List[str] = []
+
+            # --- File size analysis ---
+            expected_ranges = {
+                '.pdf': (5_000, 20_000_000),
+                '.png': (1_000, 10_000_000),
+                '.jpg': (1_000, 10_000_000),
+                '.jpeg': (1_000, 10_000_000),
             }
-            
-            # Detect statistical outliers
-            outliers = []
-            if statistical_scores["file_size_analysis"] < 0.4:
+            lo, hi = expected_ranges.get(ext, (100, 50_000_000))
+            if lo <= file_size <= hi:
+                file_size_score = 0.9
+            elif file_size < lo:
+                file_size_score = 0.3
                 outliers.append("unusual_file_size")
-            if statistical_scores["compression_ratio"] < 0.5:
-                outliers.append("compression_anomaly")
-            if statistical_scores["pixel_distribution"] < 0.3:
-                outliers.append("pixel_distribution_anomaly")
-            
-            overall_score = np.mean(list(statistical_scores.values()))
-            
+            else:
+                file_size_score = 0.5
+                outliers.append("unusual_file_size")
+
+            # --- Compression ratio (actual vs raw for PDF) ---
+            compression_score = 0.8
+            if ext == '.pdf' and fitz:
+                doc = fitz.open(file_path)
+                total_text_len = sum(len(page.get_text()) for page in doc)
+                doc.close()
+                ratio = total_text_len / max(file_size, 1)
+                compression_score = round(max(0.2, min(1.0, ratio * 5)), 3)
+                if compression_score < 0.4:
+                    outliers.append("compression_anomaly")
+
+            # --- Pixel distribution (for images) ---
+            pixel_score = 0.8
+            if ext in ('.png', '.jpg', '.jpeg') and cv2 is not None:
+                img = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
+                if img is not None:
+                    hist = cv2.calcHist([img], [0], None, [256], [0, 256]).flatten()
+                    hist_norm = hist / hist.sum()
+                    entropy = -np.sum(hist_norm[hist_norm > 0] * np.log2(hist_norm[hist_norm > 0]))
+                    pixel_score = round(min(1.0, entropy / 8.0), 3)
+                    if pixel_score < 0.3:
+                        outliers.append("pixel_distribution_anomaly")
+
+            # --- Frequency analysis (byte entropy) ---
+            with open(file_path, 'rb') as f:
+                data = f.read(min(file_size, 100_000))  # sample first 100KB
+            byte_counts = np.bincount(np.frombuffer(data, dtype=np.uint8), minlength=256)
+            byte_freq = byte_counts / byte_counts.sum()
+            byte_entropy = -np.sum(byte_freq[byte_freq > 0] * np.log2(byte_freq[byte_freq > 0]))
+            frequency_score = round(min(1.0, byte_entropy / 8.0), 3)
+
+            statistical_scores = {
+                "file_size_analysis": round(file_size_score, 3),
+                "compression_ratio": round(compression_score, 3),
+                "pixel_distribution": round(pixel_score, 3),
+                "frequency_analysis": round(frequency_score, 3),
+            }
+            overall_score = float(np.mean(list(statistical_scores.values())))
+
             return {
                 "scores": statistical_scores,
                 "outliers": outliers,
-                "overall_score": overall_score,
-                "statistical_confidence": np.random.uniform(0.7, 0.95),
-                "analysis_method": "advanced_statistical_analysis_v4.1"
+                "overall_score": round(overall_score, 3),
+                "statistical_confidence": round(min(1.0, file_size / 10_000), 3),
+                "analysis_method": "advanced_statistical_analysis_v5.0_real",
             }
-            
         except Exception as e:
             logger.error(f"Error in statistical analysis: {str(e)}")
             return {"error": str(e), "overall_score": 0.5}
     
     def _digital_forensics_analysis(self, file_path: str) -> Dict[str, Any]:
-        """Perform digital forensics analysis"""
+        """Perform digital forensics using real file hash and image analysis."""
         try:
-            # Simulated digital forensics
+            ext = os.path.splitext(file_path)[1].lower()
+            forensic_evidence: List[str] = []
+
+            # --- Hash integrity (compute SHA-256) ---
+            sha = hashlib.sha256()
+            with open(file_path, 'rb') as f:
+                for chunk in iter(lambda: f.read(8192), b''):
+                    sha.update(chunk)
+            file_hash = sha.hexdigest()
+            hash_integrity = 1.0  # valid by definition — stored for audit
+
+            # --- Digital signature validation (PDF) ---
+            sig_score = 0.8
+            if ext == '.pdf' and fitz:
+                doc = fitz.open(file_path)
+                has_sig = any(
+                    annot.type[1] == 'Widget' and '/Sig' in str(annot.info)
+                    for page in doc for annot in (page.annots() or [])
+                )
+                sig_score = 0.9 if has_sig else 0.6
+                if not has_sig:
+                    forensic_evidence.append("no_digital_signature")
+                doc.close()
+
+            # --- Copy-paste / duplicate region detection (images) ---
+            copy_paste_score = 0.8
+            image_manipulation_score = 0.8
+            if ext in ('.png', '.jpg', '.jpeg') and cv2 is not None:
+                img = cv2.imread(file_path)
+                if img is not None:
+                    # Error Level Analysis (ELA) approximation
+                    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                    lap = cv2.Laplacian(gray, cv2.CV_64F)
+                    variance = float(lap.var())
+                    # High variance can indicate manipulation
+                    image_manipulation_score = round(max(0.2, min(1.0, 1.0 - variance / 5000)), 3)
+                    if image_manipulation_score < 0.5:
+                        forensic_evidence.append("image_manipulation_detected")
+
+                    # Simple duplicate-block check (downscale + self-match)
+                    small = cv2.resize(gray, (64, 64))
+                    result = cv2.matchTemplate(gray, small, cv2.TM_CCOEFF_NORMED)
+                    high_matches = int(np.sum(result > 0.9))
+                    copy_paste_score = round(max(0.2, 1.0 - high_matches * 0.01), 3)
+                    if high_matches > 50:
+                        forensic_evidence.append("potential_copy_paste")
+
             forensics_scores = {
-                "copy_paste_detection": np.random.uniform(0.2, 0.8),
-                "image_manipulation": np.random.uniform(0.1, 0.9),
-                "digital_signature_validation": np.random.uniform(0.5, 1.0),
-                "hash_integrity": np.random.uniform(0.7, 1.0)
+                "copy_paste_detection": round(copy_paste_score, 3),
+                "image_manipulation": round(image_manipulation_score, 3),
+                "digital_signature_validation": round(sig_score, 3),
+                "hash_integrity": round(hash_integrity, 3),
             }
-            
-            # Detect forensic evidence
-            forensic_evidence = []
-            if forensics_scores["copy_paste_detection"] > 0.6:
-                forensic_evidence.append("potential_copy_paste")
-            if forensics_scores["image_manipulation"] > 0.7:
-                forensic_evidence.append("image_manipulation_detected")
-            if forensics_scores["digital_signature_validation"] < 0.6:
-                forensic_evidence.append("signature_issues")
-            
-            overall_score = np.mean(list(forensics_scores.values()))
-            
+            overall_score = float(np.mean(list(forensics_scores.values())))
+
             return {
                 "scores": forensics_scores,
                 "evidence": forensic_evidence,
-                "overall_score": overall_score,
-                "forensics_confidence": np.random.uniform(0.8, 0.98),
-                "analysis_method": "digital_forensics_suite_v5.2"
+                "overall_score": round(overall_score, 3),
+                "file_hash_sha256": file_hash,
+                "forensics_confidence": round(min(1.0, os.path.getsize(file_path) / 50_000), 3),
+                "analysis_method": "digital_forensics_suite_v6.0_real",
             }
-            
         except Exception as e:
             logger.error(f"Error in digital forensics analysis: {str(e)}")
             return {"error": str(e), "overall_score": 0.5}
