@@ -3,21 +3,17 @@ SecuredDoc - Main Flask Application
 Blockchain-powered Document Security and Fraud Detection System
 """
 
-from flask import Flask, request, render_template, jsonify, send_file, redirect, url_for, session, flash
+from flask import Flask, request, render_template, jsonify, send_file, session, abort
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
 import json
 import logging
 from datetime import datetime, timedelta
-import secrets
-from dotenv import load_dotenv
-
-# Load environment variables from .env
-load_dotenv()
-
-# Import our existing modules
-from enhanced_fraud_detector import EnhancedFraudDetector, FraudDetectionResult
+from typing import Any, Dict, List, Optional
+from contextlib import contextmanager
+from flask.json.provider import DefaultJSONProvider
+from enhanced_fraud_detector import EnhancedFraudDetector
 from Models.blockchain_audit import BlockchainAuditManager
 from ai_summarizer import generate_summary
 from ipfs_uploader import upload_to_ipfs
@@ -31,51 +27,60 @@ import spacy
 import cv2
 import numpy as np
 from presidio_analyzer import AnalyzerEngine, EntityRecognizer, RecognizerResult
-from presidio_anonymizer import AnonymizerEngine
-from presidio_analyzer.nlp_engine import NlpArtifacts
-from typing import List
 import re
 import uuid
+import firebase_admin
+from firebase_admin import credentials, firestore
+from dotenv import load_dotenv
 
-# Firebase integration
-try:
-    import firebase_admin
-    from firebase_admin import credentials, firestore
-    
-    firebase_cred_path = os.getenv('FIREBASE_CREDENTIALS_PATH', 'Models/serviceAccountKey.json')
-    cred = credentials.Certificate(firebase_cred_path)
-    firebase_admin.initialize_app(cred)
-    db = firestore.client()
-    FIREBASE_AVAILABLE = True
-    print("✅ Firebase initialized successfully")
-except Exception as e:
-    print(f"⚠️ Firebase initialization failed: {str(e)}")
-    db = None
-    FIREBASE_AVAILABLE = False
+# Load environment variables from .env
+load_dotenv()
+
+# (firebase_admin already imported above — no duplicate)
+
+firebase_cred_path = os.getenv('FIREBASE_CREDENTIALS_PATH')
+if not firebase_cred_path:
+    raise RuntimeError("FIREBASE_CREDENTIALS_PATH must be set in .env")
+
+if not os.path.exists(firebase_cred_path):
+    raise RuntimeError(f"Firebase credentials file not found at {firebase_cred_path}")
+
+cred = credentials.Certificate(firebase_cred_path)
+firebase_admin.initialize_app(cred)
+db = firestore.client()
+FIREBASE_AVAILABLE = True
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.info("Firebase initialized successfully")
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Custom JSON encoder for numpy types
-class NumpyJSONEncoder(json.JSONEncoder):
-    """Handle numpy types that are not JSON serializable by default."""
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        if isinstance(obj, np.floating):
-            return float(obj)
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return super().default(obj)
-
 # Initialize Flask app
 app = Flask(__name__)
-app.json_encoder = NumpyJSONEncoder
-CORS(app)
+
+class NumpyJSONProvider(DefaultJSONProvider):
+    def default(self, o):
+        if isinstance(o, np.integer):
+            return int(o)
+        if isinstance(o, np.floating):
+            return float(o)
+        if isinstance(o, np.ndarray):
+            return o.tolist()
+        return super().default(o)
+
+app.json = NumpyJSONProvider(app)
+
+# Restrict CORS to explicit origins from env
+_cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+CORS(app, origins=_cors_origins)
 
 # Configuration — persistent secret key from environment
-app.secret_key = os.getenv('FLASK_SECRET_KEY', secrets.token_hex(16))
+_secret = os.getenv('FLASK_SECRET_KEY')
+if not _secret or _secret == 'change-me':
+    raise RuntimeError("FLASK_SECRET_KEY must be set to a secure value (see .env.example)")
+app.secret_key = _secret
 app.permanent_session_lifetime = timedelta(hours=2)
 
 # Directory configuration
@@ -103,7 +108,7 @@ blockchain_manager = BlockchainAuditManager(network=_blockchain_network)
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'csv'}
 
-def allowed_file(filename):
+def allowed_file(filename: str) -> bool:
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ==================== DOCUMENT PROCESSING FUNCTIONS ====================
@@ -114,16 +119,17 @@ def load_spacy_model():
     try:
         # Try to load the model first
         nlp = spacy.load("en_core_web_sm")
-        print("✅ Spacy model loaded successfully")
+        print("Spacy model loaded successfully")
         return nlp
     except OSError:
-        print("⚠️ Spacy model not found. To install it manually, run:")
+        logger.warning("Spacy model not found.")
+        print("Spacy model not found. To install it manually, run:")
         print("   python -m spacy download en_core_web_sm")
-        print("📝 Continuing with basic text processing (PII detection will still work)")
+        print("Continuing with basic text processing (PII detection will still work)")
         return None
     except Exception as e:
-        print(f"⚠️ Error loading spacy model: {str(e)}")
-        print("📝 Continuing with basic text processing")
+        print(f"Error loading spacy model: {str(e)}")
+        print("Continuing with basic text processing")
         return None
 
 # Lazy-loaded NLP models — loaded on first request instead of blocking startup
@@ -145,7 +151,7 @@ def _ensure_models_loaded():
             ignore_labels=["O", "MISC"]
         )
     except Exception as e:
-        print(f"⚠️ Transformers model not available: {str(e)}")
+        print(f"Transformers model not available: {str(e)}")
         _transformers_model = None
     _models_loaded = True
 
@@ -171,12 +177,12 @@ class TransformersRecognizer(EntityRecognizer):
             "ORG": "ORGANIZATION",
             "MISC": "MISC",
         }
-        super().__init__(supported_entities=list(self.label2presidio.values()), supported_language=supported_language)
+        super().__init__(supported_entities=list(self.label2presidio.values()), supported_language=supported_language)  # type: ignore
 
     def load(self) -> None:
         pass
 
-    def analyze(self, text: str, entities: List[str] = None, nlp_artifacts=None) -> List[RecognizerResult]:
+    def analyze(self, text: str, entities: Optional[List[str]] = None, nlp_artifacts=None) -> List[RecognizerResult]:  # type: ignore[override]
         if not self.pipeline:
             return []
         
@@ -185,7 +191,7 @@ class TransformersRecognizer(EntityRecognizer):
             predicted_entities = self.pipeline(text)
             for e in predicted_entities:
                 converted_entity = self.label2presidio.get(e["entity_group"], None)
-                if converted_entity and (entities is None or converted_entity in entities):
+                if converted_entity and (entities is None or converted_entity in entities):  # type: ignore[operator]
                     results.append(RecognizerResult(entity_type=converted_entity, start=e["start"], end=e["end"], score=e["score"]))
         except Exception as e:
             print(f"Error in TransformersRecognizer: {str(e)}")
@@ -194,7 +200,6 @@ class TransformersRecognizer(EntityRecognizer):
 
 # Initialize Presidio components
 analyzer = AnalyzerEngine()
-anonymizer = AnonymizerEngine()
 _custom_recognizer_registered = False
 
 def _ensure_custom_recognizer():
@@ -221,13 +226,19 @@ def generate_secure_token():
     """Generate a unique secure token"""
     return str(uuid.uuid4())
 
-def extract_text_from_pdf(pdf_path):
-    """Extract text from PDF."""
-    doc = fitz.open(pdf_path)
-    text = "\n".join(page.get_text("text") for page in doc)
-    return text, doc
 
-def extract_text_from_image(image_path):
+@contextmanager
+def extract_text_from_pdf(pdf_path: str):
+    """Extract text from PDF safely using context manager."""
+    doc = fitz.open(pdf_path)
+    try:
+        text = "\n".join(str(page.get_text("text")) for page in doc)
+        yield text, doc
+    finally:
+        if not doc.is_closed:
+            doc.close()
+
+def extract_text_from_image(image_path: str) -> str:
     """Extract text from image using Tesseract OCR."""
     try:
         with Image.open(image_path) as img:
@@ -237,7 +248,7 @@ def extract_text_from_image(image_path):
         print(f"Error extracting text from image: {str(e)}")
         return ""
 
-def indian_specific_regex(text):
+def indian_specific_regex(text: str) -> Dict[str, List[Dict[str, Any]]]:
     """Returns additional sensitive data based on Indian-specific regex patterns"""
     regex_patterns = {
         "IN_PAN": r"\b[A-Z]{5}\d{4}[A-Z]{1}\b",  
@@ -261,7 +272,7 @@ def indian_specific_regex(text):
     
     return sensitive_data
 
-def get_sensitive_data(text, custom_hide=None, custom_allow=None):
+def get_sensitive_data(text: str, custom_hide: Optional[List[str]] = None, custom_allow: Optional[List[str]] = None) -> Dict[str, Any]:
     """Extract sensitive data using Presidio, regex patterns, and user-defined lists"""
     _ensure_custom_recognizer()
     try:
@@ -273,17 +284,15 @@ def get_sensitive_data(text, custom_hide=None, custom_allow=None):
     sensitive_data = {}
     
     for result in analysis_results:
-        entity_text = text[result.start:result.end]
+        entity_text = text[result.start:result.end]  # Extract actual sensitive text
         if len(entity_text) <= 2:
             continue
         
-        entity_label = result.entity_type
+        entity_label = result.entity_type  # Get entity label
+        confidence_score = result.score  # Confidence score
         safe_token = generate_secure_token()
-        confidence_score = result.score
         
-        if entity_label == "IN_PAN" and confidence_score <= 0.7:
-            continue
-            
+        # Skip very-short matches regardless of entity type
         sensitive_data[entity_text] = {
             "entity": entity_label,
             "safe_token": safe_token,
@@ -319,12 +328,12 @@ def get_sensitive_data(text, custom_hide=None, custom_allow=None):
     
     return sensitive_data
 
-def convert_np_floats(value):
+def convert_np_floats(value: Any) -> Any:
     """Recursively converts numpy float32/64 and other non-serializable values to Python types."""
-    if isinstance(value, (np.float32, np.float64)):
+    if type(value) in (np.float32, np.float64):
         return float(value)
-    if isinstance(value, (np.int32, np.int64)):
-        return int(value)
+    if type(value) in (np.int32, np.int64):
+        return int(value.item()) # type: ignore
     if isinstance(value, np.ndarray):
         return value.tolist()
     if isinstance(value, dict):
@@ -335,18 +344,17 @@ def convert_np_floats(value):
         return value.item()
     return value
 
-def store_sensitive_data_firestore(sensitive_data):
+def store_sensitive_data_firestore(sensitive_data: Dict[str, Any]) -> None:
     """Store sensitive data in Firestore using batch operations for better performance"""
-    if not FIREBASE_AVAILABLE or not db:
-        print("⚠️ Firebase not available, skipping data storage")
+    if not FIREBASE_AVAILABLE or db is None:
+        print("Firebase not available, skipping data storage")
         return
     
     try:
         if not sensitive_data:
             return
 
-        # Use batch operations for better performance
-        batch = db.batch()
+        batch = db.batch()  # type: ignore[union-attr]
         batch_count = 0
         successful_stores = 0
         
@@ -358,7 +366,7 @@ def store_sensitive_data_firestore(sensitive_data):
             cleaned_details = convert_np_floats(details)
             
             # Add to batch
-            doc_ref = db.collection("tokens").document(safe_token)
+            doc_ref = db.collection("tokens").document(safe_token)  # type: ignore[union-attr]
             batch.set(doc_ref, {
                 "original_text": entity_text,
                 "entity": cleaned_details.get("entity"),
@@ -372,30 +380,30 @@ def store_sensitive_data_firestore(sensitive_data):
             # Commit batch when it reaches 500 operations (Firestore limit)
             if batch_count >= 500:
                 batch.commit()
-                batch = db.batch()
+                batch = db.batch()  # type: ignore[union-attr]
                 batch_count = 0
         
         # Commit remaining operations
         if batch_count > 0:
             batch.commit()
             
-        print(f"✅ Successfully stored {successful_stores} PII entities in Firebase")
+        print(f"Successfully stored {successful_stores} PII entities in Firebase")
 
     except Exception as e:
-        print(f"❌ Error storing data in Firestore: {e}")
+        print(f"Error storing data in Firestore: {e}")
 
-def redact_text_with_pymupdf(doc, blur=False, custom_hide=None, custom_allow=None):
+def redact_text_with_pymupdf(doc: fitz.Document, blur: bool = False, custom_hide: Optional[List[str]] = None, custom_allow: Optional[List[str]] = None) -> fitz.Document:
     """Redact or blur sensitive text in a PDF."""
     for page in doc:
         page.wrap_contents()
-        text = page.get_text("text")
+        text = str(page.get_text("text"))
         
         sensitive_data = get_sensitive_data(text, custom_hide=custom_hide, custom_allow=custom_allow)
         
         for data in sensitive_data.keys():
             raw_areas = page.search_for(data)
             for area in raw_areas:
-                extracted_text = page.get_text("text", clip=area).strip()
+                extracted_text = str(page.get_text("text", clip=area)).strip()
                 if extracted_text == data:
                     if blur:
                         # For simplicity, we'll use redaction instead of blur for now
@@ -407,37 +415,55 @@ def redact_text_with_pymupdf(doc, blur=False, custom_hide=None, custom_allow=Non
     
     return doc
 
-def process_pdf_document(pdf_path, output_pdf, blur=False, custom_hide=None, custom_allow=None):
+def process_pdf_document(pdf_path: str, output_pdf: str, blur: bool = False, custom_hide: Optional[List[str]] = None, custom_allow: Optional[List[str]] = None) -> tuple[str, str]:
     """Complete process: Extract text, detect sensitive info, redact, and save."""
-    text, doc = extract_text_from_pdf(pdf_path)
-    
-    try:
-        # Redact sensitive data in PDF
-        redacted_doc = redact_text_with_pymupdf(doc, blur=blur, custom_hide=custom_hide, custom_allow=custom_allow)
-        
-        # Save the redacted PDF
-        redacted_doc.save(output_pdf)
-    finally:
-        # Close the document to prevent memory leaks and release file handles
-        if doc and not doc.is_closed:
-            doc.close()
-    
+    with extract_text_from_pdf(pdf_path) as (text, doc):
+        doc = redact_text_with_pymupdf(doc, blur=blur, custom_hide=custom_hide, custom_allow=custom_allow)
+        doc.save(output_pdf)
     return output_pdf, text
 
-def process_image_document(image_path, output_image_path, blur=False):
-    """Complete process for images: Detect sensitive data, redact, and save."""
+
+def extract_redacted_text_from_pdf(pdf_path: str) -> str:
+    """Re-read an already-redacted PDF so the text sent to LLMs contains no PII."""
+    with fitz.open(pdf_path) as doc:
+        return "\n".join(str(page.get_text("text")) for page in doc)
+
+
+def process_image_document(image_path: str, output_image_path: str, blur: bool = False, custom_hide: Optional[List[str]] = None, custom_allow: Optional[List[str]] = None) -> tuple[str, str]:
+    """Complete process for images: Detect sensitive data, redact using bounding boxes, and save."""
     text = extract_text_from_image(image_path)
     
-    # For now, just copy the image (redaction would require more complex OCR processing)
     try:
         img = cv2.imread(image_path)
-        cv2.imwrite(output_image_path, img)
+        sensitive_data = get_sensitive_data(text, custom_hide=custom_hide, custom_allow=custom_allow)
+        
+        if sensitive_data:
+            d = pytesseract.image_to_data(Image.open(image_path), output_type=pytesseract.Output.DICT)
+            n_boxes = len(d['text'])
+            for i in range(n_boxes):
+                word = d['text'][i].strip()
+                if not word:
+                    continue
+                
+                # If this word is part of any sensitive phrase, blackout its bounding box
+                for sensitive_text in sensitive_data.keys():
+                    if word.lower() in sensitive_text.lower() or sensitive_text.lower() in word.lower():
+                        (x, y, w, h) = (d['left'][i], d['top'][i], d['width'][i], d['height'][i])
+                        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 0), -1)
+
+        # cv2.imwrite accepts MatLike or ndarray, ignore type error if PyRight is strict
+        cv2.imwrite(output_image_path, img)  # type: ignore
     except Exception as e:
         print(f"Error processing image: {str(e)}")
     
     return output_image_path, text
 
 # ==================== ROUTES ====================
+
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
 
 @app.route('/')
 def home():
@@ -472,12 +498,17 @@ def process_document():
         if file.filename == '':
             return jsonify({'success': False, 'error': 'No file selected'}), 400
         
-        if not allowed_file(file.filename):
+        if not file.filename or not allowed_file(file.filename):
             return jsonify({'success': False, 'error': 'File type not allowed'}), 400
         
         # Save uploaded file
-        filename = secure_filename(file.filename)
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        if file and file.filename:
+            filename = secure_filename(str(file.filename))
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        else:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = "unknown_file"
+
         unique_filename = f"{timestamp}_{filename}"
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         file.save(file_path)
@@ -502,9 +533,9 @@ def process_document():
         
         logger.info(f"Processing document: {unique_filename}")
         if custom_hide:
-            logger.info(f"Custom hide list: {custom_hide}")
+            logger.debug(f"Custom hide list ({len(custom_hide)} terms)")  # Never log PII terms at INFO
         if custom_allow:
-            logger.info(f"Custom allow list: {custom_allow}")
+            logger.debug(f"Custom allow list ({len(custom_allow)} terms)")
         
         # Step 1: Extract text and process document
         extracted_text = ""
@@ -520,10 +551,15 @@ def process_document():
                 # Process Image
                 output_filename = f"processed_{unique_filename}"
                 processed_file_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
-                _, extracted_text = process_image_document(file_path, processed_file_path)
+                _, extracted_text = process_image_document(file_path, processed_file_path, custom_hide=custom_hide, custom_allow=custom_allow)
+            elif filename.lower().endswith('.csv'):
+                # Read CSV text directly for PII detection
+                with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+                    extracted_text = f.read()
+                processed_file_path = None # No visual redaction for CSV
             else:
-                # For other files, just extract text
-                extracted_text = "File processing not supported for this format"
+                # For other files, return error
+                return jsonify({'error': 'Unsupported file format. Only PDF, PNG, JPG, and CSV are supported.'}), 415
         except Exception as e:
             logger.error(f"Document processing error: {str(e)}")
             extracted_text = f"Error processing document: {str(e)}"
@@ -576,7 +612,7 @@ def process_document():
         fraud_prob = float(fraud_result.fraud_probability) if fraud_result else 0.0
         fraud_conf = float(fraud_result.confidence_score) if fraud_result else 0.0
 
-        response = {
+        response: Dict[str, Any] = {
             'success': True,
             'filename': unique_filename,
             'processed_filename': output_filename if processed_file_path else None,
@@ -605,10 +641,19 @@ def process_document():
             }
         }
         
-        # Step 5: AI Document Summary (privacy-preserving — uses redacted text only)
+        # Step 5: AI Document Summary — uses REDACTED text to prevent PII leaking to LLM
         try:
+            # For PDFs: re-read the already-redacted output file so PII is gone
+            # For images: fall back to masking with [REDACTED] tokens
+            if processed_file_path and processed_file_path.lower().endswith('.pdf') and os.path.exists(processed_file_path):
+                text_for_summary = extract_redacted_text_from_pdf(processed_file_path)
+            else:
+                # Mask every detected PII token from the raw text
+                text_for_summary = extracted_text
+                for pii_token in sensitive_data.keys():
+                    text_for_summary = text_for_summary.replace(pii_token, '[REDACTED]')
             ai_summary = generate_summary(
-                extracted_text,
+                text_for_summary,
                 pii_count=len(sensitive_data),
                 fraud_risk=fraud_result.risk_level if fraud_result else 'Unknown'
             )
@@ -678,42 +723,49 @@ def get_document_history(document_hash):
         logger.error(f"Error fetching document history: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/download/<filename>')
-def download_file(filename):
-    """Download processed files"""
+def _safe_filename_check(filename: str) -> str:
+    """Validate filename against path traversal. Returns sanitised name or aborts 400."""
+    safe = secure_filename(filename)
+    if not safe or safe != filename or '..' in filename or '/' in filename or '\\' in filename:
+        abort(400, description="Invalid filename")
+    return safe
+
+
+@app.route('/download/<path:filename>')
+def download_file(filename: str):
+    """Download processed files — path traversal protected."""
+    safe = _safe_filename_check(filename)
     try:
-        # Check both output folders
         for folder in [app.config['OUTPUT_FOLDER'], app.config['RESULTS_FOLDER']]:
-            file_path = os.path.join(folder, filename)
+            file_path = os.path.join(folder, safe)
             if os.path.exists(file_path):
                 return send_file(file_path, as_attachment=True)
-        
         return jsonify({'error': 'File not found'}), 404
     except Exception as e:
         logger.error(f"Download error: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Download failed'}), 500
 
-@app.route('/preview/<filename>')
-def preview_file(filename):
-    """Preview uploaded file before processing"""
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/preview/<path:filename>')
+def preview_file(filename: str):
+    """Preview uploaded file — path traversal protected."""
+    safe = _safe_filename_check(filename)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], safe)
     if os.path.exists(file_path):
-        return render_template('preview.html', filename=filename)
-    else:
-        return "File not found", 404
+        return render_template('preview.html', filename=safe)
+    return "File not found", 404
 
-@app.route('/result/<filename>')
-def result_file(filename):
-    """Show processing results"""
-    # Load analysis results if available
-    results_file = os.path.join(app.config['RESULTS_FOLDER'], f"{filename}_analysis.json")
-    
+
+@app.route('/result/<path:filename>')
+def result_file(filename: str):
+    """Show processing results — path traversal protected."""
+    safe = _safe_filename_check(filename)
+    results_file = os.path.join(app.config['RESULTS_FOLDER'], f"{safe}_analysis.json")
     if os.path.exists(results_file):
         with open(results_file, 'r') as f:
             results = json.load(f)
-        return render_template('result.html', filename=filename, results=results)
-    else:
-        return "Results not found", 404
+        return render_template('result.html', filename=safe, results=results)
+    return "Results not found", 404
 
 # ==================== API ROUTES ====================
 
@@ -950,7 +1002,7 @@ def register_on_blockchain():
         metadata = request.form.to_dict()
         
         # Save file temporarily
-        filename = secure_filename(file.filename)
+        filename = secure_filename(str(file.filename))
         temp_path = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_blockchain_{filename}")
         file.save(temp_path)
         
@@ -1009,7 +1061,7 @@ def analyze_fraud():
             }), 400
         
         # Save file temporarily
-        filename = secure_filename(file.filename)
+        filename = secure_filename(str(file.filename))
         temp_path = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_fraud_{filename}")
         file.save(temp_path)
         
@@ -1081,15 +1133,15 @@ def internal_error(e):
 if __name__ == '__main__':
     port = int(os.getenv('APP_PORT', 5000))
     debug = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'
-    print("🚀 Starting SecuredDoc Application...")
-    print("📁 Upload folder:", UPLOAD_FOLDER)
-    print("📁 Output folder:", OUTPUT_FOLDER)
-    print(f"🌐 Server will be available at: http://localhost:{port}")
-    print("🔗 Routes available:")
-    print("   • / (Home)")
-    print("   • /dashboard (Main Dashboard)")
-    print("   • /login (Authentication)")
-    print("   • /auth (Enhanced Features)")
-    print("   • /process (Document Processing)")
+    print("Starting SecuredDoc Application...")
+    print("Upload folder:", UPLOAD_FOLDER)
+    print("Output folder:", OUTPUT_FOLDER)
+    print(f"Server will be available at: http://localhost:{port}")
+    print("Routes available:")
+    print("   - / (Home)")
+    print("   - /dashboard (Main Dashboard)")
+    print("   - /login (Authentication)")
+    print("   - /auth (Enhanced Features)")
+    print("   - /process (Document Processing)")
     
     app.run(host='0.0.0.0', port=port, debug=debug)

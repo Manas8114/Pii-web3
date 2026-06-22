@@ -5,11 +5,9 @@ Handles document registration and audit trail on Stacks blockchain
 
 import hashlib
 import json
-import requests
 import logging
 from datetime import datetime
 from typing import Dict, Any, Optional, List
-import time
 import os
 
 # Setup logging
@@ -42,9 +40,10 @@ class BlockchainAuditManager:
             
             hash_obj = hashlib.sha256()
             hash_obj.update(combined_content)
-            document_hash = hash_obj.hexdigest()
+            document_hash: str = hash_obj.hexdigest()
             
-            logger.info(f"Generated document hash: {document_hash[:16]}...")
+            hash_preview = "".join([document_hash[i] for i in range(min(16, len(document_hash)))])
+            logger.info(f"Generated document hash: {hash_preview}...")
             return document_hash
             
         except Exception as e:
@@ -71,7 +70,7 @@ class BlockchainAuditManager:
             }
     
     def register_document(self, document_hash: str, metadata: Dict[str, Any], 
-                         wallet_address: str = None) -> Dict[str, Any]:
+                         wallet_address: Optional[str] = None) -> Dict[str, Any]:
         """Register document on blockchain"""
         try:
             # Prepare registration data
@@ -110,7 +109,7 @@ class BlockchainAuditManager:
                     "document_hash": document_hash,
                     "timestamp": datetime.now().isoformat()
                 }, "error")
-            except:
+            except Exception:
                 pass
                 
             return {
@@ -237,17 +236,16 @@ class BlockchainAuditManager:
             }
     
     def _simulate_blockchain_transaction(self, data: Dict[str, Any]) -> str:
-        """Simulate blockchain transaction and return mock transaction hash"""
-        # Create a deterministic but unique transaction hash
+        """Produce a demo transaction hash with cryptographic randomness.
+        NOTE: This is a DEMO-MODE simulation — not a real on-chain transaction.
+        """
+        import secrets as _secrets
         tx_data = json.dumps(data, sort_keys=True)
-        tx_hash = hashlib.sha256(tx_data.encode()).hexdigest()
-        
-        # Add some randomness for realism
-        import random
-        random.seed(int(time.time()))
-        tx_hash = tx_hash[:56] + f"{random.randint(1000, 9999):04x}"
-        
-        logger.info(f"Simulated blockchain transaction: {tx_hash[:16]}...")
+        base_hash = hashlib.sha256(tx_data.encode()).hexdigest()  # 64 hex chars
+        # Append 8 cryptographically random hex chars so the hash is unpredictable
+        random_suffix = _secrets.token_hex(4)
+        tx_hash = base_hash[:56] + random_suffix
+        logger.info(f"[DEMO] Simulated blockchain tx: {tx_hash[:16]}...")
         return f"0x{tx_hash}"
     
     def _get_simulated_block_height(self) -> int:
@@ -363,7 +361,7 @@ def create_audit_manager(network="testnet"):
     """Create and return a blockchain audit manager instance"""
     return BlockchainAuditManager(network=network)
 
-def hash_document_content(file_path: str, metadata: Dict[str, Any] = None) -> str:
+def hash_document_content(file_path: str, metadata: Optional[Dict[str, Any]] = None) -> str:
     """Hash document file content with optional metadata"""
     try:
         with open(file_path, 'rb') as f:
@@ -377,7 +375,7 @@ def hash_document_content(file_path: str, metadata: Dict[str, Any] = None) -> st
         raise
 
 def register_document_on_blockchain(file_path: str, metadata: Dict[str, Any], 
-                                  wallet_address: str = None) -> Dict[str, Any]:
+                                  wallet_address: Optional[str] = None) -> Dict[str, Any]:
     """Convenience function to register a document"""
     try:
         document_hash = hash_document_content(file_path, metadata)

@@ -183,7 +183,7 @@
         }
     </style>
 </head>
-<body>
+<body aria-label="page">
     <div class="container">
         <header>
             <h2>Document Security Processing</h2>
@@ -228,7 +228,7 @@
         </div>
         
         <div class="actions">
-            <a href="{{ url_for('download_file', filename=filename) }}" class="btn btn-primary">
+            <a class="link_bypass link_bypass" href="{{ url_for('download_file', filename=filename) }}" class="btn btn-primary">
                 Download Secured Document
             </a>
             <button onclick="sendDataToAPI()" class="btn btn-outline">

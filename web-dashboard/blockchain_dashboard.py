@@ -1,11 +1,8 @@
-import json
 import os
 import sys
 from datetime import datetime
 from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO, emit
-import sqlite3
-import threading
 
 # Add parent directory to path to import our modules
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'blockchain-interface'))

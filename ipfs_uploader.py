@@ -5,8 +5,8 @@ Uploads processed/redacted documents to IPFS and returns the CID + gateway URL.
 
 import os
 import logging
-import hashlib
 import requests
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -53,17 +53,18 @@ def upload_to_ipfs(file_path, metadata=None):
 
         filename = os.path.basename(file_path)
 
-        pinata_metadata = {
-            "name": filename,
-            "keyvalues": {
-                "app": "SecuredDoc",
-                "type": "redacted_document"
-            }
+        keyvalues: dict = {
+            "app": "SecuredDoc",
+            "type": "redacted_document"
         }
         if metadata:
-            pinata_metadata["keyvalues"].update({
+            keyvalues.update({
                 k: str(v) for k, v in metadata.items()
             })
+        pinata_metadata = {
+            "name": filename,
+            "keyvalues": keyvalues
+        }
 
         import json
         pinata_options = {"cidVersion": 1}
@@ -102,32 +103,21 @@ def upload_to_ipfs(file_path, metadata=None):
         return _demo_upload(file_path, metadata)
 
 
-def _demo_upload(file_path, metadata=None):
+def _demo_upload(file_path: str, metadata: Optional[dict] = None) -> dict:  # type: ignore[type-arg]
     """
-    Generate a realistic demo IPFS result when Pinata API is unavailable.
-    Uses a real SHA-256 hash of the file as a simulated CID.
+    Return an honest 'not configured' result when Pinata API keys are absent.
+    Does NOT claim success — the file is NOT stored anywhere.
     """
-    try:
-        sha256 = hashlib.sha256()
-        with open(file_path, 'rb') as f:
-            for chunk in iter(lambda: f.read(8192), b''):
-                sha256.update(chunk)
-        
-        file_hash = sha256.hexdigest()
-        simulated_cid = f"bafybeig{file_hash[:50]}"
-        file_size = os.path.getsize(file_path)
-
-        return {
-            "success": True,
-            "ipfs_hash": simulated_cid,
-            "gateway_url": "",
-            "pin_size": file_size,
-            "timestamp": "",
-            "storage": "demo_simulated",
-            "note": "Demo mode — set PINATA_API_KEY and PINATA_API_SECRET for real IPFS uploads"
-        }
-    except Exception as e:
-        return _error_result(str(e))
+    return {
+        "success": False,
+        "ipfs_hash": None,
+        "gateway_url": None,
+        "pin_size": 0,
+        "timestamp": "",
+        "storage": "demo_simulated",
+        "error": "Pinata API keys not configured — no actual upload performed",
+        "note": "Set PINATA_API_KEY and PINATA_API_SECRET in .env for real IPFS uploads"
+    }
 
 
 def _error_result(message):

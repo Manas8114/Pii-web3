@@ -3,12 +3,11 @@ Enhanced Fraud Detection System with Blockchain Integration
 Combines AI-powered fraud detection with blockchain audit trails
 """
 
-import json
 import logging
 import os
 import hashlib
 from datetime import datetime
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional
 import numpy as np
 from dataclasses import dataclass
 from Models.blockchain_audit import BlockchainAuditManager
@@ -89,21 +88,32 @@ class EnhancedFraudDetector:
             "high": 0.8
         }
     
-    def analyze_document(self, file_path: str, metadata: Dict[str, Any] = None) -> FraudDetectionResult:
+    def analyze_document(self, file_path: str, metadata: Optional[Dict[str, Any]] = None) -> FraudDetectionResult:
         """
         Perform comprehensive fraud analysis on a document
         """
+        if metadata is None:
+            metadata = {}
         try:
             logger.info(f"Starting enhanced fraud analysis for: {file_path}")
             
-            # Initialize analysis components
-            analysis_results = {
-                "structural_analysis": self._analyze_structure(file_path),
-                "content_analysis": self._analyze_content(file_path),
-                "metadata_analysis": self._analyze_metadata(file_path, metadata or {}),
-                "statistical_analysis": self._statistical_analysis(file_path),
-                "digital_forensics": self._digital_forensics_analysis(file_path)
-            }
+            ext = os.path.splitext(file_path)[1].lower()
+            doc = fitz.open(file_path) if ext == '.pdf' and fitz else None
+            try:
+                with open(file_path, 'rb') as f:
+                    file_bytes = f.read()
+
+                # Initialize analysis components
+                analysis_results = {
+                    "structural_analysis": self._analyze_structure(file_path, doc),
+                    "content_analysis": self._analyze_content(file_path, doc),
+                    "metadata_analysis": self._analyze_metadata(file_path, metadata, doc),
+                    "statistical_analysis": self._statistical_analysis(file_path, file_bytes, doc),
+                    "digital_forensics": self._digital_forensics_analysis(file_path, file_bytes, doc)
+                }
+            finally:
+                if doc:
+                    doc.close()
             
             # Calculate overall fraud probability
             fraud_probability = self._calculate_fraud_probability(analysis_results)
@@ -117,10 +127,9 @@ class EnhancedFraudDetector:
             # Calculate confidence score
             confidence_score = self._calculate_confidence_score(analysis_results)
             
-            # Create comprehensive analysis details
+            # Create comprehensive analysis details (file_path intentionally excluded — never sent to client)
             analysis_details = {
                 "timestamp": datetime.now().isoformat(),
-                "file_path": file_path,
                 "analysis_components": analysis_results,
                 "pattern_matches": suspicious_patterns,
                 "risk_factors": self._identify_risk_factors(analysis_results),
@@ -149,14 +158,14 @@ class EnhancedFraudDetector:
             logger.error(f"Error in fraud analysis: {str(e)}")
             raise
     
-    def _analyze_structure(self, file_path: str) -> Dict[str, Any]:
+    def _analyze_structure(self, file_path: str, doc_obj: Any = None) -> Dict[str, Any]:
         """Analyze document structure for anomalies using PyMuPDF."""
         try:
             ext = os.path.splitext(file_path)[1].lower()
             anomalies: List[str] = []
 
-            if ext == '.pdf' and fitz:
-                doc = fitz.open(file_path)
+            if ext == '.pdf' and doc_obj is not None:
+                doc = doc_obj
 
                 # --- Font consistency ---
                 all_fonts: set = set()
@@ -191,7 +200,7 @@ class EnhancedFraudDetector:
                         alignment_scores.append(max(0.0, 1.0 - float(np.std(x0s)) / 50.0))
                 element_alignment = float(np.mean(alignment_scores)) if alignment_scores else 0.8
 
-                doc.close()
+                element_alignment = float(np.mean(alignment_scores)) if alignment_scores else 0.8
             else:
                 # For images or unsupported types give neutral scores
                 font_consistency = 0.8
@@ -200,38 +209,37 @@ class EnhancedFraudDetector:
                 element_alignment = 0.8
 
             structural_scores = {
-                "font_consistency": round(font_consistency, 3),
-                "layout_regularity": round(layout_regularity, 3),
-                "formatting_consistency": round(formatting_consistency, 3),
-                "element_alignment": round(element_alignment, 3),
+                "font_consistency": round(float(font_consistency), 3),
+                "layout_regularity": round(float(layout_regularity), 3),
+                "formatting_consistency": round(float(formatting_consistency), 3),
+                "element_alignment": round(float(element_alignment), 3),
             }
             overall_score = float(np.mean(list(structural_scores.values())))
 
             return {
                 "scores": structural_scores,
                 "anomalies": anomalies,
-                "overall_score": round(overall_score, 3),
+                "overall_score": round(float(overall_score), 3),
                 "analysis_method": "structural_analysis_v3.0_real",
             }
         except Exception as e:
             logger.error(f"Error in structural analysis: {str(e)}")
             return {"error": str(e), "overall_score": 0.5}
     
-    def _analyze_content(self, file_path: str) -> Dict[str, Any]:
+    def _analyze_content(self, file_path: str, doc_obj: Any = None) -> Dict[str, Any]:
         """Analyze document content for suspicious patterns using real text extraction."""
         try:
             ext = os.path.splitext(file_path)[1].lower()
             text = ""
 
-            if ext == '.pdf' and fitz:
-                doc = fitz.open(file_path)
+            if ext == '.pdf' and doc_obj is not None:
+                doc = doc_obj
                 text = "\n".join(page.get_text() for page in doc)
-                doc.close()
 
             # --- Text authenticity (ratio of printable chars) ---
             if text:
                 printable_ratio = sum(c.isprintable() or c.isspace() for c in text) / max(len(text), 1)
-                text_authenticity = round(printable_ratio, 3)
+                text_authenticity = round(float(printable_ratio), 3)
             else:
                 text_authenticity = 0.8
 
@@ -240,23 +248,23 @@ class EnhancedFraudDetector:
             if len(sentences) > 2:
                 lengths = [len(s.split()) for s in sentences]
                 cv = float(np.std(lengths)) / max(float(np.mean(lengths)), 1)
-                logical_flow = round(max(0.0, 1.0 - cv * 0.5), 3)
+                logical_flow = round(float(max(0.0, 1.0 - cv * 0.5)), 3)
             else:
                 logical_flow = 0.8
 
             # --- Language consistency (unique-word ratio) ---
             words = text.lower().split()
             if words:
-                language_consistency = round(min(1.0, len(set(words)) / max(len(words), 1) * 2), 3)
+                language_consistency = round(float(min(1.0, len(set(words)) / max(len(words), 1) * 2)), 3)
             else:
                 language_consistency = 0.8
 
             # --- Content coherence (presence of repeated long phrases) ---
             from collections import Counter
-            trigrams = [' '.join(words[i:i+3]) for i in range(len(words)-2)]
+            trigrams = [' '.join(words[i:i+3]) for i in range(len(words)-2)]  # type: ignore[index]
             trigram_counts = Counter(trigrams)
             repeated = sum(1 for c in trigram_counts.values() if c > 3)
-            content_coherence = round(max(0.0, 1.0 - repeated * 0.05), 3)
+            content_coherence = round(float(max(0.0, 1.0 - repeated * 0.05)), 3)
 
             suspicious_content: List[str] = []
             if text_authenticity < 0.4:
@@ -277,15 +285,15 @@ class EnhancedFraudDetector:
             return {
                 "scores": content_scores,
                 "suspicious_patterns": suspicious_content,
-                "overall_score": round(overall_score, 3),
-                "text_analysis_confidence": round(min(1.0, len(text) / 500), 3),
+                "overall_score": round(float(overall_score), 3),
+                "text_analysis_confidence": round(float(min(1.0, len(text) / 500)), 3),
                 "analysis_method": "nlp_content_analysis_v4.0_real",
             }
         except Exception as e:
             logger.error(f"Error in content analysis: {str(e)}")
             return {"error": str(e), "overall_score": 0.5}
     
-    def _analyze_metadata(self, file_path: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+    def _analyze_metadata(self, file_path: str, metadata: Dict[str, Any], doc_obj: Any = None) -> Dict[str, Any]:
         """Analyze document metadata for inconsistencies using real file metadata."""
         try:
             ext = os.path.splitext(file_path)[1].lower()
@@ -296,10 +304,9 @@ class EnhancedFraudDetector:
             modification_history = 0.8
             tool_authenticity = 0.8
 
-            if ext == '.pdf' and fitz:
-                doc = fitz.open(file_path)
+            if ext == '.pdf' and doc_obj is not None:
+                doc = doc_obj
                 pdf_meta = doc.metadata or {}
-                doc.close()
 
                 # Creation date validity
                 creation = pdf_meta.get('creationDate', '')
@@ -334,17 +341,17 @@ class EnhancedFraudDetector:
                     metadata_anomalies.append("suspicious_tool_used")
 
             metadata_scores = {
-                "creation_date_validity": round(creation_date_validity, 3),
-                "author_consistency": round(author_consistency, 3),
-                "modification_history": round(modification_history, 3),
-                "tool_authenticity": round(tool_authenticity, 3),
+                "creation_date_validity": round(float(creation_date_validity), 3),
+                "author_consistency": round(float(author_consistency), 3),
+                "modification_history": round(float(modification_history), 3),
+                "tool_authenticity": round(float(tool_authenticity), 3),
             }
             overall_score = float(np.mean(list(metadata_scores.values())))
 
             return {
                 "scores": metadata_scores,
                 "anomalies": metadata_anomalies,
-                "overall_score": round(overall_score, 3),
+                "overall_score": round(float(overall_score), 3),
                 "metadata_available": len(metadata) > 0,
                 "analysis_method": "metadata_forensics_v3.0_real",
             }
@@ -352,7 +359,7 @@ class EnhancedFraudDetector:
             logger.error(f"Error in metadata analysis: {str(e)}")
             return {"error": str(e), "overall_score": 0.5}
     
-    def _statistical_analysis(self, file_path: str) -> Dict[str, Any]:
+    def _statistical_analysis(self, file_path: str, file_bytes: bytes = b'', doc_obj: Any = None) -> Dict[str, Any]:
         """Perform statistical analysis using real file properties."""
         try:
             stat = os.stat(file_path)
@@ -379,12 +386,11 @@ class EnhancedFraudDetector:
 
             # --- Compression ratio (actual vs raw for PDF) ---
             compression_score = 0.8
-            if ext == '.pdf' and fitz:
-                doc = fitz.open(file_path)
+            if ext == '.pdf' and doc_obj is not None:
+                doc = doc_obj
                 total_text_len = sum(len(page.get_text()) for page in doc)
-                doc.close()
                 ratio = total_text_len / max(file_size, 1)
-                compression_score = round(max(0.2, min(1.0, ratio * 5)), 3)
+                compression_score = round(float(max(0.2, min(1.0, ratio * 5))), 3)
                 if compression_score < 0.4:
                     outliers.append("compression_anomaly")
 
@@ -396,38 +402,40 @@ class EnhancedFraudDetector:
                     hist = cv2.calcHist([img], [0], None, [256], [0, 256]).flatten()
                     hist_norm = hist / hist.sum()
                     entropy = -np.sum(hist_norm[hist_norm > 0] * np.log2(hist_norm[hist_norm > 0]))
-                    pixel_score = round(min(1.0, entropy / 8.0), 3)
+                    pixel_score = round(float(min(1.0, entropy / 8.0)), 3)
                     if pixel_score < 0.3:
                         outliers.append("pixel_distribution_anomaly")
 
             # --- Frequency analysis (byte entropy) ---
-            with open(file_path, 'rb') as f:
-                data = f.read(min(file_size, 100_000))  # sample first 100KB
+            data = file_bytes[:min(file_size, 100_000)] if file_bytes else b''
+            if not data:
+                with open(file_path, 'rb') as f:
+                    data = f.read(min(file_size, 100_000))  # sample first 100KB
             byte_counts = np.bincount(np.frombuffer(data, dtype=np.uint8), minlength=256)
             byte_freq = byte_counts / byte_counts.sum()
             byte_entropy = -np.sum(byte_freq[byte_freq > 0] * np.log2(byte_freq[byte_freq > 0]))
-            frequency_score = round(min(1.0, byte_entropy / 8.0), 3)
+            frequency_score = round(float(min(1.0, byte_entropy / 8.0)), 3)
 
             statistical_scores = {
-                "file_size_analysis": round(file_size_score, 3),
-                "compression_ratio": round(compression_score, 3),
-                "pixel_distribution": round(pixel_score, 3),
-                "frequency_analysis": round(frequency_score, 3),
+                "file_size_analysis": round(float(file_size_score), 3),
+                "compression_ratio": round(float(compression_score), 3),
+                "pixel_distribution": round(float(pixel_score), 3),
+                "frequency_analysis": round(float(frequency_score), 3),
             }
             overall_score = float(np.mean(list(statistical_scores.values())))
 
             return {
                 "scores": statistical_scores,
                 "outliers": outliers,
-                "overall_score": round(overall_score, 3),
-                "statistical_confidence": round(min(1.0, file_size / 10_000), 3),
+                "overall_score": round(float(overall_score), 3),
+                "statistical_confidence": round(float(min(1.0, file_size / 10_000)), 3),
                 "analysis_method": "advanced_statistical_analysis_v5.0_real",
             }
         except Exception as e:
             logger.error(f"Error in statistical analysis: {str(e)}")
             return {"error": str(e), "overall_score": 0.5}
     
-    def _digital_forensics_analysis(self, file_path: str) -> Dict[str, Any]:
+    def _digital_forensics_analysis(self, file_path: str, file_bytes: bytes = b'', doc_obj: Any = None) -> Dict[str, Any]:
         """Perform digital forensics using real file hash and image analysis."""
         try:
             ext = os.path.splitext(file_path)[1].lower()
@@ -435,16 +443,19 @@ class EnhancedFraudDetector:
 
             # --- Hash integrity (compute SHA-256) ---
             sha = hashlib.sha256()
-            with open(file_path, 'rb') as f:
-                for chunk in iter(lambda: f.read(8192), b''):
-                    sha.update(chunk)
+            if file_bytes:
+                sha.update(file_bytes)
+            else:
+                with open(file_path, 'rb') as f:
+                    for chunk in iter(lambda: f.read(8192), b''):
+                        sha.update(chunk)
             file_hash = sha.hexdigest()
             hash_integrity = 1.0  # valid by definition — stored for audit
 
             # --- Digital signature validation (PDF) ---
             sig_score = 0.8
-            if ext == '.pdf' and fitz:
-                doc = fitz.open(file_path)
+            if ext == '.pdf' and doc_obj is not None:
+                doc = doc_obj
                 has_sig = any(
                     annot.type[1] == 'Widget' and '/Sig' in str(annot.info)
                     for page in doc for annot in (page.annots() or [])
@@ -452,7 +463,6 @@ class EnhancedFraudDetector:
                 sig_score = 0.9 if has_sig else 0.6
                 if not has_sig:
                     forensic_evidence.append("no_digital_signature")
-                doc.close()
 
             # --- Copy-paste / duplicate region detection (images) ---
             copy_paste_score = 0.8
@@ -465,7 +475,7 @@ class EnhancedFraudDetector:
                     lap = cv2.Laplacian(gray, cv2.CV_64F)
                     variance = float(lap.var())
                     # High variance can indicate manipulation
-                    image_manipulation_score = round(max(0.2, min(1.0, 1.0 - variance / 5000)), 3)
+                    image_manipulation_score = round(float(max(0.2, min(1.0, 1.0 - variance / 5000))), 3)
                     if image_manipulation_score < 0.5:
                         forensic_evidence.append("image_manipulation_detected")
 
@@ -473,24 +483,24 @@ class EnhancedFraudDetector:
                     small = cv2.resize(gray, (64, 64))
                     result = cv2.matchTemplate(gray, small, cv2.TM_CCOEFF_NORMED)
                     high_matches = int(np.sum(result > 0.9))
-                    copy_paste_score = round(max(0.2, 1.0 - high_matches * 0.01), 3)
+                    copy_paste_score = round(float(max(0.2, 1.0 - high_matches * 0.01)), 3)
                     if high_matches > 50:
                         forensic_evidence.append("potential_copy_paste")
 
             forensics_scores = {
-                "copy_paste_detection": round(copy_paste_score, 3),
-                "image_manipulation": round(image_manipulation_score, 3),
-                "digital_signature_validation": round(sig_score, 3),
-                "hash_integrity": round(hash_integrity, 3),
+                "copy_paste_detection": round(float(copy_paste_score), 3),
+                "image_manipulation": round(float(image_manipulation_score), 3),
+                "digital_signature_validation": round(float(sig_score), 3),
+                "hash_integrity": round(float(hash_integrity), 3),
             }
             overall_score = float(np.mean(list(forensics_scores.values())))
 
             return {
                 "scores": forensics_scores,
                 "evidence": forensic_evidence,
-                "overall_score": round(overall_score, 3),
+                "overall_score": round(float(overall_score), 3),
                 "file_hash_sha256": file_hash,
-                "forensics_confidence": round(min(1.0, os.path.getsize(file_path) / 50_000), 3),
+                "forensics_confidence": round(float(min(1.0, os.path.getsize(file_path) / 50_000)), 3),
                 "analysis_method": "digital_forensics_suite_v6.0_real",
             }
         except Exception as e:
@@ -513,15 +523,16 @@ class EnhancedFraudDetector:
             total_weight = 0.0
             
             for component, weight in weights.items():
-                if component in analysis_results and "overall_score" in analysis_results[component]:
+                component_result = analysis_results.get(component)
+                if isinstance(component_result, dict) and "overall_score" in component_result:
                     # Convert score to fraud probability (invert good scores)
-                    fraud_component = 1.0 - analysis_results[component]["overall_score"]
-                    weighted_score += fraud_component * weight
-                    total_weight += weight
+                    fraud_component = 1.0 - float(component_result["overall_score"])
+                    weighted_score += fraud_component * weight  # type: ignore[operator]
+                    total_weight += weight  # type: ignore[operator]
             
             # Normalize by total weight
-            if total_weight > 0:
-                fraud_probability = weighted_score / total_weight
+            if total_weight > 0:  # type: ignore[operator]
+                fraud_probability = weighted_score / total_weight  # type: ignore[operator]
             else:
                 fraud_probability = 0.5  # Default uncertainty
             
@@ -672,7 +683,7 @@ class EnhancedFraudDetector:
             logger.error(f"Error registering fraud analysis on blockchain: {str(e)}")
             return {"success": False, "error": str(e)}
 
-def analyze_document_fraud(file_path: str, metadata: Dict[str, Any] = None, blockchain_network: str = "testnet") -> FraudDetectionResult:
+def analyze_document_fraud(file_path: str, metadata: Optional[Dict[str, Any]] = None, blockchain_network: str = "testnet") -> FraudDetectionResult:
     """
     Convenience function to perform fraud analysis on a document
     """

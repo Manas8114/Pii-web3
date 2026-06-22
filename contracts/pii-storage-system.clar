@@ -13,6 +13,7 @@
 (define-constant err-record-not-found (err u202))
 (define-constant err-invalid-data (err u203))
 (define-constant err-duplicate-token (err u204))
+(define-constant err-contract-paused (err u205))
 
 ;; Data structures
 (define-map pii-records
@@ -61,6 +62,9 @@
 (define-data-var audit-counter uint u0)
 (define-data-var total-documents uint u0)
 
+;; Pause state
+(define-data-var is-paused bool false)
+
 ;; Events for real-time monitoring
 (define-public (emit-pii-stored (record-id uint) (entity-type (string-ascii 50)) (is-sensitive bool) (document-hash (string-ascii 128)))
     (begin
@@ -106,6 +110,9 @@
             (new-record-id (+ (var-get record-counter) u1))
         )
         (begin
+            ;; Check if paused
+            (asserts! (not (var-get is-paused)) err-contract-paused)
+            
             ;; Check if token already exists
             (asserts! (is-none (map-get? token-to-record { safe-token: safe-token })) err-duplicate-token)
             
@@ -264,14 +271,27 @@
     (map-get? document-records { document-hash: document-hash })
 )
 
-;; Get recent PII records
+;; Get recent PII records (last 10; Clarity does not support dynamic-length lists)
 (define-read-only (get-recent-pii-records (count uint))
     (let
         (
             (current-counter (var-get record-counter))
-            (start-id (if (> current-counter count) (- current-counter count) u0))
+            (start-id (if (> current-counter u10) (- current-counter u10) u0))
         )
-        (map get-pii-record (list start-id))
+        (map get-pii-record
+            (list
+                start-id
+                (+ start-id u1)
+                (+ start-id u2)
+                (+ start-id u3)
+                (+ start-id u4)
+                (+ start-id u5)
+                (+ start-id u6)
+                (+ start-id u7)
+                (+ start-id u8)
+                (+ start-id u9)
+            )
+        )
     )
 )
 
@@ -368,7 +388,17 @@
 (define-public (emergency-pause)
     (begin
         (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (var-set is-paused true)
         (print { event: "emergency-pause", timestamp: block-timestamp })
+        (ok true)
+    )
+)
+
+(define-public (resume)
+    (begin
+        (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+        (var-set is-paused false)
+        (print { event: "resume", timestamp: block-timestamp })
         (ok true)
     )
 )

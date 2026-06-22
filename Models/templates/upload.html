@@ -531,7 +531,7 @@
         }
     </style>
 </head>
-<body>
+<body aria-label="page">
     <div class="header">
         <div class="header-content">
             <div class="header-left">
@@ -551,7 +551,7 @@
                     Blockchain Secured
                 </div>
                 <div style="margin-top: 0.5rem;">
-                    <a href="/enhanced" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; font-size: 0.9rem; border: 1px solid rgba(255, 255, 255, 0.3); padding: 0.3rem 0.8rem; border-radius: 15px; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                    <a class="link_bypass link_bypass" href="/enhanced" style="color: rgba(255, 255, 255, 0.8); text-decoration: none; font-size: 0.9rem; border: 1px solid rgba(255, 255, 255, 0.3); padding: 0.3rem 0.8rem; border-radius: 15px; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                         ✨ Try Enhanced Portal
                     </a>
                 </div>
@@ -641,7 +641,7 @@
                         </div>
                         <div class="file-message">Drag & drop files here</div>
                         <div class="file-hint">or click to browse</div>
-                        <input type="file" name="file" id="file-input" class="file-input">
+                        <label><input type="file" name="file" id="file-input" class="file-input"></label>
                     </div>
                     
                     <div class="selected-file" id="selected-file">

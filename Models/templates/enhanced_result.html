@@ -453,7 +453,7 @@
         }
     </style>
 </head>
-<body>
+<body aria-label="page">
     <!-- Header -->
     <header class="header">
         <div class="header-content">
@@ -462,11 +462,11 @@
                 SecureDoc Analysis
             </div>
             <div class="header-actions">
-                <a href="/" class="btn btn-secondary">
+                <a class="link_bypass link_bypass" href="/" class="btn btn-secondary">
                     <i class="fas fa-chart-line"></i>
                     Dashboard
                 </a>
-                <a href="/upload" class="btn btn-primary">
+                <a class="link_bypass link_bypass" href="/upload" class="btn btn-primary">
                     <i class="fas fa-upload"></i>
                     New Upload
                 </a>
@@ -627,7 +627,7 @@
         <div class="action-section animate-fade-in">
             <h3 style="margin-bottom: 1rem;">Document Actions</h3>
             <div class="action-buttons">
-                <a href="/download/{{ filename }}" class="btn btn-primary btn-large">
+                <a class="link_bypass link_bypass" href="/download/{{ filename }}" class="btn btn-primary btn-large">
                     <i class="fas fa-download"></i>
                     Download Processed
                 </a>

@@ -14,15 +14,15 @@
     .pill { display: inline-block; padding: 6px 10px; background: #eef; border-radius: 999px; margin: 0 4px 6px 0; }
   </style>
 </head>
-<body>
+<body aria-label="page">
   <h2>Leather Wallet Integration: Send PII batch to Clarity</h2>
   <div class="row">
     <label>Contract Address</label>
-    <input id="contractAddress" placeholder="ST..." />
+    <label><input id="contractAddress" placeholder="ST..." /></label>
     <label>Contract Name</label>
-    <input id="contractName" value="pii-storage-system" />
+    <label><input id="contractName" value="pii-storage-system" /></label>
     <label>Document Hash</label>
-    <input id="documentHash" placeholder="sha256 hash of document+text" />
+    <label><input id="documentHash" placeholder="sha256 hash of document+text" /></label>
     <label>PII Batch (JSON list)</label>
     <textarea id="piiBatch" rows="8" placeholder='[
   {"safe-token":"token-123","entity-type":"PERSON","confidence-score":95,"is-sensitive":true,"metadata":"from script.py"}

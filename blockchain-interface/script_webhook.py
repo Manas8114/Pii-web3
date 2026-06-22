@@ -9,8 +9,6 @@ Run this alongside your script.py to enable blockchain integration.
 
 import requests
 import threading
-import time
-import json
 from flask import Flask, request, jsonify
 from pii_blockchain_bridge import PIIInterceptor
 

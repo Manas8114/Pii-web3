@@ -9,7 +9,6 @@ import http.server
 import ssl
 import socketserver
 import os
-from pathlib import Path
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):

@@ -9,35 +9,34 @@ import spacy
 import cv2
 import numpy as np
 from presidio_analyzer import AnalyzerEngine
-from presidio_anonymizer import AnonymizerEngine
-from transformers import pipeline
 from presidio_analyzer import EntityRecognizer, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
-from typing import List
+from typing import List, Optional, Any
 import firebase_admin
+import re
+import uuid
 from flask_cors import CORS
 from firebase_admin import credentials, firestore
-from safetensors.torch import load_file
-import torch
-import json
-import logging
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Import blockchain and enhanced fraud detection modules
 try:
-    from blockchain_audit import BlockchainAuditManager, create_audit_manager
+    from blockchain_audit import create_audit_manager
     BLOCKCHAIN_AVAILABLE = True
 except ImportError:
-    print("WARNING: Blockchain audit module not available")
+    logger.info("WARNING: Blockchain audit module not available")
     BLOCKCHAIN_AVAILABLE = False
 
 try:
     import sys
     sys.path.append('..')
-    from enhanced_fraud_detector import EnhancedFraudDetector, analyze_document_fraud
+    from enhanced_fraud_detector import EnhancedFraudDetector
     FRAUD_DETECTOR_AVAILABLE = True
 except ImportError:
-    print("WARNING: Enhanced fraud detector not available")
+    logger.info("WARNING: Enhanced fraud detector not available")
     FRAUD_DETECTOR_AVAILABLE = False
 
 app = Flask(__name__)
@@ -59,23 +58,6 @@ os.makedirs(PROCESSED_FOLDER, exist_ok=True)  # N
 
 
 
-try:
-    nlp = spacy.load("en_core_web_lg")
-except OSError:
-    print("Downloading en_core_web_lg model...")
-    os.system("spacy download en_core_web_lg")
-    nlp = spacy.load("en_core_web_lg")
-
-transformers_model = pipeline(
-    "token-classification",
-    model="dbmdz/bert-large-cased-finetuned-conll03-english",
-    aggregation_strategy="average",
-    ignore_labels=["O", "MISC"]
-)
-
-# Load the model weights
-model_path = r"D:\CodeFest(tokenization)\Standard-Chartered-Hackthon\Models\model.safetensors"
-# state_dict = load_file(model_path)
 class TransformersRecognizer(EntityRecognizer):
     def __init__(self, model_pipeline, supported_language="en"):
         self.pipeline = model_pipeline
@@ -85,26 +67,45 @@ class TransformersRecognizer(EntityRecognizer):
             "ORG": "ORGANIZATION",
             "MISC": "MISC",
         }
-        super().__init__(supported_entities=list(self.label2presidio.values()), supported_language=supported_language)
+        super().__init__(supported_entities=list(self.label2presidio.values()), supported_language=supported_language)  # type: ignore[call-arg]
 
     def load(self) -> None:
         pass
 
-    def analyze(self, text: str, entities: List[str] = None, nlp_artifacts: NlpArtifacts = None) -> List[RecognizerResult]:
+    def analyze(self, text: str, entities: Optional[List[str]] = None, nlp_artifacts: Optional[NlpArtifacts] = None) -> List[RecognizerResult]:  # type: ignore[override]
         results = []
         predicted_entities = self.pipeline(text)
 
         for e in predicted_entities:
             converted_entity = self.label2presidio.get(e["entity_group"], None)
-            if converted_entity and (entities is None or converted_entity in entities):
+            if converted_entity and (entities is None or converted_entity in entities):  # type: ignore[operator]
                 results.append(RecognizerResult(entity_type=converted_entity, start=e["start"], end=e["end"], score=e["score"]))
         return results
 
-analyzer = AnalyzerEngine()
-anonymizer = AnonymizerEngine()
+_analyzer = None
 
-transformers_recognizer = TransformersRecognizer(transformers_model)
-analyzer.registry.add_recognizer(transformers_recognizer)
+def get_analyzer():
+    global _analyzer
+    if _analyzer is None:
+        try:
+            nlp = spacy.load("en_core_web_lg")
+        except OSError:
+            import logging
+            logging.getLogger(__name__).info("Downloading en_core_web_lg model...")
+            os.system("spacy download en_core_web_lg")
+            spacy.load("en_core_web_lg")
+
+        transformers_model = pipeline(
+            "token-classification",
+            model="dbmdz/bert-large-cased-finetuned-conll03-english",
+            aggregation_strategy="average",
+            ignore_labels=["O", "MISC"]
+        )
+        
+        _analyzer = AnalyzerEngine()
+        transformers_recognizer = TransformersRecognizer(transformers_model)
+        _analyzer.registry.add_recognizer(transformers_recognizer)
+    return _analyzer
 
 COLOR_MASK = "BLACK"
 color_map = {
@@ -131,9 +132,6 @@ def extract_text_from_image(image_path):
 def allowed_file(filename):
     """Check if file type is allowed."""
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-
-import re
-import uuid
 
 def generate_secure_token():
     """Generate a unique secure token"""
@@ -174,9 +172,9 @@ try:
     firebase_admin.initialize_app(cred)
     db = firestore.client()
     FIREBASE_AVAILABLE = True
-    print("SUCCESS: Firebase initialized successfully")
+    logger.info("SUCCESS: Firebase initialized successfully")
 except Exception as e:
-    print(f"WARNING: Firebase initialization failed: {str(e)}")
+    logger.info(f"WARNING: Firebase initialization failed: {str(e)}")
     db = None
     FIREBASE_AVAILABLE = False
 
@@ -184,9 +182,9 @@ except Exception as e:
 if BLOCKCHAIN_AVAILABLE:
     try:
         blockchain_manager = create_audit_manager(network="testnet")
-        print("✅ Blockchain audit manager initialized")
+        logger.info("✅ Blockchain audit manager initialized")
     except Exception as e:
-        print(f"⚠️ Blockchain manager initialization failed: {str(e)}")
+        logger.info(f"⚠️ Blockchain manager initialization failed: {str(e)}")
         blockchain_manager = None
 else:
     blockchain_manager = None
@@ -195,15 +193,15 @@ else:
 if FRAUD_DETECTOR_AVAILABLE:
     try:
         fraud_detector = EnhancedFraudDetector(blockchain_network="testnet")
-        print("✅ Enhanced fraud detector initialized")
+        logger.info("✅ Enhanced fraud detector initialized")
     except Exception as e:
-        print(f"⚠️ Fraud detector initialization failed: {str(e)}")
+        logger.info(f"⚠️ Fraud detector initialization failed: {str(e)}")
         fraud_detector = None
 else:
     fraud_detector = None
 
 def get_sensitive_data(text):
-    analysis_results = analyzer.analyze(text=text, entities=None, language="en")
+    analysis_results = get_analyzer().analyze(text=text, entities=None, language="en")
 
     sensitive_data = {}
     
@@ -248,7 +246,7 @@ def extract_and_store_sensitive_data(text):
         return jsonify({"message": "Data saved successfully!", "sensitive_data": sensitive_data})
 
     except Exception as e:
-        print("Error occurred:", str(e))  # Log the error
+        logger.info("Error occurred:", str(e))  # Log the error
         return jsonify({"error": str(e)}), 500
 
 
@@ -264,34 +262,37 @@ def convert_np_floats(value):
 
 def store_sensitive_data_firestore(sensitive_data):
     try:
-        print(f"Received sensitive data: {sensitive_data}")
+        logger.info(f"Received sensitive data: {sensitive_data}")
         if not sensitive_data:
-            print("No sensitive data to store.")
+            logger.info("No sensitive data to store.")
             return
 
         for entity_text, details in sensitive_data.items():
             safe_token = details.get("safe_token")
 
             if not safe_token:
-                print(f"Skipping {entity_text} due to missing safe_token")
+                logger.info(f"Skipping {entity_text} due to missing safe_token")
                 continue
 
             cleaned_details = convert_np_floats(details)
 
-            print(f"Storing entity: {entity_text}, Safe Token: {safe_token}")
+            logger.info(f"Storing entity: {entity_text}, Safe Token: {safe_token}")
 
             try:
-                db.collection("tokens").document(safe_token).set({
+                if db is None:
+                    logger.info(f"⚠️ Firebase not available, skipping store for {entity_text}")
+                    continue
+                db.collection("tokens").document(safe_token).set({  # type: ignore[union-attr]
                     "original_text": entity_text,
                     "entity": cleaned_details.get("entity"),
                     "confidence_score": cleaned_details.get("confidence_score")
                 })
-                print(f"✅ Stored {entity_text} successfully!")
+                logger.info(f"✅ Stored {entity_text} successfully!")
             except Exception as firestore_error:
-                print(f"❌ Firestore Error for {entity_text}: {firestore_error}")
+                logger.info(f"❌ Firestore Error for {entity_text}: {firestore_error}")
 
     except Exception as e:
-        print(f"Error storing data in Firestore: {e}")
+        logger.info(f"Error storing data in Firestore: {e}")
 
 
 def apply_blur(page, area):
@@ -393,7 +394,7 @@ def process_pdf(pdf_path, output_pdf, blur=False):
     redacted_doc = redact_text_with_pymupdf(doc, blur=blur)
 
     # ✅ Save the redacted/blurred PDF
-    print(f"Saving redacted PDF to: {output_pdf}")
+    logger.info(f"Saving redacted PDF to: {output_pdf}")
 
     redacted_doc.save(output_pdf)
 
@@ -403,7 +404,7 @@ def get_token_map(text):
     """
     Get a mapping of detected entities with their original name and entity type.
     """
-    analysis_results = analyzer.analyze(text=text, entities=None, language="en")
+    analysis_results = get_analyzer().analyze(text=text, entities=None, language="en")
     
     token_map = {}
     for result in analysis_results:
@@ -465,7 +466,7 @@ def dashboard():
                              recent_activity=recent_activity,
                              fraud_steps=get_fraud_detection_steps())
     except Exception as e:
-        print(f"Dashboard error: {str(e)}")
+        logger.info(f"Dashboard error: {str(e)}")
         return render_template("dashboard.html", 
                              stats={"total_documents": 0, "fraud_detected": 0, "pii_protected": 0, "blockchain_records": 0},
                              recent_activity=[],
@@ -498,13 +499,12 @@ def upload_file():
 
 @app.route("/preview/<filename>")
 def preview_file(filename):
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     return render_template("preview.html", filename=filename)
 @app.route("/process/<filename>")
 def process_file(filename):
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     
-    print(f"File path for upload: {file_path}")  # Debugging file path
+    logger.info(f"File path for upload: {file_path}")  # Debugging file path
 
     # Check if the file exists
     if not os.path.exists(file_path):
@@ -513,19 +513,19 @@ def process_file(filename):
     if filename.lower().endswith(".pdf"):
         output_filename = "processed_" + filename  # Example: "processed_filename.pdf"
         output_path = os.path.join(app.config["PROCESSED_FOLDER"], output_filename)
-        print(f"Saving processed PDF to: {output_path}")  # Debugging output path
+        logger.info(f"Saving processed PDF to: {output_path}")  # Debugging output path
         _, extracted_text = process_pdf(file_path, output_path)
     else:
         output_filename = "processed_" + filename  # Example: "processed_filename.png"
         output_path = os.path.join(app.config["PROCESSED_FOLDER"], output_filename)
-        print(f"Saving processed image to: {output_path}")  # Debugging output path
+        logger.info(f"Saving processed image to: {output_path}")  # Debugging output path
         _, extracted_text = process_image(file_path, output_path)
 
     sensitive_data = get_sensitive_data(extracted_text)
     store_sensitive_data_firestore(sensitive_data)
 
     # Return the result page with the processed filename
-    # print(sensitive_data)
+    # logger.info(sensitive_data)
     return render_template(
         "result.html",
         filename=output_filename,
@@ -533,7 +533,6 @@ def process_file(filename):
         sensitive_data=sensitive_data,
     )
 
-from flask import send_from_directory
 @app.route("/download/<filename>")
 def download_file(filename):
     """Allow user to download processed file."""
@@ -552,7 +551,7 @@ def enhanced_interface():
     try:
         return render_template("../templates/enhanced_index.html")
     except Exception as e:
-        print(f"Error serving enhanced interface: {str(e)}")
+        logger.info(f"Error serving enhanced interface: {str(e)}")
         return "Enhanced interface not available", 404
 
 @app.route("/api/stacks/fees", methods=["GET"])
@@ -693,7 +692,7 @@ def analyze_fraud():
         })
         
     except Exception as e:
-        print(f"Fraud analysis error: {str(e)}")
+        logger.info(f"Fraud analysis error: {str(e)}")
         return jsonify({
             "success": False,
             "error": str(e)
@@ -753,7 +752,7 @@ def register_on_blockchain():
         return jsonify(registration_result)
         
     except Exception as e:
-        print(f"Blockchain registration error: {str(e)}")
+        logger.info(f"Blockchain registration error: {str(e)}")
         return jsonify({
             "success": False,
             "error": str(e)
@@ -817,7 +816,7 @@ def get_fraud_detection_steps():
             "description": "Deep analysis of document metadata and digital fingerprints",
             "details": "Creation dates, modification history, author information, and tool signatures",
             "icon": "fas fa-search",
-            "color": "#8B5CF6"
+            "color": "#10B981"
         },
         {
             "step": 3,
@@ -848,7 +847,7 @@ def get_fraud_detection_steps():
 def analyze_document_fraud_steps(file_path, filename):
     """Enhanced fraud detection with 5-step process tracking"""
     try:
-        fraud_analysis = {
+        fraud_analysis: dict[str, Any] = {
             "filename": filename,
             "analysis_id": f"FA_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
             "steps": [],
@@ -914,7 +913,7 @@ def analyze_document_fraud_steps(file_path, filename):
         return fraud_analysis
         
     except Exception as e:
-        logger.error(f"Error in fraud analysis: {str(e)}")
+        logger.info(f"Error in fraud analysis: {str(e)}")
         return {
             "error": str(e),
             "filename": filename,
@@ -929,7 +928,7 @@ def perform_intake_analysis(file_path):
     
     # Simulate intake analysis
     return {
-        "file_size_mb": round(file_size / (1024*1024), 2),
+        "file_size_mb": round(float(file_size) / (1024*1024), 2),
         "file_format": file_ext,
         "format_valid": file_ext in ['.pdf', '.png', '.jpg', '.jpeg'],
         "size_suspicious": file_size > 10*1024*1024 or file_size < 1024,
@@ -1029,7 +1028,7 @@ def get_document_count():
     """Get total number of processed documents"""
     try:
         return len([f for f in os.listdir(app.config['UPLOAD_FOLDER']) if f.endswith(('.pdf', '.png', '.jpg', '.jpeg'))])
-    except:
+    except Exception:
         return 0
 
 def get_fraud_count():
@@ -1064,7 +1063,6 @@ def connect_leather_wallet():
     """Enhanced Leather wallet connection with Stacks Connect integration"""
     try:
         data = request.get_json()
-        auth_data = data.get('authData', {})
         user_session = data.get('userSession', {})
         wallet_address = data.get('wallet_address')
         network = data.get('network', 'testnet')
@@ -1104,9 +1102,9 @@ def connect_leather_wallet():
         if FIREBASE_AVAILABLE and db:
             try:
                 db.collection('wallet_connections').document(wallet_address).set(wallet_info)
-                print(f"✅ Leather wallet connection stored: {wallet_address[:8]}...")
+                logger.info(f"✅ Leather wallet connection stored: {wallet_address[:8]}...")
             except Exception as e:
-                print(f"⚠️ Failed to store wallet connection: {str(e)}")
+                logger.info(f"⚠️ Failed to store wallet connection: {str(e)}")
         
         return jsonify({
             'success': True,
@@ -1123,7 +1121,7 @@ def connect_leather_wallet():
         })
         
     except Exception as e:
-        print(f"Leather wallet connection error: {str(e)}")
+        logger.info(f"Leather wallet connection error: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -1179,7 +1177,7 @@ def prepare_stacks_transaction():
         })
         
     except Exception as e:
-        print(f"Transaction preparation error: {str(e)}")
+        logger.info(f"Transaction preparation error: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -1218,9 +1216,9 @@ def submit_stacks_transaction():
         if FIREBASE_AVAILABLE and db:
             try:
                 db.collection('stacks_transactions').document(tx_id).set(transaction_record)
-                print(f"✅ Transaction recorded: {tx_id}")
+                logger.info(f"✅ Transaction recorded: {tx_id}")
             except Exception as e:
-                print(f"⚠️ Failed to store transaction: {str(e)}")
+                logger.info(f"⚠️ Failed to store transaction: {str(e)}")
         
         return jsonify({
             'success': True,
@@ -1230,7 +1228,7 @@ def submit_stacks_transaction():
         })
         
     except Exception as e:
-        print(f"Transaction submission error: {str(e)}")
+        logger.info(f"Transaction submission error: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -1251,7 +1249,7 @@ def get_transaction_status(tx_id):
                 if doc.exists:
                     transaction_data = doc.to_dict()
             except Exception as e:
-                print(f"⚠️ Failed to fetch transaction: {str(e)}")
+                logger.info(f"⚠️ Failed to fetch transaction: {str(e)}")
         
         # Simulate transaction status
         status_options = ['pending', 'confirmed', 'failed']
@@ -1341,7 +1339,7 @@ def process_document_with_payment():
         
         # Verify payment transaction (in production, verify on-chain)
         if tx_id:
-            print(f"✅ Processing with payment: {tx_id}")
+            logger.info(f"✅ Processing with payment: {tx_id}")
         
         # Save and process file
         filename = secure_filename(file.filename)
@@ -1392,7 +1390,7 @@ def process_document_with_payment():
         return jsonify(result)
         
     except Exception as e:
-        print(f"Document processing with payment error: {str(e)}")
+        logger.info(f"Document processing with payment error: {str(e)}")
         return jsonify({
             'success': False,
             'error': str(e)
@@ -1453,13 +1451,13 @@ def get_dashboard_stats():
 if __name__ == "__main__":
     try:
         app.config['DEBUG'] = True
-        print("🚀 Starting SecureDoc Enhanced Server...")
-        print("📊 Dashboard available at: http://localhost:5001/")
-        print("📤 Upload interface at: http://localhost:5001/upload")
-        print("🔍 Fraud detection API: http://localhost:5001/api/fraud-analysis")
+        logger.info("🚀 Starting SecureDoc Enhanced Server...")
+        logger.info("📊 Dashboard available at: http://localhost:5001/")
+        logger.info("📤 Upload interface at: http://localhost:5001/upload")
+        logger.info("🔍 Fraud detection API: http://localhost:5001/api/fraud-analysis")
         app.run(debug=True, port=5001, host='0.0.0.0')
     except Exception as e:
-        print(f"Error starting server: {str(e)}")
+        logger.info(f"Error starting server: {str(e)}")
         import traceback
         traceback.print_exc()
         input("Press Enter to exit...") # This keeps the window open
@@ -1470,15 +1468,15 @@ if __name__ == "__main__":
     
 #     # Process PDF or image based on the file type
 #     if file_path.lower().endswith(".pdf"):
-#         print(f"\n🔹 Processing PDF: {file_path}")
+#         logger.info(f"\n🔹 Processing PDF: {file_path}")
 #         processed_pdf, extracted_text = process_pdf(file_path, "processed_output.pdf")
 
 #     elif file_path.lower().endswith((".png", ".jpg", ".jpeg")):
-#         print(f"\n🔹 Processing Image: {file_path}")
+#         logger.info(f"\n🔹 Processing Image: {file_path}")
 #         processed_image, extracted_text = process_image(file_path, "processed_output.png")
 
 #     else:
-#         print("❌ Unsupported file type! Please provide a PDF or image.")
+#         logger.info("❌ Unsupported file type! Please provide a PDF or image.")
 #         exit(1)
 
 #     # ✅ Get token-wise entity mapping
@@ -1488,7 +1486,7 @@ if __name__ == "__main__":
 #     sensitive_data = get_sensitive_data(extracted_text)
 
 #     # ✅ Print the results
-#     print("\n📌 Entity Map with Secure Tokens and Confidence Scores:")
+#     logger.info("\n📌 Entity Map with Secure Tokens and Confidence Scores:")
 #     if sensitive_data:
 #         for token, details in sensitive_data.items():
 #             # Extract the safe token and confidence score
@@ -1498,6 +1496,6 @@ if __name__ == "__main__":
 #             if entity_type=="IN_PAN" and confidence_score<=0.7:
 #                 continue
 #             # Print the token, entity, generated secure token, and confidence score
-#             print(f"Token: {token} -> Entity: {entity_type} -> Safe Token: {safe_token} -> Confidence Score: {confidence_score:.2f}")
+#             logger.info(f"Token: {token} -> Entity: {entity_type} -> Safe Token: {safe_token} -> Confidence Score: {confidence_score:.2f}")
 #     else:
-#         print("No sensitive entities found in the document.")
+#         logger.info("No sensitive entities found in the document.")

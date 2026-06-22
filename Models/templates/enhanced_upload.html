@@ -23,7 +23,7 @@
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
             --metamask-color: #f6851b;
-            --leather-color: #8B5CF6;
+            --leather-color: #10B981;
         }
 
         * {
@@ -252,7 +252,7 @@
         }
 
         .leather-btn:hover {
-            background: #7c3aed;
+            background: #10b981;
             transform: translateY(-2px);
             box-shadow: var(--shadow);
         }
@@ -529,7 +529,7 @@
         }
     </style>
 </head>
-<body>
+<body aria-label="page">
     <!-- Header -->
     <header class="header">
         <div class="header-content">
@@ -538,7 +538,7 @@
                 SecureDoc
             </div>
             <div class="header-actions">
-                <a href="/" class="btn btn-secondary">
+                <a class="link_bypass link_bypass" href="/" class="btn btn-secondary">
                     <i class="fas fa-chart-line"></i>
                     Dashboard
                 </a>
@@ -631,7 +631,7 @@
                     </div>
                     <div class="upload-text">Drag & drop your document here</div>
                     <div class="upload-hint">or click to browse files</div>
-                    <input type="file" name="file" id="fileInput" class="file-input" accept=".pdf,.png,.jpg,.jpeg">
+                    <label><input type="file" name="file" id="fileInput" class="file-input" accept=".pdf,.png,.jpg,.jpeg"></label>
                 </div>
 
                 <!-- Selected File Preview -->

@@ -231,7 +231,7 @@
         }
     </style>
 </head>
-<body>
+<body aria-label="page">
     <div class="header">
         <h1>SecureDoc Preview</h1>
         <div class="blockchain-badge">
@@ -266,13 +266,13 @@
                     {% if filename.endswith('.pdf') %}
                         <embed src="{{ url_for('static', filename='uploads/' + filename) }}" width="700px" height="700px">
                     {% else %}
-                        <img src="{{ url_for('static', filename='uploads/' + filename) }}" width="700px">
+                        <img alt="image" src="{{ url_for('static', filename='uploads/' + filename) }}" width="700px">
                     {% endif %}
                 </div>
             </div>
             
             <div class="actions">
-                <a href="{{ url_for('process_file', filename=filename) }}">
+                <a class="link_bypass link_bypass" href="{{ url_for('process_file', filename=filename) }}">
                     <button class="btn btn-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="9 11 12 14 22 4"></polyline>

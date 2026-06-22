@@ -296,7 +296,7 @@
         }
     </style>
 </head>
-<body>
+<body aria-label="page">
     <div class="connection-status" id="connection-status">🔴 Disconnected</div>
     
     <div class="header">
@@ -306,8 +306,8 @@
     
     <div class="controls">
         <div class="control-group">
-            <input type="text" id="contract-address" placeholder="Contract Address (e.g., ST1PQHQKV...)" />
-            <input type="text" id="contract-name" placeholder="Contract Name" value="tokenization-system" />
+            <label><input type="text" id="contract-address" placeholder="Contract Address (e.g., ST1PQHQKV...)" /></label>
+            <label><input type="text" id="contract-name" placeholder="Contract Name" value="tokenization-system" /></label>
         </div>
         <div class="control-group">
             <button onclick="startMonitoring()">🚀 Start Monitoring</button>

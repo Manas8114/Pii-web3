@@ -26,25 +26,25 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body aria-label="page" class="bg-gray-100 min-h-screen">
     <!-- Navigation -->
-    <nav class="gradient-bg shadow-lg">
+    <div role="navigation" class="gradient-bg shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="/" class="flex items-center">
+                    <a class="link_bypass link_bypass flex items-center" href="/" >
                         <i class="fas fa-shield-alt text-white text-2xl mr-3"></i>
                         <h1 class="text-white text-xl font-bold">SecuredDoc</h1>
                     </a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="/dashboard" class="text-white hover:text-blue-200 transition duration-200">
+                    <a class="link_bypass link_bypass text-white hover:text-blue-200 transition duration-200" href="/dashboard" >
                         <i class="fas fa-chart-bar mr-1"></i>Dashboard
                     </a>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
@@ -106,25 +106,25 @@
                     
                     <div class="space-y-4">
                         <div class="flex items-center">
-                            <input type="checkbox" id="enablePII" class="mr-3" checked>
+                            <label><input type="checkbox" id="enablePII" class="mr-3" checked></label>
                             <label for="enablePII" class="text-gray-700">
                                 <i class="fas fa-user-secret text-blue-600 mr-2"></i>PII Detection & Redaction
                             </label>
                         </div>
                         <div class="flex items-center">
-                            <input type="checkbox" id="enableFraud" class="mr-3" checked>
+                            <label><input type="checkbox" id="enableFraud" class="mr-3" checked></label>
                             <label for="enableFraud" class="text-gray-700">
                                 <i class="fas fa-shield-virus text-red-600 mr-2"></i>Fraud Detection
                             </label>
                         </div>
                         <div class="flex items-center">
-                            <input type="checkbox" id="enableBlockchain" class="mr-3" checked>
+                            <label><input type="checkbox" id="enableBlockchain" class="mr-3" checked></label>
                             <label for="enableBlockchain" class="text-gray-700">
-                                <i class="fas fa-cube text-purple-600 mr-2"></i>Blockchain Registration
+                                <i class="fas fa-cube text-teal-600 mr-2"></i>Blockchain Registration
                             </label>
                         </div>
                         <div class="flex items-center">
-                            <input type="checkbox" id="enableAudit" class="mr-3" checked>
+                            <label><input type="checkbox" id="enableAudit" class="mr-3" checked></label>
                             <label for="enableAudit" class="text-gray-700">
                                 <i class="fas fa-history text-green-600 mr-2"></i>Audit Trail
                             </label>

@@ -7,7 +7,6 @@ Just import this file in your script.py and call send_to_blockchain() with your 
 """
 
 import requests
-import json
 from datetime import datetime
 import threading
 import os

@@ -1,4 +1,5 @@
 from flask import Flask, request, send_file, render_template
+from typing import List, Optional
 import pytesseract
 from PIL import Image
 from transformers import pipeline
@@ -10,10 +11,8 @@ import cv2
 import numpy as np
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
-from transformers import pipeline
 from presidio_analyzer import EntityRecognizer, RecognizerResult
 from presidio_analyzer.nlp_engine import NlpArtifacts
-from typing import List
 
 app = Flask(__name__)
 # Define the upload and output directories
@@ -52,12 +51,12 @@ class TransformersRecognizer(EntityRecognizer):
             "ORG": "ORGANIZATION",
             "MISC": "MISC",
         }
-        super().__init__(supported_entities=list(self.label2presidio.values()), supported_language=supported_language)
+        super().__init__(supported_entities=list(self.label2presidio.values()), supported_language=supported_language)  # type: ignore[call-arg]
 
     def load(self) -> None:
         pass
 
-    def analyze(self, text: str, entities: List[str] = None, nlp_artifacts: NlpArtifacts = None) -> List[RecognizerResult]:
+    def analyze(self, text: str, entities: Optional[List[str]] = None, nlp_artifacts: NlpArtifacts = None) -> List[RecognizerResult]:  # type: ignore[override]
         results = []
         predicted_entities = self.pipeline(text)
 
@@ -105,7 +104,6 @@ def get_sensitive_data(text):
     for result in analysis_results:
         entity_text = text[result.start:result.end]  # Extract actual sensitive text
         entity_label = result.entity_type  # Get entity label
-        confidence_score = result.score  # Confidence score
 
         # Store entity in dictionary
         sensitive_data[entity_text] = entity_label

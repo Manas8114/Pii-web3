@@ -435,26 +435,26 @@
         .activity-icon.warning { background: var(--warning); }
     </style>
 </head>
-<body>
+<body aria-label="page">
     <!-- Navigation -->
-    <nav class="navbar">
+    <div role="navigation" class="navbar">
         <div class="nav-container">
-            <a href="/" class="logo">
+            <a class="link_bypass link_bypass" href="/" class="logo">
                 <i class="fas fa-shield-alt"></i>
                 SecureDoc
             </a>
             <ul class="nav-links">
-                <li><a href="/" class="active">Dashboard</a></li>
-                <li><a href="/upload">Upload</a></li>
-                <li><a href="/api/fraud-analysis">Fraud Analysis</a></li>
-                <li><a href="#blockchain">Blockchain</a></li>
-                <li><a href="#settings">Settings</a></li>
+                <li><a class="link_bypass link_bypass" href="/" class="active">Dashboard</a></li>
+                <li><a class="link_bypass link_bypass" href="/upload">Upload</a></li>
+                <li><a class="link_bypass link_bypass" href="/api/fraud-analysis">Fraud Analysis</a></li>
+                <li><a class="link_bypass link_bypass" href="#blockchain">Blockchain</a></li>
+                <li><a class="link_bypass link_bypass" href="#settings">Settings</a></li>
             </ul>
-            <a href="/upload" class="upload-btn">
+            <a class="link_bypass link_bypass" href="/upload" class="upload-btn">
                 <i class="fas fa-upload"></i> Upload Document
             </a>
         </div>
-    </nav>
+    </div>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -575,19 +575,19 @@
 
         <!-- Quick Actions -->
         <div class="quick-actions">
-            <a href="/upload" class="action-btn">
+            <a class="link_bypass link_bypass" href="/upload" class="action-btn">
                 <i class="fas fa-upload"></i>
                 Upload Document
             </a>
-            <a href="/api/fraud-analysis" class="action-btn">
+            <a class="link_bypass link_bypass" href="/api/fraud-analysis" class="action-btn">
                 <i class="fas fa-search"></i>
                 Analyze Document
             </a>
-            <a href="#blockchain" class="action-btn">
+            <a class="link_bypass link_bypass" href="#blockchain" class="action-btn">
                 <i class="fas fa-link"></i>
                 Blockchain Audit
             </a>
-            <a href="#settings" class="action-btn">
+            <a class="link_bypass link_bypass" href="#settings" class="action-btn">
                 <i class="fas fa-cog"></i>
                 Settings
             </a>

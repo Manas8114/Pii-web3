@@ -1,0 +1,414 @@
+.auto-style-1 {
+    background: var(--bg-surface);
+}
+.auto-style-2 {
+    background: var(--bg-surface); border-right: 1px solid var(--glass-border);
+}
+.auto-style-3 {
+    border-left: 3px solid var(--accent-violet);
+}
+.auto-style-4 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-5 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-6 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-7 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-8 {
+    background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);
+}
+.auto-style-9 {
+    background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.15);
+}
+.auto-style-10 {
+    background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.15);
+}
+.auto-style-11 {
+    background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);
+}
+.auto-style-12 {
+    background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.15);
+}
+.auto-style-13 {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+}
+.auto-style-14 {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F8FAFC;
+}
+.auto-style-15 {
+    background: rgba(244,63,94,0.15); border: 1px solid rgba(244,63,94,0.3); color: #FB7185;
+}
+.auto-style-16 {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F8FAFC;
+}
+.auto-style-17 {
+    background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399;
+}
+.auto-style-18 {
+    background: rgba(255,255,255,0.1);
+}
+.auto-style-19 {
+    width: 0%
+}
+.auto-style-20 {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+}
+.auto-style-21 {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+}
+.auto-style-22 {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+}
+.auto-style-23 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-24 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-25 {
+    background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); color: #22D3EE;
+}
+.auto-style-26 {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+}
+.auto-style-27 {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+}
+.auto-style-28 {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+}
+.auto-style-29 {
+    background: rgba(20,184,166,0.15); border: 1px solid rgba(20,184,166,0.3); color: #2DD4BF;
+}
+.auto-style-30 {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.auto-style-31 {
+    background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: #60A5FA;
+}
+.auto-style-32 {
+    background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399;
+}
+.auto-style-33 {
+    background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #34D399;
+}
+.auto-style-34 {
+    background: var(--bg-surface);
+}
+.auto-style-35 {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.auto-style-36 {
+    background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
+}
+.auto-style-37 {
+    background: rgba(255,255,255,0.05);
+}
+.auto-style-38 {
+    background: rgba(255,255,255,0.05);
+}
+.auto-style-39 {
+    background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);
+}
+.auto-style-40 {
+    text-decoration:underline;color:#FBBF24
+}
+.auto-style-41 {
+    text-decoration:underline;color:#FBBF24
+}
+.auto-style-42 {
+    background: ${colorClass}; border: 1px solid ${borderColor};
+}
+.auto-style-43 {
+    background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #F87171;
+}
+.auto-style-44 {
+    background: rgba(107,114,128,0.15); border: 1px solid rgba(107,114,128,0.3); color: #9CA3AF;
+}
+.auto-style-45 {
+    background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #FBBF24;
+}
+.auto-style-46 {
+    background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.3); color: #FB923C;
+}
+.auto-style-47 {
+    background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.15);
+}
+.auto-style-48 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-49 {
+    background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);
+}
+.auto-style-50 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-51 {
+    background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.15);
+}
+.auto-style-52 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-53 {
+    background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.15);
+}
+.auto-style-54 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-55 {
+    background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.15);
+}
+.auto-style-56 {
+    background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.15);
+}
+.auto-style-57 {
+    background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);
+}
+.auto-style-58 {
+    background: rgba(255,255,255,0.1);
+}
+.auto-style-59 {
+    width: 0%
+}
+.auto-style-60 {
+    background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.15);
+}
+.auto-style-61 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-62 {
+    background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.15);
+}
+.auto-style-63 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-64 {
+    background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);
+}
+.auto-style-65 {
+    font-family:'Orbitron',sans-serif;
+}
+.auto-style-66 {
+    background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: #60A5FA;
+}
+.auto-style-67 {
+    background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399;
+}
+.auto-style-68 {
+    background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #34D399;
+}
+.auto-style-69 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-70 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-71 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-72 {
+    font-family: 'Exo 2', sans-serif;
+}
+.auto-style-73 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+}
+.auto-style-74 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+}
+.auto-style-75 {
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.auto-style-76 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.95rem;
+}
+.auto-style-77 {
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.auto-style-78 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.95rem;
+}
+.auto-style-79 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.95rem;
+}
+.auto-style-80 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-81 {
+    font-family: 'Orbitron', sans-serif; font-size: 1.1rem;
+}
+.auto-style-82 {
+    font-family: 'Orbitron', sans-serif; font-size: 1.1rem;
+}
+.auto-style-83 {
+    font-family: 'Orbitron', sans-serif; font-size: 1.1rem;
+}
+.auto-style-84 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-85 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-86 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-87 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-88 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-89 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+}
+.auto-style-90 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+}
+.auto-style-91 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+}
+.auto-style-92 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+}
+.auto-style-93 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-94 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-95 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-96 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-97 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-98 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-99 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-100 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-101 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.85rem;
+}
+.auto-style-102 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.85rem;
+}
+.auto-style-103 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.85rem;
+}
+.auto-style-104 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.85rem;
+}
+.auto-style-105 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-106 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+}
+.auto-style-107 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+}
+.auto-style-108 {
+    background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(255,255,255,0.05);
+}
+.auto-style-109 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-110 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-111 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-112 {
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+.auto-style-113 {
+    background: var(--bg-surface); border-left: 1px solid var(--glass-border);
+}
+.auto-style-114 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-115 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+}
+.auto-style-116 {
+    background: rgba(234, 88, 12, 0.15); border: 1px solid rgba(234, 88, 12, 0.3);
+}
+.auto-style-117 {
+    background: rgba(234, 88, 12, 0.2);
+}
+.auto-style-118 {
+    background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);
+}
+.auto-style-119 {
+    background: rgba(245, 158, 11, 0.15);
+}
+.auto-style-120 {
+    background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.auto-style-121 {
+    background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.auto-style-122 {
+    background: rgba(239, 68, 68, 0.15);
+}
+.auto-style-123 {
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.auto-style-124 {
+    background: rgba(255, 255, 255, 0.05);
+}
+.auto-style-125 {
+    background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.auto-style-126 {
+    background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.15);
+}
+.auto-style-127 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-128 {
+    background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.15);
+}
+.auto-style-129 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-130 {
+    background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.15);
+}
+.auto-style-131 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-132 {
+    background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.15);
+}
+.auto-style-133 {
+    font-family: 'Orbitron', sans-serif;
+}
+.auto-style-134 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+}
+.auto-style-135 {
+    background: var(--bg-surface);
+}
+.auto-style-136 {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+}
+.auto-style-137 {
+    text-decoration:underline;color:#FBBF24
+}
+.auto-style-138 {
+    width: {{ (results.fraud_detection.fraud_probability * 100)|round }}%
+}

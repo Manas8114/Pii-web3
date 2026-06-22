@@ -185,7 +185,7 @@ class LeatherPIIIntegration {
     }
 
     async setupEventListeners() {
-        document.addEventListener('DOMContentLoaded', () => {
+        const setup = () => {
             const connectBtn = document.getElementById('wallet-connect-btn');
             if (connectBtn) {
                 connectBtn.addEventListener('click', () => this.connectWallet());
@@ -195,7 +195,15 @@ class LeatherPIIIntegration {
             if (deployBtn) {
                 deployBtn.addEventListener('click', () => this.deployContract());
             }
-        });
+        };
+
+        // Guard: if the script loads after DOMContentLoaded has already fired
+        // (e.g. script at bottom of <body> or with defer), call setup immediately.
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setup);
+        } else {
+            setup();
+        }
     }
 
     // Public API for manual transactions

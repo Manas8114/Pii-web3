@@ -1,8 +1,6 @@
-<<<<<<< HEAD
-PII protecter 
+# PII protecter 
 
 A tool to protect PII data in a file.
-
 
 ![Build](https://img.shields.io/badge/build-passing-brightgreen) 
 
@@ -23,9 +21,10 @@ Our solution is designed to address these challenges by providing an easy-to-use
 
 <img width="1733" height="861" alt="image" src="https://github.com/user-attachments/assets/bb25a801-dbae-47bb-9f44-16bc7d0b3a5a" />
 
-## Contract address
+## Contract addresses
 
-ST2T3AST18YFFVFDN9Q3913803PP8BD42FFH6V4KB.pil-storage
+- Tokenization System: `ST2T3AST18YFFVFDN9Q3913803PP8BD42FFH6V4KB.tokenization-system`
+- PII Storage System: `ST2T3AST18YFFVFDN9Q3913803PP8BD42FFH6V4KB.pii-storage-system`
 
 ## Installation & Run:
 1.Clone my github repository
@@ -65,7 +64,3 @@ https://drive.google.com/file/d/1pXuNvgqj8NY1_HO07EdDpOtbQQtdQ0V7/view?usp=shari
 
 ## License
 This project is licensed under the MIT license. See [LICENSE](LICENSE) for more details.
-
-=======
-# Pii-web3
->>>>>>> 20dfb3e (Initial commit)

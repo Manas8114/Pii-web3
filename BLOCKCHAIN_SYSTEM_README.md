@@ -157,7 +157,7 @@ python blockchain-interface/transaction_monitor.py --sample-data
 ### Demo Contract
 For testing without deployment, use these sample addresses:
 - **Devnet**: `ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM`
-- **Contract**: `tokenization-system`
+- **Contract**: `pii-storage-system`
 
 ---
 

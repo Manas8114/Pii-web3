@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/extracted_inline.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - SecuredDoc</title>
@@ -15,8 +16,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Stacks Connect for Leather Wallet -->
-    <script src="https://unpkg.com/@stacks/connect@20.0.0/dist/index.umd.js"></script>
-    <script src="https://unpkg.com/@stacks/transactions@4.3.5/dist/index.umd.js"></script>
+    <script src="https://unpkg.com/@stacks/connect@latest/dist/index.umd.js"></script>
+    <script src="https://unpkg.com/@stacks/transactions@latest/dist/index.umd.js"></script>
+    <script src="https://unpkg.com/@stacks/network@latest/dist/index.umd.js"></script>
 
     <style>
         :root {
@@ -25,7 +27,7 @@
             --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
             --accent-amber: #F59E0B;
-            --accent-violet: #8B5CF6;
+            --accent-violet: #10B981;
         }
 
         * {
@@ -49,16 +51,14 @@
 
         .glass-nav {
             background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
         }
 
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
             border-radius: 16px;
             border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
@@ -141,7 +141,7 @@
 
         .icon-glow-violet {
             background: rgba(139, 92, 246, 0.15);
-            color: #8B5CF6;
+            color: #10B981;
         }
 
         .icon-glow-blue {
@@ -186,9 +186,9 @@
     </style>
 </head>
 
-<body class="min-h-screen grid-bg">
+<body aria-label="page" class="min-h-screen grid-bg">
     <!-- Floating Navigation -->
-    <nav class="glass-nav fixed top-4 left-4 right-4 z-50 mx-auto max-w-7xl">
+    <div role="navigation" class="glass-nav fixed top-4 left-4 right-4 z-50 mx-auto max-w-7xl">
         <div class="px-6 py-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center">
@@ -196,7 +196,7 @@
                         title="Toggle sidebar">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
-                    <a href="/" class="flex items-center space-x-3 cursor-pointer">
+                    <a class="link_bypass link_bypass flex items-center space-x-3 cursor-pointer" href="/" >
                         <div class="w-9 h-9 rounded-lg icon-glow-amber flex items-center justify-center">
                             <i class="fas fa-shield-alt text-lg"></i>
                         </div>
@@ -216,21 +216,20 @@
                             <span id="currentUser" class="text-sm">User</span>
                             <i class="fas fa-chevron-down ml-2 text-xs"></i>
                         </button>
-                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-52 glass-card py-2"
-                            style="background: var(--bg-surface);">
-                            <a href="#" id="connectLeatherBtn"
-                                class="block px-4 py-2 text-gray-400 hover:text-amber-400 transition text-sm cursor-pointer">
+                        <div id="userMenu" class="hidden absolute right-0 mt-2 w-52 glass-card py-2 auto-style-1">
+                            <a class="link_bypass link_bypass block px-4 py-2 text-gray-400 hover:text-amber-400 transition text-sm cursor-pointer" href="#" id="connectLeatherBtn"
+                                >
                                 <i class="fas fa-wallet mr-2"></i>Connect Leather Wallet
                             </a>
                             <div id="walletStatus" class="hidden px-4 py-2 text-sm text-green-400">
                                 <i class="fas fa-check-circle mr-2"></i>Wallet Connected
                             </div>
-                            <a href="/auth"
-                                class="block px-4 py-2 text-gray-400 hover:text-amber-400 transition text-sm cursor-pointer">
+                            <a class="link_bypass link_bypass block px-4 py-2 text-gray-400 hover:text-amber-400 transition text-sm cursor-pointer" href="/auth"
+                                >
                                 <i class="fas fa-cog mr-2"></i>Enhanced Features
                             </a>
-                            <a href="/"
-                                class="block px-4 py-2 text-gray-400 hover:text-amber-400 transition text-sm cursor-pointer">
+                            <a class="link_bypass link_bypass block px-4 py-2 text-gray-400 hover:text-amber-400 transition text-sm cursor-pointer" href="/"
+                                >
                                 <i class="fas fa-home mr-2"></i>Home
                             </a>
                         </div>
@@ -238,32 +237,31 @@
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
     <div class="flex pt-20">
         <!-- Sidebar -->
-        <div id="sidebar" class="sidebar w-64 h-screen fixed left-0 top-20 z-40 md:relative md:top-0 p-4"
-            style="background: var(--bg-surface); border-right: 1px solid var(--glass-border);">
+        <div id="sidebar" class="sidebar w-64 h-screen fixed left-0 top-20 z-40 md:relative md:top-0 p-4 auto-style-2">
             <div class="p-4">
                 <h2 class="text-sm font-bold text-gray-400 mb-6 uppercase tracking-wider">Dashboard Menu</h2>
-                <nav class="space-y-2">
-                    <a href="#upload"
-                        class="flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer">
+                <div role="navigation" class="space-y-2">
+                    <a class="link_bypass link_bypass flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer" href="#upload"
+                        >
                         <i class="fas fa-upload mr-3"></i>Upload Document
                     </a>
-                    <a href="#analysis"
-                        class="flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer">
+                    <a class="link_bypass link_bypass flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer" href="#analysis"
+                        >
                         <i class="fas fa-chart-line mr-3"></i>Analysis Results
                     </a>
-                    <a href="#blockchain"
-                        class="flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer">
+                    <a class="link_bypass link_bypass flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer" href="#blockchain"
+                        >
                         <i class="fas fa-cube mr-3"></i>Blockchain
                     </a>
-                    <a href="#history"
-                        class="flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer">
+                    <a class="link_bypass link_bypass flex items-center px-3 py-2 text-gray-400 hover:text-amber-400 rounded-lg transition duration-200 text-sm cursor-pointer" href="#history"
+                        >
                         <i class="fas fa-history mr-3"></i>Processing History
                     </a>
-                </nav>
+                </div>
             </div>
         </div>
 
@@ -277,20 +275,24 @@
             </div>
 
             <!-- Wallet Connection Section -->
-            <div class="glass-card p-6 mb-8" style="border-left: 3px solid var(--accent-violet);">
-                <div class="flex items-center justify-between">
+            <div class="glass-card p-6 mb-8 auto-style-3">
+                <div class="flex items-center justify-between flex-wrap gap-4">
                     <div>
-                        <h3 class="text-lg font-bold mb-2"><i class="fas fa-link mr-2 text-violet-400"></i>Stacks Wallet
+                        <h3 class="text-lg font-bold mb-2"><i class="fas fa-link mr-2 text-emerald-400"></i>Wallet
                             Connection</h3>
-                        <p class="text-gray-500 text-sm" id="walletConnectionText">Connect your Leather wallet to enable
-                            blockchain features and STX payments</p>
+                        <p class="text-gray-500 text-sm" id="walletConnectionText">Connect your wallet to enable
+                            blockchain features and secure transactions</p>
                     </div>
-                    <div class="text-right">
-                        <button id="mainConnectBtn"
-                            class="bg-gradient-to-r from-violet-600 to-violet-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition duration-200 cursor-pointer text-sm">
-                            <i class="fas fa-wallet mr-2"></i>Connect Leather Wallet
+                    <div class="text-right flex gap-3 flex-wrap">
+                        <button id="mainConnectLeatherBtn"
+                            class="bg-gradient-to-r from-emerald-600 to-emerald-500 text-white px-5 py-3 rounded-lg font-semibold hover:shadow-lg transition duration-200 cursor-pointer text-sm">
+                            <i class="fas fa-coins mr-2"></i>Leather (Stacks)
                         </button>
-                        <div id="mainWalletStatus" class="hidden mt-2 text-green-400 text-sm">
+                        <button id="mainConnectMetaMaskBtn"
+                            class="bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 px-5 py-3 rounded-lg font-semibold hover:shadow-lg transition duration-200 cursor-pointer text-sm">
+                            <i class="fab fa-ethereum mr-2"></i>MetaMask
+                        </button>
+                        <div id="mainWalletStatus" class="hidden mt-2 text-green-400 text-sm w-full">
                             <i class="fas fa-check-circle mr-2"></i>
                             <span id="connectedAddress">Wallet Connected</span>
                         </div>
@@ -301,23 +303,19 @@
             <!-- Quick Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="glass-card p-6 text-center">
-                    <div class="text-2xl font-bold text-blue-400" id="totalProcessed"
-                        style="font-family:'Orbitron',sans-serif;">0</div>
+                    <div class="text-2xl font-bold text-blue-400 auto-style-4" id="totalProcessed">0</div>
                     <div class="text-gray-500 text-sm mt-1">Documents Processed</div>
                 </div>
                 <div class="glass-card p-6 text-center">
-                    <div class="text-2xl font-bold text-rose-400" id="fraudDetected"
-                        style="font-family:'Orbitron',sans-serif;">0</div>
+                    <div class="text-2xl font-bold text-rose-400 auto-style-5" id="fraudDetected">0</div>
                     <div class="text-gray-500 text-sm mt-1">Fraud Cases Detected</div>
                 </div>
                 <div class="glass-card p-6 text-center">
-                    <div class="text-2xl font-bold text-emerald-400" id="piiProtected"
-                        style="font-family:'Orbitron',sans-serif;">0</div>
+                    <div class="text-2xl font-bold text-emerald-400 auto-style-6" id="piiProtected">0</div>
                     <div class="text-gray-500 text-sm mt-1">PII Items Protected</div>
                 </div>
                 <div class="glass-card p-6 text-center">
-                    <div class="text-2xl font-bold text-violet-400" id="blockchainRecords"
-                        style="font-family:'Orbitron',sans-serif;">0</div>
+                    <div class="text-2xl font-bold text-emerald-400 auto-style-7" id="blockchainRecords">0</div>
                     <div class="text-gray-500 text-sm mt-1">Blockchain Records</div>
                 </div>
             </div>
@@ -337,12 +335,11 @@
                         class="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 px-6 py-3 rounded-lg cursor-pointer hover:shadow-lg transition duration-200 inline-block font-semibold text-sm">
                         Choose File
                     </label>
-                    <input type="file" id="fileInput" class="hidden" accept=".pdf,.png,.jpg,.jpeg,.csv">
+                    <label><input type="file" id="fileInput" class="hidden" accept=".pdf,.png,.jpg,.jpeg,.csv"></label>
                     <p class="text-xs text-gray-600 mt-4">Supported: PDF, PNG, JPG, JPEG, CSV (Max: 50MB)</p>
 
                     <!-- File Info Display -->
-                    <div id="fileInfo" class="mt-4 p-4 rounded-lg hidden"
-                        style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);">
+                    <div id="fileInfo" class="mt-4 p-4 rounded-lg hidden auto-style-8">
                         <div class="flex items-center justify-center">
                             <i class="fas fa-file text-amber-400 mr-2"></i>
                             <span id="fileName" class="font-medium text-amber-300 text-sm"></span>
@@ -356,23 +353,20 @@
 
                 <!-- Processing Options -->
                 <div class="grid md:grid-cols-3 gap-4 mb-6">
-                    <div class="flex items-center p-4 rounded-lg"
-                        style="background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.15);">
-                        <input type="checkbox" id="enableBlockchain" class="mr-3" checked>
+                    <div class="flex items-center p-4 rounded-lg auto-style-9">
+                        <label><input type="checkbox" id="enableBlockchain" class="mr-3" checked></label>
                         <label for="enableBlockchain" class="text-sm text-gray-300">
-                            <i class="fas fa-cube text-violet-400 mr-2"></i>Blockchain Registration
+                            <i class="fas fa-cube text-emerald-400 mr-2"></i>Blockchain Registration
                         </label>
                     </div>
-                    <div class="flex items-center p-4 rounded-lg"
-                        style="background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.15);">
-                        <input type="checkbox" id="enableFraudDetection" class="mr-3" checked>
+                    <div class="flex items-center p-4 rounded-lg auto-style-10">
+                        <label><input type="checkbox" id="enableFraudDetection" class="mr-3" checked></label>
                         <label for="enableFraudDetection" class="text-sm text-gray-300">
                             <i class="fas fa-shield-virus text-rose-400 mr-2"></i>Fraud Detection
                         </label>
                     </div>
-                    <div class="flex items-center p-4 rounded-lg"
-                        style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);">
-                        <input type="checkbox" id="enableAuditTrail" class="mr-3" checked>
+                    <div class="flex items-center p-4 rounded-lg auto-style-11">
+                        <label><input type="checkbox" id="enableAuditTrail" class="mr-3" checked></label>
                         <label for="enableAuditTrail" class="text-sm text-gray-300">
                             <i class="fas fa-history text-emerald-400 mr-2"></i>Audit Trail
                         </label>
@@ -382,8 +376,7 @@
                 <!-- Custom PII Control Panel -->
                 <div class="mb-6">
                     <button id="toggleCustomPII" type="button"
-                        class="w-full flex items-center justify-between p-4 rounded-lg cursor-pointer transition text-sm"
-                        style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.15);">
+                        class="w-full flex items-center justify-between p-4 rounded-lg cursor-pointer transition text-sm auto-style-12">
                         <div class="flex items-center">
                             <i class="fas fa-user-shield text-amber-400 mr-2"></i>
                             <span class="text-gray-300 font-semibold">Custom PII Control</span>
@@ -393,15 +386,14 @@
                             class="fas fa-chevron-down text-amber-400 transition-transform duration-200"></i>
                     </button>
 
-                    <div id="customPIIPanel" class="hidden mt-3 p-5 rounded-lg space-y-5"
-                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                    <div id="customPIIPanel" class="hidden mt-3 p-5 rounded-lg space-y-5 auto-style-13">
 
                         <!-- Enable toggle -->
                         <div class="flex items-center justify-between">
                             <label for="enableCustomPII" class="text-sm text-gray-300">
                                 <i class="fas fa-toggle-on text-amber-400 mr-2"></i>Enable custom PII rules
                             </label>
-                            <input type="checkbox" id="enableCustomPII" class="mr-1" checked>
+                            <label><input type="checkbox" id="enableCustomPII" class="mr-1" checked></label>
                         </div>
 
                         <!-- Hide List -->
@@ -411,12 +403,10 @@
                                 <span class="text-xs text-gray-600 ml-1">(words to always redact)</span>
                             </label>
                             <div class="flex gap-2">
-                                <input type="text" id="hideListInput" placeholder="Type word and press Enter or comma"
-                                    class="flex-1 text-sm px-3 py-2 rounded-lg outline-none"
-                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F8FAFC;">
+                                <label><input type="text" id="hideListInput" placeholder="Type word and press Enter or comma"
+                                    class="flex-1 text-sm px-3 py-2 rounded-lg outline-none auto-style-14"></label>
                                 <button type="button" id="addHideWord" title="Add word to hide list"
-                                    class="px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer"
-                                    style="background: rgba(244,63,94,0.15); border: 1px solid rgba(244,63,94,0.3); color: #FB7185;">
+                                    class="px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer auto-style-15">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
@@ -430,12 +420,10 @@
                                 <span class="text-xs text-gray-600 ml-1">(words to never redact)</span>
                             </label>
                             <div class="flex gap-2">
-                                <input type="text" id="allowListInput" placeholder="Type word and press Enter or comma"
-                                    class="flex-1 text-sm px-3 py-2 rounded-lg outline-none"
-                                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #F8FAFC;">
+                                <label><input type="text" id="allowListInput" placeholder="Type word and press Enter or comma"
+                                    class="flex-1 text-sm px-3 py-2 rounded-lg outline-none auto-style-16"></label>
                                 <button type="button" id="addAllowWord" title="Add word to allow list"
-                                    class="px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer"
-                                    style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399;">
+                                    class="px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer auto-style-17">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </div>
@@ -470,23 +458,19 @@
                         <span id="processingText" class="text-gray-400">Uploading document...</span>
                         <span id="processingPercentage" class="text-amber-400 font-bold">0%</span>
                     </div>
-                    <div class="rounded-full h-2" style="background: rgba(255,255,255,0.1);">
+                    <div class="rounded-full h-2 auto-style-18">
                         <div id="progressBar"
-                            class="bg-gradient-to-r from-amber-500 to-yellow-400 h-2 rounded-full transition-all duration-300"
-                            style="width: 0%"></div>
+                            class="bg-gradient-to-r from-amber-500 to-yellow-400 h-2 rounded-full transition-all duration-300 auto-style-19"></div>
                     </div>
                     <div id="processingSteps" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                        <div class="processing-step p-3 rounded-lg text-sm" data-step="upload"
-                            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                        <div class="processing-step p-3 rounded-lg text-sm" data-step="upload auto-style-20">
                             <i class="fas fa-upload text-gray-600 mr-2"></i><span class="text-gray-400">Upload</span>
                         </div>
-                        <div class="processing-step p-3 rounded-lg text-sm" data-step="analysis"
-                            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                        <div class="processing-step p-3 rounded-lg text-sm" data-step="analysis auto-style-21">
                             <i class="fas fa-brain text-gray-600 mr-2"></i><span class="text-gray-400">AI
                                 Analysis</span>
                         </div>
-                        <div class="processing-step p-3 rounded-lg text-sm" data-step="blockchain"
-                            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                        <div class="processing-step p-3 rounded-lg text-sm" data-step="blockchain auto-style-22">
                             <i class="fas fa-cube text-gray-600 mr-2"></i><span class="text-gray-400">Blockchain</span>
                         </div>
                     </div>
@@ -503,8 +487,7 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-gray-400 text-sm">Total PII Found:</span>
-                            <span id="totalPII" class="text-2xl font-bold text-blue-400"
-                                style="font-family:'Orbitron',sans-serif;">0</span>
+                            <span id="totalPII" class="text-2xl font-bold text-blue-400 auto-style-23">0</span>
                         </div>
                         <div id="piiBreakdown" class="space-y-2"></div>
                         <canvas id="piiChart" width="400" height="200"></canvas>
@@ -525,8 +508,7 @@
                                     stroke="#EF4444" stroke-width="8" fill="none"></circle>
                             </svg>
                             <div class="absolute inset-0 flex items-center justify-center">
-                                <span id="fraudScoreText" class="text-2xl font-bold text-rose-400"
-                                    style="font-family:'Orbitron',sans-serif;">0%</span>
+                                <span id="fraudScoreText" class="text-2xl font-bold text-rose-400 auto-style-24">0%</span>
                             </div>
                         </div>
                         <div id="riskLevel" class="text-base font-semibold mt-2">Risk Level: Unknown</div>
@@ -538,7 +520,7 @@
             <!-- Blockchain Information -->
             <div id="blockchain" class="glass-card p-6 mb-8 hidden">
                 <h3 class="text-lg font-bold mb-6">
-                    <i class="fas fa-cube mr-2 text-violet-400"></i>Blockchain Registration
+                    <i class="fas fa-cube mr-2 text-emerald-400"></i>Blockchain Registration
                 </h3>
                 <div class="grid md:grid-cols-2 gap-6">
                     <div class="space-y-4">
@@ -552,7 +534,7 @@
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-500">Block Height:</span>
-                            <span id="blockHeight" class="text-violet-400">-</span>
+                            <span id="blockHeight" class="text-emerald-400">-</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-500">Network:</span>
@@ -576,7 +558,7 @@
                         </div>
                         <div class="mt-4">
                             <button id="viewAuditTrail"
-                                class="bg-gradient-to-r from-violet-600 to-violet-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition duration-200 w-full cursor-pointer text-sm font-semibold">
+                                class="bg-gradient-to-r from-emerald-600 to-emerald-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition duration-200 w-full cursor-pointer text-sm font-semibold">
                                 <i class="fas fa-history mr-2"></i>View Audit Trail
                             </button>
                         </div>
@@ -588,25 +570,21 @@
             <div id="aiSummary" class="glass-card p-6 mb-8 hidden">
                 <h3 class="text-lg font-bold mb-4">
                     <i class="fas fa-robot mr-2 text-cyan-400"></i>AI Document Summary
-                    <span id="aiPoweredBadge" class="ml-2 text-xs px-2 py-1 rounded-full hidden"
-                        style="background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); color: #22D3EE;">
+                    <span id="aiPoweredBadge" class="ml-2 text-xs px-2 py-1 rounded-full hidden auto-style-25">
                         <i class="fas fa-bolt mr-1"></i>Gemini Powered
                     </span>
                 </h3>
                 <div class="grid md:grid-cols-3 gap-4 mb-4">
-                    <div class="p-3 rounded-lg"
-                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                    <div class="p-3 rounded-lg auto-style-26">
                         <span class="text-xs text-gray-500 block mb-1">Document Type</span>
                         <span id="aiDocType" class="text-cyan-400 font-semibold text-sm">—</span>
                     </div>
-                    <div class="p-3 rounded-lg col-span-2"
-                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                    <div class="p-3 rounded-lg col-span-2 auto-style-27">
                         <span class="text-xs text-gray-500 block mb-1">Risk Assessment</span>
                         <span id="aiRiskAssess" class="text-amber-400 text-sm">—</span>
                     </div>
                 </div>
-                <div class="p-4 rounded-lg mb-4"
-                    style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                <div class="p-4 rounded-lg mb-4 auto-style-28">
                     <span class="text-xs text-gray-500 block mb-2">Summary</span>
                     <p id="aiSummaryText" class="text-gray-300 text-sm leading-relaxed">—</p>
                 </div>
@@ -620,8 +598,7 @@
             <div id="ipfsStorage" class="glass-card p-6 mb-8 hidden">
                 <h3 class="text-lg font-bold mb-4">
                     <i class="fas fa-cloud-upload-alt mr-2 text-teal-400"></i>IPFS Decentralized Storage
-                    <span id="ipfsStatusBadge" class="ml-2 text-xs px-2 py-1 rounded-full"
-                        style="background: rgba(20,184,166,0.15); border: 1px solid rgba(20,184,166,0.3); color: #2DD4BF;">
+                    <span id="ipfsStatusBadge" class="ml-2 text-xs px-2 py-1 rounded-full auto-style-29">
                         <i class="fas fa-check mr-1"></i>Pinned
                     </span>
                 </h3>
@@ -668,7 +645,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+                            <tr class="auto-style-30">
                                 <th class="text-left py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">
                                     Document</th>
                                 <th class="text-left py-3 text-gray-500 font-medium text-xs uppercase tracking-wider">
@@ -697,18 +674,15 @@
                 </h3>
                 <div class="grid md:grid-cols-3 gap-4">
                     <button id="downloadProcessed"
-                        class="px-4 py-3 rounded-lg transition duration-200 w-full cursor-pointer text-sm font-semibold"
-                        style="background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: #60A5FA;">
+                        class="px-4 py-3 rounded-lg transition duration-200 w-full cursor-pointer text-sm font-semibold auto-style-31">
                         <i class="fas fa-file-pdf mr-2"></i>Download Processed Document
                     </button>
                     <button id="downloadReport"
-                        class="px-4 py-3 rounded-lg transition duration-200 w-full cursor-pointer text-sm font-semibold"
-                        style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34D399;">
+                        class="px-4 py-3 rounded-lg transition duration-200 w-full cursor-pointer text-sm font-semibold auto-style-32">
                         <i class="fas fa-chart-line mr-2"></i>Download Analysis Report
                     </button>
                     <button id="downloadAudit"
-                        class="px-4 py-3 rounded-lg transition duration-200 w-full cursor-pointer text-sm font-semibold"
-                        style="background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #A78BFA;">
+                        class="px-4 py-3 rounded-lg transition duration-200 w-full cursor-pointer text-sm font-semibold auto-style-33">
                         <i class="fas fa-cube mr-2"></i>Download Blockchain Receipt
                     </button>
                 </div>
@@ -722,12 +696,11 @@
     <!-- Modal for Audit Trail -->
     <div id="auditModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden">
         <div class="flex items-center justify-center h-full p-4">
-            <div class="glass-card max-w-4xl w-full max-h-[80vh] overflow-y-auto"
-                style="background: var(--bg-surface);">
-                <div class="p-6" style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <div class="glass-card max-w-4xl w-full max-h-[80vh] overflow-y-auto auto-style-34">
+                <div class="p-6 auto-style-35">
                     <div class="flex justify-between items-center">
                         <h3 class="text-lg font-bold">
-                            <i class="fas fa-history mr-2 text-violet-400"></i>Document Audit Trail
+                            <i class="fas fa-history mr-2 text-emerald-400"></i>Document Audit Trail
                         </h3>
                         <button id="closeAuditModal" class="text-gray-500 hover:text-white cursor-pointer"
                             title="Close">
@@ -1064,7 +1037,7 @@
                 // Update fraud indicators
                 const fraudIndicators = document.getElementById('fraudIndicators');
                 fraudIndicators.innerHTML = (fraudData.suspicious_patterns || []).map(pattern => `
-                    <div class="flex items-center p-2 rounded" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);">
+                    <div class="flex items-center p-2 rounded auto-style-36">
                         <i class="fas fa-exclamation-triangle text-rose-400 mr-2"></i>
                         <span class="text-sm text-rose-300">${pattern}</span>
                     </div>
@@ -1178,7 +1151,7 @@
                         <div><strong class="text-gray-500">Fraud Score:</strong> <span class="text-gray-300">${(entry.fraud_score * 100).toFixed(1)}%</span></div>
                         <div><strong class="text-gray-500">Blockchain:</strong> <span class="text-gray-300">${entry.blockchain_hash ? '✅ Registered' : '❌ Not registered'}</span></div>
                     </div>
-                    ${entry.blockchain_hash ? `<div class="mt-4"><strong class="text-gray-500">Document Hash:</strong><p class="font-mono text-sm p-2 rounded mt-1 text-blue-400" style="background: rgba(255,255,255,0.05);">${entry.blockchain_hash}</p></div>` : ''}
+                    ${entry.blockchain_hash ? `<div class="mt-4"><strong class="text-gray-500">Document Hash:</strong><p class="font-mono text-sm p-2 rounded mt-1 text-blue-400 auto-style-37">${entry.blockchain_hash}</p></div>` : ''}
                 </div>
             `;
             modal.classList.remove('hidden');
@@ -1279,13 +1252,13 @@
                 <div class="space-y-4">
                     <div class="mb-6">
                         <h4 class="font-bold text-gray-300 mb-2">Document Hash</h4>
-                        <p class="font-mono text-sm p-2 rounded text-blue-400" style="background: rgba(255,255,255,0.05);">${dashboardState.lastResults.results.blockchain.document_hash}</p>
+                        <p class="font-mono text-sm p-2 rounded text-blue-400 auto-style-38">${dashboardState.lastResults.results.blockchain.document_hash}</p>
                     </div>
                     <div>
                         <h4 class="font-bold text-gray-300 mb-4">Processing Timeline</h4>
                         <div class="space-y-3">
                             ${auditSteps.map(step => `
-                                <div class="flex items-center p-3 rounded-lg" style="background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.15);">
+                                <div class="flex items-center p-3 rounded-lg auto-style-39">
                                     <i class="fas fa-check-circle text-emerald-400 mr-3"></i>
                                     <div class="flex-1">
                                         <div class="font-medium text-gray-300 text-sm">${step.step}</div>
@@ -1323,11 +1296,10 @@
 
         // Stacks Wallet Integration Functions
         function checkWalletConnection() {
-            // Check session storage for wallet connection
             const authState = sessionStorage.getItem('authState');
             if (authState) {
                 const parsed = JSON.parse(authState);
-                return parsed.wallet && parsed.wallet.type === 'leather';
+                return parsed.wallet && (parsed.wallet.type === 'leather' || parsed.wallet.type === 'metamask');
             }
             return false;
         }
@@ -1348,68 +1320,113 @@
                     throw new Error('No wallet connected');
                 }
 
+                const docHash = await generateDocumentHash(dashboardState.currentFile);
+
                 // Prepare transaction for document registration
                 const transactionData = {
                     transaction_type: 'registration',
                     wallet_address: walletInfo.address,
-                    document_hash: generateDocumentHash(dashboardState.currentFile)
+                    document_hash: docHash
                 };
 
                 const response = await fetch('/api/stacks/transaction/prepare', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(transactionData)
                 });
 
                 const result = await response.json();
 
                 if (result.success) {
-                    showNotification('Stacks transaction prepared for signing', 'info');
-                    // In a real implementation, you would use Stacks Connect to sign the transaction
-                    // For demo purposes, we'll simulate a successful transaction
-                    await simulateStacksTransaction(result.transaction_data);
+                    const txData = result.transaction_data;
+
+                    if (walletInfo.type === 'leather' && typeof StacksConnect !== 'undefined' && StacksConnect.openContractCall) {
+                        // Real Stacks contract call via Leather wallet
+                        const txOptions = {
+                            contractAddress: txData.contract_address,
+                            contractName: txData.contract_name,
+                            functionName: txData.function_name,
+                            functionArgs: [],
+                            network: txData.network === 'mainnet' ? 'mainnet' : 'testnet',
+                            appDetails: { name: 'SecuredDoc', icon: window.location.origin + '/favicon.ico' },
+                            onFinish: async (data) => {
+                                const submitData = {
+                                    tx_id: data.txId,
+                                    transaction_type: txData.transaction_type,
+                                    amount_stx: txData.amount_stx,
+                                    wallet_address: txData.sender,
+                                    document_hash: docHash
+                                };
+                                const submitResp = await fetch('/api/stacks/transaction/submit', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(submitData)
+                                });
+                                const submitResult = await submitResp.json();
+                                if (submitResult.success) {
+                                    showNotification(`Transaction submitted: ${data.txId}`, 'success');
+                                    dashboardState.lastTransactionId = data.txId;
+                                }
+                            },
+                            onCancel: () => {
+                                showNotification('Transaction cancelled by user', 'warning');
+                            }
+                        };
+                        StacksConnect.openContractCall(txOptions);
+                    } else if (walletInfo.type === 'metamask' && typeof window.ethereum !== 'undefined') {
+                        // For MetaMask — record a simple ETH transaction hash
+                        try {
+                            const txHash = await window.ethereum.request({
+                                method: 'eth_sendTransaction',
+                                params: [{
+                                    from: walletInfo.address,
+                                    to: walletInfo.address,
+                                    value: '0x0',
+                                    data: '0x' + Array.from(new TextEncoder().encode(docHash)).map(b => b.toString(16).padStart(2, '0')).join('')
+                                }]
+                            });
+                            const submitData = {
+                                tx_id: txHash,
+                                transaction_type: 'registration',
+                                wallet_address: walletInfo.address,
+                                document_hash: docHash
+                            };
+                            await fetch('/api/stacks/transaction/submit', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(submitData)
+                            });
+                            showNotification(`Transaction submitted: ${txHash.substring(0, 16)}...`, 'success');
+                            dashboardState.lastTransactionId = txHash;
+                        } catch (txError) {
+                            if (txError.code === 4001) {
+                                showNotification('Transaction rejected by user', 'warning');
+                            } else {
+                                showNotification('Transaction failed: ' + txError.message, 'error');
+                            }
+                        }
+                    } else {
+                        showNotification('Wallet extension not available for signing. Please ensure your wallet is installed.', 'warning');
+                    }
                 } else {
                     throw new Error(result.error);
                 }
             } catch (error) {
-                console.error('Stacks transaction error:', error);
-                showNotification('Stacks transaction failed: ' + error.message, 'warning');
+                console.error('Transaction error:', error);
+                showNotification('Transaction failed: ' + error.message, 'warning');
             }
         }
 
-        async function simulateStacksTransaction(transactionData) {
-            // Simulate transaction signing and submission
-            const simulatedTxId = 'stx_' + Math.random().toString(36).substr(2, 16);
-
-            // Submit transaction record
-            const submitData = {
-                tx_id: simulatedTxId,
-                transaction_type: transactionData.transaction_type,
-                amount_stx: transactionData.amount_stx,
-                wallet_address: transactionData.sender,
-                document_hash: transactionData.memo.split(': ')[1]
-            };
-
-            const response = await fetch('/api/stacks/transaction/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(submitData)
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                showNotification(`Transaction submitted: ${simulatedTxId}`, 'success');
-                dashboardState.lastTransactionId = simulatedTxId;
+        async function generateDocumentHash(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            } catch (e) {
+                // Fallback for environments without crypto.subtle
+                return 'doc_' + file.name.replace(/[^a-zA-Z0-9]/g, '') + '_' + file.size + '_' + Date.now();
             }
-        }
-
-        function generateDocumentHash(file) {
-            // Simple hash generation for demo purposes
-            return 'doc_' + file.name.replace(/[^a-zA-Z0-9]/g, '') + '_' + file.size;
         }
 
         function showNotification(message, type = 'info') {
@@ -1463,42 +1480,31 @@
             try {
                 showNotification('Connecting to Leather wallet...', 'info');
 
-                // Check if Stacks Connect is available
-                if (typeof StacksConnect !== 'undefined' && StacksConnect.showConnect) {
+                if (typeof showConnect !== 'undefined') {
                     const authOptions = {
                         onFinish: async (authData) => {
                             try {
-                                const response = await fetch('/api/wallet/leather/connect', {
+                                const response = await fetch('/api/auth/stacks', {
                                     method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify({
-                                        authData: authData,
-                                        userSession: authData.userSession ? {
-                                            userData: authData.userSession.loadUserData()
-                                        } : null
-                                    })
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ authData: authData, userSession: authData.userSession ? { userData: authData.userSession.loadUserData() } : null })
                                 });
-
                                 const result = await response.json();
-
                                 if (result.success) {
-                                    // Update session storage
                                     const authState = {
                                         wallet: result.wallet,
                                         user: result.user,
                                         authenticated: true
                                     };
                                     sessionStorage.setItem('authState', JSON.stringify(authState));
-
                                     showNotification('Leather wallet connected successfully!', 'success');
                                     updateWalletDisplay(result.wallet);
                                 } else {
                                     throw new Error(result.error);
                                 }
                             } catch (error) {
-                                showNotification('Wallet connection failed: ' + error.message, 'error');
+                                console.error('Backend authentication error:', error);
+                                showNotification('Authentication failed: ' + error.message, 'error');
                             }
                         },
                         onCancel: () => {
@@ -1509,30 +1515,108 @@
                             icon: window.location.origin + '/favicon.ico'
                         }
                     };
-
-                    StacksConnect.showConnect(authOptions);
+                    showConnect(authOptions);
+                } else if (window.LeatherProvider) {
+                    try {
+                        const response = await window.LeatherProvider.request('getAddresses');
+                        if (response && response.result && response.result.addresses) {
+                            const stxAddressObj = response.result.addresses.find(a => a.symbol === 'STX');
+                            if (!stxAddressObj) throw new Error("No STX address found in Leather wallet.");
+                            const address = stxAddressObj.address;
+                            const backendResponse = await fetch('/api/wallet/connect', {
+                                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ wallet_type: 'leather', wallet_address: address, network: 'testnet' })
+                            });
+                            const result = await backendResponse.json();
+                            if (result.success) {
+                                const walletObj = { type: 'leather', address: address, network: result.network };
+                                const authState = {
+                                    wallet: walletObj,
+                                    user: { name: 'Leather User' },
+                                    authenticated: true
+                                };
+                                sessionStorage.setItem('authState', JSON.stringify(authState));
+                                showNotification('Leather wallet connected successfully!', 'success');
+                                updateWalletDisplay(walletObj);
+                            } else { throw new Error(result.error); }
+                        }
+                    } catch (error) { throw error; }
                 } else {
-                    showNotification('Stacks Connect not available. Connecting demo wallet...', 'warning');
+                    showNotification('Leather wallet not detected. Please install the Leather browser extension from <a class="link_bypass link_bypass auto-style-40" href="https://leather.io" target="_blank" >leather.io</a>', 'error');
+                }
+            } catch (error) {
+                const isRejected = (error && error.code === 4001) ||
+                    (error && error.error && (error.error.code === 4001 || (error.error.message && /reject|cancel|deny|denied|close/i.test(error.error.message)))) ||
+                    (error && error.message && /reject|cancel|deny|denied|close/i.test(error.message));
 
-                    // Fallback for demo mode
-                    const demoWallet = {
-                        type: 'leather',
-                        address: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
-                        network: 'testnet'
-                    };
+                if (isRejected) {
+                    console.warn('Leather connection rejected');
+                    showNotification('Leather wallet connection cancelled.', 'warning');
+                } else {
+                    const safeError = Object.getOwnPropertyNames(error).reduce((acc, key) => { acc[key] = error[key]; return acc; }, {});
+                    console.error('Leather wallet connection error:', JSON.stringify(safeError, null, 2));
+                    const errMsg = (error && error.error && error.error.message) || (error && error.message) || JSON.stringify(safeError);
+                    showNotification('Failed to connect wallet: ' + errMsg, 'error');
+                }
+            }
+        }
 
+        async function connectMetaMaskDashboard() {
+            try {
+                showNotification('Connecting to MetaMask...', 'info');
+                if (typeof window.ethereum !== 'undefined') {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const address = accounts[0];
+                    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+
+                    const backendResponse = await fetch('/api/wallet/connect', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ wallet_type: 'metamask', wallet_address: address, network: 'ethereum', chain_id: chainId })
+                    });
+                    await backendResponse.json();
+
+                    const walletObj = { type: 'metamask', address: address, network: 'ethereum', chainId: chainId };
                     const authState = {
-                        wallet: demoWallet,
-                        user: { name: 'Demo User' },
+                        wallet: walletObj,
+                        user: { name: 'MetaMask User' },
                         authenticated: true
                     };
                     sessionStorage.setItem('authState', JSON.stringify(authState));
+                    showNotification('MetaMask connected successfully!', 'success');
+                    updateWalletDisplay(walletObj);
 
-                    updateWalletDisplay(demoWallet);
+                    window.ethereum.on('accountsChanged', (newAccounts) => {
+                        if (newAccounts.length === 0) {
+                            sessionStorage.removeItem('authState');
+                            showNotification('MetaMask disconnected', 'warning');
+                            updateWalletDisplay(null);
+                        } else {
+                            walletObj.address = newAccounts[0];
+                            const updatedAuth = { wallet: walletObj, user: { name: 'MetaMask User' }, authenticated: true };
+                            sessionStorage.setItem('authState', JSON.stringify(updatedAuth));
+                            showNotification('MetaMask account changed', 'info');
+                            updateWalletDisplay(walletObj);
+                        }
+                    });
+                    window.ethereum.on('chainChanged', () => window.location.reload());
+                } else {
+                    showNotification('MetaMask not detected. <a class="link_bypass link_bypass auto-style-41" href="https://metamask.io/download/" target="_blank" >Install MetaMask</a>', 'error');
                 }
             } catch (error) {
-                console.error('Leather wallet connection error:', error);
-                showNotification('Failed to connect wallet: ' + error.message, 'error');
+                const isRejected = (error && error.code === 4001) ||
+                    (error && error.error && (error.error.code === 4001 || (error.error.message && /reject|cancel|deny|denied|close/i.test(error.error.message)))) ||
+                    (error && error.message && /reject|cancel|deny|denied|close/i.test(error.message));
+
+                if (isRejected) {
+                    console.warn('MetaMask connection rejected by user.');
+                    showNotification('MetaMask connection rejected by user.', 'warning');
+                } else {
+                    const safeError = Object.getOwnPropertyNames(error).reduce((acc, key) => { acc[key] = error[key]; return acc; }, {});
+                    console.error('MetaMask error:', JSON.stringify(safeError, null, 2));
+                    const errMsg = (error && error.error && error.error.message) || (error && error.message) || JSON.stringify(safeError);
+                    showNotification('Failed to connect MetaMask: ' + errMsg, 'error');
+                }
             }
         }
 
@@ -1550,15 +1634,19 @@
                 currentUser.textContent = `${wallet.address.substring(0, 8)}...`;
                 currentUser.title = wallet.address;
 
-                // Hide connect button and show status in header menu
+                // Hide connect buttons and show status in header menu
                 if (connectBtn) connectBtn.style.display = 'none';
                 if (walletStatus) {
                     walletStatus.classList.remove('hidden');
-                    walletStatus.innerHTML = `<i class="fas fa-check-circle mr-2"></i>Connected: ${wallet.address.substring(0, 12)}...`;
+                    const walletLabel = wallet.type === 'metamask' ? 'MetaMask' : 'Leather';
+                    walletStatus.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${walletLabel}: ${wallet.address.substring(0, 12)}...`;
                 }
 
                 // Update main wallet section
-                if (mainConnectBtn) mainConnectBtn.style.display = 'none';
+                const mainConnectLeatherBtn = document.getElementById('mainConnectLeatherBtn');
+                const mainConnectMetaMaskBtn = document.getElementById('mainConnectMetaMaskBtn');
+                if (mainConnectLeatherBtn) mainConnectLeatherBtn.style.display = 'none';
+                if (mainConnectMetaMaskBtn) mainConnectMetaMaskBtn.style.display = 'none';
                 if (mainWalletStatus) {
                     mainWalletStatus.classList.remove('hidden');
                     if (connectedAddress) {
@@ -1574,15 +1662,18 @@
                 currentUser.textContent = 'User';
                 currentUser.title = '';
 
-                // Show connect button and hide status in header menu
+                // Show connect buttons and hide status in header menu
                 if (connectBtn) connectBtn.style.display = 'block';
                 if (walletStatus) walletStatus.classList.add('hidden');
 
                 // Update main wallet section
-                if (mainConnectBtn) mainConnectBtn.style.display = 'block';
+                const mainConnectLeatherBtn2 = document.getElementById('mainConnectLeatherBtn');
+                const mainConnectMetaMaskBtn2 = document.getElementById('mainConnectMetaMaskBtn');
+                if (mainConnectLeatherBtn2) mainConnectLeatherBtn2.style.display = 'block';
+                if (mainConnectMetaMaskBtn2) mainConnectMetaMaskBtn2.style.display = 'block';
                 if (mainWalletStatus) mainWalletStatus.classList.add('hidden');
                 if (walletConnectionText) {
-                    walletConnectionText.textContent = 'Connect your Leather wallet to enable blockchain features and STX payments';
+                    walletConnectionText.textContent = 'Connect your wallet to enable blockchain features and secure transactions';
                 }
             }
             updateUI();
@@ -1592,7 +1683,8 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Connect wallet button events (both header and main section)
             const connectBtn = document.getElementById('connectLeatherBtn');
-            const mainConnectBtn = document.getElementById('mainConnectBtn');
+            const mainConnectLeatherBtn = document.getElementById('mainConnectLeatherBtn');
+            const mainConnectMetaMaskBtn = document.getElementById('mainConnectMetaMaskBtn');
 
             if (connectBtn) {
                 connectBtn.addEventListener('click', (e) => {
@@ -1601,10 +1693,17 @@
                 });
             }
 
-            if (mainConnectBtn) {
-                mainConnectBtn.addEventListener('click', (e) => {
+            if (mainConnectLeatherBtn) {
+                mainConnectLeatherBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     connectLeatherWallet();
+                });
+            }
+
+            if (mainConnectMetaMaskBtn) {
+                mainConnectMetaMaskBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    connectMetaMaskDashboard();
                 });
             }
 
@@ -1636,7 +1735,7 @@
             const textClass = listName === 'customHideList' ? 'text-rose-300' : 'text-emerald-300';
 
             container.innerHTML = dashboardState[listName].map((word, i) => `
-                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs ${textClass}" style="background: ${colorClass}; border: 1px solid ${borderColor};">
+                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs ${textClass} auto-style-42">
                     ${word}
                     <button type="button" class="ml-1 hover:text-white cursor-pointer" onclick="removeFromList('${listName}', ${i})" title="Remove ${word}">
                         <i class="fas fa-times text-xs"></i>

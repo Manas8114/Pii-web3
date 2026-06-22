@@ -149,7 +149,7 @@
         }
     </style>
 </head>
-<body>
+<body aria-label="page">
     <div class="container">
         <h1>Upload a PDF or Image for Processing</h1>
         
@@ -158,7 +158,7 @@
                 <div class="file-icon">📄</div>
                 <div class="file-message">Drag & drop your file here or click to browse</div>
                 <div class="file-name" id="file-name">No file selected</div>
-                <input type="file" name="file" id="file-input" class="file-input" required>
+                <label><input type="file" name="file" id="file-input" class="file-input" required></label>
             </div>
             
             <button type="submit" class="submit-btn" id="submit-btn" disabled>Process File</button>

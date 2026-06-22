@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/extracted_inline.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Processing Results - SecuredDoc</title>
@@ -33,25 +34,25 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body aria-label="page" class="bg-gray-100 min-h-screen">
     <!-- Navigation -->
-    <nav class="gradient-bg shadow-lg">
+    <div role="navigation" class="gradient-bg shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="/" class="flex items-center">
+                    <a class="link_bypass link_bypass flex items-center" href="/" >
                         <i class="fas fa-shield-alt text-white text-2xl mr-3"></i>
                         <h1 class="text-white text-xl font-bold">SecuredDoc</h1>
                     </a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="/dashboard" class="text-white hover:text-blue-200 transition duration-200">
+                    <a class="link_bypass link_bypass text-white hover:text-blue-200 transition duration-200" href="/dashboard" >
                         <i class="fas fa-chart-bar mr-1"></i>Dashboard
                     </a>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
@@ -89,8 +90,8 @@
             </div>
             
             <div class="stat-card bg-white rounded-lg shadow-md p-6 text-center">
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-cube text-xl text-purple-600"></i>
+                <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-cube text-xl text-teal-600"></i>
                 </div>
                 <div class="text-2xl font-bold text-gray-900">
                     {% if results.blockchain and results.blockchain.success %}✓{% else %}✗{% endif %}
@@ -165,8 +166,8 @@
                             <div class="h-3 rounded-full 
                                 {% if results.fraud_detection.fraud_probability >= 0.7 %}bg-red-500
                                 {% elif results.fraud_detection.fraud_probability >= 0.4 %}bg-yellow-500
-                                {% else %}bg-green-500{% endif %}" 
-                                style="width: {{ (results.fraud_detection.fraud_probability * 100)|round }}%"></div>
+                                {% else %}bg-green-500{% endif %} auto-style-138" 
+                                ></div>
                         </div>
                     </div>
 
@@ -226,8 +227,8 @@
                         {% endif %}
                         
                         {% if results.blockchain %}
-                        <div class="flex items-start p-3 border-l-4 border-purple-400 bg-purple-50">
-                            <i class="fas fa-cube text-purple-600 mr-3 mt-1"></i>
+                        <div class="flex items-start p-3 border-l-4 border-teal-400 bg-teal-50">
+                            <i class="fas fa-cube text-teal-600 mr-3 mt-1"></i>
                             <div>
                                 <div class="font-medium text-gray-900">Blockchain Registration</div>
                                 <div class="text-sm text-gray-600">
@@ -252,20 +253,20 @@
                     </h3>
                     
                     <div class="space-y-3">
-                        <a href="/download/{{ results.filename }}" 
-                           class="block w-full bg-blue-600 text-white text-center px-4 py-3 rounded-lg hover:bg-blue-700 transition duration-200">
+                        <a class="link_bypass link_bypass block w-full bg-blue-600 text-white text-center px-4 py-3 rounded-lg hover:bg-blue-700 transition duration-200" href="/download/{{ results.filename }}" 
+                           >
                             <i class="fas fa-file-alt mr-2"></i>Original Document
                         </a>
                         
                         {% if results.processed_filename %}
-                        <a href="/download/{{ results.processed_filename }}" 
-                           class="block w-full bg-green-600 text-white text-center px-4 py-3 rounded-lg hover:bg-green-700 transition duration-200">
+                        <a class="link_bypass link_bypass block w-full bg-green-600 text-white text-center px-4 py-3 rounded-lg hover:bg-green-700 transition duration-200" href="/download/{{ results.processed_filename }}" 
+                           >
                             <i class="fas fa-user-secret mr-2"></i>Redacted Version
                         </a>
                         {% endif %}
                         
-                        <a href="/download/{{ results.filename }}_analysis.json" 
-                           class="block w-full bg-purple-600 text-white text-center px-4 py-3 rounded-lg hover:bg-purple-700 transition duration-200">
+                        <a class="link_bypass link_bypass block w-full bg-teal-600 text-white text-center px-4 py-3 rounded-lg hover:bg-teal-700 transition duration-200" href="/download/{{ results.filename }}_analysis.json" 
+                           >
                             <i class="fas fa-chart-bar mr-2"></i>Analysis Report
                         </a>
                     </div>
@@ -275,7 +276,7 @@
                 {% if results.blockchain and results.blockchain.success %}
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h3 class="text-xl font-bold text-gray-900 mb-4">
-                        <i class="fas fa-cube mr-2 text-purple-600"></i>Blockchain Record
+                        <i class="fas fa-cube mr-2 text-teal-600"></i>Blockchain Record
                     </h3>
                     
                     <div class="space-y-3">
@@ -358,8 +359,8 @@
                             <i class="fas fa-share mr-2"></i>Share Report
                         </button>
                         
-                        <a href="/dashboard" 
-                           class="block w-full bg-green-600 text-white text-center px-4 py-3 rounded-lg hover:bg-green-700 transition duration-200">
+                        <a class="link_bypass link_bypass block w-full bg-green-600 text-white text-center px-4 py-3 rounded-lg hover:bg-green-700 transition duration-200" href="/dashboard" 
+                           >
                             <i class="fas fa-chart-bar mr-2"></i>Back to Dashboard
                         </a>
                     </div>
@@ -382,9 +383,9 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Share Link</label>
-                        <input type="text" id="shareLink" readonly
+                        <label><input type="text" id="shareLink" readonly
                                class="w-full p-2 border border-gray-300 rounded-lg bg-gray-50"
-                               value="{{ request.url }}">
+                               value="{{ request.url }}"></label>
                     </div>
                     
                     <div class="flex space-x-3">

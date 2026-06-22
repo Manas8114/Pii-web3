@@ -5,6 +5,7 @@ Uses Google Gemini to summarize already-redacted text, ensuring no PII leaks to 
 
 import os
 import logging
+from typing import Dict, Any, List
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ def _ensure_model():
         return False
 
 
-def generate_summary(redacted_text, pii_count=0, fraud_risk="Unknown"):
+def generate_summary(redacted_text: str, pii_count: int = 0, fraud_risk: str = "Unknown") -> Dict[str, Any]:
     """
     Generate a privacy-preserving summary of a redacted document.
     
@@ -70,13 +71,17 @@ def generate_summary(redacted_text, pii_count=0, fraud_risk="Unknown"):
         return _demo_summary(redacted_text, pii_count, fraud_risk)
 
     try:
+        if _model is None:
+            return _demo_summary(redacted_text, pii_count, fraud_risk)
+            
+        _text_sample: str = str(redacted_text)[:3000] if redacted_text else ""  # type: ignore[index]
         prompt = f"""You are a document security analyst. Analyze this REDACTED document text and provide a structured summary.
 The document has been pre-processed: all personally identifiable information (PII) has been removed and replaced with [REDACTED] markers. 
 Do NOT attempt to guess or reconstruct any redacted information.
 
 REDACTED DOCUMENT TEXT:
 ---
-{redacted_text[:3000]}
+{_text_sample}
 ---
 
 SECURITY CONTEXT:
@@ -92,7 +97,7 @@ KEY_FINDINGS:
 - [finding 3]
 RISK_ASSESSMENT: [1-2 sentence assessment of document sensitivity based on PII density and fraud indicators]"""
 
-        response = _model.generate_content(prompt)
+        response = _model.generate_content(prompt) # type: ignore
         
         if response and response.text:
             return _parse_response(response.text, pii_count)
@@ -104,45 +109,51 @@ RISK_ASSESSMENT: [1-2 sentence assessment of document sensitivity based on PII d
         return _demo_summary(redacted_text, pii_count, fraud_risk)
 
 
-def _parse_response(text, pii_count):
+def _parse_response(text: str, pii_count: int) -> Dict[str, Any]:
     """Parse Gemini's structured response into a dict."""
-    result = {
-        "summary": "",
-        "document_type": "General Document",
-        "key_findings": [],
-        "risk_assessment": "",
-        "ai_powered": True
-    }
+    summary: str = ""
+    document_type: str = "General Document"
+    key_findings: List[str] = []
+    risk_assessment: str = ""
 
     lines = text.strip().split('\n')
     current_section = None
 
     for line in lines:
         line = line.strip()
+        if not line:
+            continue
         if line.startswith("DOCUMENT_TYPE:"):
-            result["document_type"] = line.replace("DOCUMENT_TYPE:", "").strip()
+            document_type = line.replace("DOCUMENT_TYPE:", "").strip()
         elif line.startswith("SUMMARY:"):
-            result["summary"] = line.replace("SUMMARY:", "").strip()
+            summary = line.replace("SUMMARY:", "").strip()
             current_section = "summary"
         elif line.startswith("KEY_FINDINGS:"):
             current_section = "findings"
         elif line.startswith("RISK_ASSESSMENT:"):
-            result["risk_assessment"] = line.replace("RISK_ASSESSMENT:", "").strip()
+            risk_assessment = line.replace("RISK_ASSESSMENT:", "").strip()
             current_section = "risk"
         elif line.startswith("- ") and current_section == "findings":
-            result["key_findings"].append(line[2:].strip())
-        elif current_section == "summary" and line:
-            result["summary"] += " " + line
-        elif current_section == "risk" and line:
-            result["risk_assessment"] += " " + line
+            key_findings.append(line[2:].strip())  # type: ignore[index]
+        elif current_section is not None:
+            if current_section == "summary":
+                summary = str(summary) + " " + line
+            elif current_section == "risk":
+                risk_assessment = str(risk_assessment) + " " + line
 
-    if not result["key_findings"]:
-        result["key_findings"] = [f"{pii_count} PII entities were detected and redacted"]
+    if not key_findings:
+        key_findings = [f"{pii_count} PII entities were detected and redacted"]
 
-    return result
+    return {
+        "summary": summary,
+        "document_type": document_type,
+        "key_findings": key_findings,
+        "risk_assessment": risk_assessment,
+        "ai_powered": True
+    }
 
 
-def _demo_summary(text, pii_count, fraud_risk):
+def _demo_summary(text: str, pii_count: int, fraud_risk: str) -> Dict[str, Any]:
     """Fallback summary when Gemini API is unavailable."""
     word_count = len(text.split())
     

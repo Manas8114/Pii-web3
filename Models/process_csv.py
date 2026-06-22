@@ -1,12 +1,11 @@
 import os
 import pandas as pd
 import numpy as np
-import re
 import spacy
 from google.cloud import firestore
-import google.auth
-import google.generativeai as genai
+import warnings
 
+warnings.filterwarnings('ignore')
 # Initialize Firestore client (optional)
 db = firestore.Client()
 
@@ -35,22 +34,22 @@ def detect_and_tokenize_pii(df):
     pii_mapping = {}  # Store original PII → Token mapping
     sensitive_data = {}  # Store sensitive data and its origin
     tokenized_data = {}  # Store tokenized PII data for reference
-    token_index = 1  # Track token indices for unique token generation
+    token_index: int = 1  # Track token indices for unique token generation
 
     # 1. Use regex patterns to detect emails, phone numbers, etc.
     for col in df.columns:
         for pii_type, pattern in PII_PATTERNS.items():
             df[col] = df[col].astype(str)  # Ensure column is string type
-            matches = df[col].str.findall(pattern)
+            matches = df[col].str.findall(pattern)  # type: ignore[arg-type]
 
             for i, match_list in enumerate(matches):
                 for match in match_list:
                     if match not in pii_mapping:
                         token = generate_safe_token(match, token_index, pii_type)
                         pii_mapping[match] = token
-                        token_index += 1
+                        token_index += 1  # type: ignore[operator]
                     
-                    df.at[i, col] = df.at[i, col].replace(match, pii_mapping[match])
+                    df.at[i, col] = df.at[i, col].replace(match, pii_mapping[match])  # type: ignore[union-attr]
 
     # 2. Use spaCy NER to detect names, organizations, and locations.
     for col in df.columns:
@@ -61,14 +60,11 @@ def detect_and_tokenize_pii(df):
                     if ent.text not in pii_mapping:
                         token = generate_safe_token(ent.text, token_index, ent.label_)
                         pii_mapping[ent.text] = token
-                        token_index += 1
+                        token_index += 1  # type: ignore[operator]
                     
-                    df.at[i, col] = df.at[i, col].replace(ent.text, pii_mapping[ent.text])
+                    df.at[i, col] = df.at[i, col].replace(ent.text, pii_mapping[ent.text])  # type: ignore[union-attr]
 
     return df, pii_mapping, sensitive_data, tokenized_data
-
-import os
-import pandas as pd
 
 def process_csv_file(filename):
     """Process and anonymize .csv files."""

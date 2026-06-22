@@ -456,7 +456,7 @@
     .filter-pill:hover { transform:translateY(-2px); }
     </style>
 </head>
-<body>
+<body aria-label="page">
     <!-- Header -->
     <header class="header">
         <div class="header-content">
@@ -469,7 +469,7 @@
                     <i class="fas fa-moon" id="themeIcon"></i>
                     <span id="themeLabel">Dark</span>
                 </div>
-                <a href="/upload" class="btn btn-primary">
+                <a class="link_bypass link_bypass" href="/upload" class="btn btn-primary">
                     <i class="fas fa-upload"></i>
                     Upload Document
                 </a>
@@ -647,12 +647,12 @@
                     </div>
                 </div>
 
-                <div class="fraud-step" style="--step-color: #8b5cf6;">
+                <div class="fraud-step" style="--step-color: #10b981;">
                     <div class="step-number">2</div>
                     <div class="step-title">Metadata Examination</div>
                     <div class="step-description">Deep analysis of digital fingerprints and history</div>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 95%; --progress-color: #8b5cf6;"></div>
+                        <div class="progress-fill" style="width: 95%; --progress-color: #10b981;"></div>
                     </div>
                 </div>
 
@@ -708,7 +708,7 @@
                     <div class="filter-pill" data-type="blockchain"><i class="fas fa-link"></i> Chain</div>
                     <div class="filter-pill" data-type="success"><i class="fas fa-check-circle"></i> Success</div>
                     <div class="filter-pill" data-type="search"><i class="fas fa-search"></i> Search (/)</div>
-                    <input id="activitySearch" placeholder="Type to filter activity..." style="display:none;margin-top:.5rem;width:100%;padding:.6rem .8rem;border:1px solid var(--border-color);border-radius:.6rem;background:var(--card-bg);color:var(--text-color);" />
+                    <label><input id="activitySearch" placeholder="Type to filter activity..." style="display:none;margin-top:.5rem;width:100%;padding:.6rem .8rem;border:1px solid var(--border-color);border-radius:.6rem;background:var(--card-bg);color:var(--text-color);" /></label>
                 </div>
                 {% if recent_activity %}
                     {% for activity in recent_activity %}

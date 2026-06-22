@@ -94,6 +94,8 @@
             (new-token-id (+ (var-get token-counter) u1))
         )
         (begin
+            (asserts! (not (var-get is-paused)) err-contract-paused)
+            
             ;; Store token information
             (map-set tokens
                 { token-id: new-token-id }
@@ -330,14 +332,28 @@
     (var-get transaction-counter)
 )
 
-;; Get recent transactions (last N transactions)
+;; Get recent transactions (last N transactions, up to 10)
+;; NOTE: Clarity does not support dynamic-length lists; this returns the last 10 IDs.
 (define-read-only (get-recent-transactions (count uint))
     (let
         (
             (current-counter (var-get transaction-counter))
-            (start-id (if (> current-counter count) (- current-counter count) u0))
+            (start-id (if (> current-counter u10) (- current-counter u10) u0))
         )
-        (map get-transaction-details (list start-id))
+        (map get-transaction-details
+            (list
+                start-id
+                (+ start-id u1)
+                (+ start-id u2)
+                (+ start-id u3)
+                (+ start-id u4)
+                (+ start-id u5)
+                (+ start-id u6)
+                (+ start-id u7)
+                (+ start-id u8)
+                (+ start-id u9)
+            )
+        )
     )
 )
 

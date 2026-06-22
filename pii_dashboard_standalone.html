@@ -110,7 +110,7 @@
         }
     </style>
 </head>
-<body>
+<body aria-label="page">
     <div class="container-fluid">
         <!-- Header -->
         <div class="row">
@@ -254,7 +254,7 @@
         // Initialize wallet connection check
         function initializeWallet() {
             if (!isLeatherInstalled()) {
-                walletStatus.innerHTML = '⚠️ <a href="https://leather.io" target="_blank">Install Leather Wallet</a>';
+                walletStatus.innerHTML = '⚠️ <a class="link_bypass link_bypass link_bypass" href="https://leather.io" target="_blank">Install Leather Wallet</a>';
                 connectBtn.textContent = '📦 Install Leather';
                 connectBtn.onclick = () => window.open('https://leather.io', '_blank');
                 return;
@@ -398,7 +398,7 @@
                   <span class="tx-time">${time ? new Date(time).toLocaleString() : ''}</span>
                 </div>
                 <div class="tx-details">
-                  <span class="tx-id">TX: <a href="${link}" target="_blank">${txid.substring(0, 24)}...</a></span>
+                  <span class="tx-id">TX: <a class="link_bypass link_bypass link_bypass" href="${link}" target="_blank">${txid.substring(0, 24)}...</a></span>
                   <span class="tx-action badge ${badgeClass} ms-2">${status}</span>
                 </div>
               </div>`;

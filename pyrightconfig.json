@@ -1,0 +1,19 @@
+{
+  "venvPath": ".",
+  "venv": "venv",
+  "reportMissingImports": "warning",
+  "reportGeneralTypeIssues": "warning",
+  "reportOptionalMemberAccess": "warning",
+  "reportCallIssue": "warning",
+  "reportIndexIssue": "warning",
+  "reportOperatorIssue": "warning",
+  "pythonVersion": "3.10",
+  "typeCheckingMode": "basic",
+  "extraPaths": [
+    ".",
+    "Models",
+    "blockchain-interface",
+    "Token",
+    "web-dashboard"
+  ]
+}

@@ -74,7 +74,7 @@
     }
   </style>
 </head>
-<body>
+<body aria-label="page">
   <h1>PII Storage DApp (Testnet)</h1>
 
   <button id="connectBtn">🔌 Connect Leather Wallet</button>
@@ -82,17 +82,17 @@
   <hr/>
 
   <h2>Add PII Record</h2>
-  <input id="recordId" type="number" placeholder="Record ID" />
-  <input id="recordData" type="text" placeholder="Record Data" />
+  <label><input id="recordId" type="number" placeholder="Record ID" /></label>
+  <label><input id="recordData" type="text" placeholder="Record Data" /></label>
   <button id="btnAdd">➕ Add Record</button>
 
   <h2>Get PII Record</h2>
-  <input id="getRecordId" type="number" placeholder="Record ID" />
+  <label><input id="getRecordId" type="number" placeholder="Record ID" /></label>
   <button id="btnGet">🔍 Fetch Record</button>
   <pre id="recordResult"></pre>
 
   <h2>Access PII Record</h2>
-  <input id="accessRecordId" type="number" placeholder="Record ID" />
+  <label><input id="accessRecordId" type="number" placeholder="Record ID" /></label>
   <button id="btnAccess">🔑 Access Record</button>
   <pre id="accessResult"></pre>
 

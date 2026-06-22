@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/extracted_inline.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SecuredDoc</title>
@@ -16,7 +17,7 @@
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://apis.google.com/js/gsi/client" async defer></script>
-    <script src="https://unpkg.com/@stacks/connect@latest/dist/index.js"></script>
+    <script src="https://unpkg.com/@stacks/connect@latest/dist/index.umd.js"></script>
     <script src="https://unpkg.com/@stacks/transactions@latest/dist/index.umd.js"></script>
     <script src="https://unpkg.com/@stacks/network@latest/dist/index.umd.js"></script>
 
@@ -27,7 +28,7 @@
             --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
             --accent-amber: #F59E0B;
-            --accent-violet: #8B5CF6;
+            --accent-violet: #10B981;
             --text-primary: #F8FAFC;
             --text-secondary: #94A3B8;
         }
@@ -53,16 +54,14 @@
 
         .glass-nav {
             background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
         }
 
         .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
             border-radius: 16px;
             border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
@@ -107,7 +106,7 @@
 
         .icon-glow-violet {
             background: rgba(139, 92, 246, 0.15);
-            color: #8B5CF6;
+            color: #10B981;
         }
 
         .icon-glow-blue {
@@ -150,35 +149,35 @@
     </style>
 </head>
 
-<body class="min-h-screen grid-bg">
+<body aria-label="page" class="min-h-screen grid-bg">
     <!-- Floating Navigation -->
-    <nav class="glass-nav fixed top-4 left-4 right-4 z-50 mx-auto max-w-7xl">
+    <div role="navigation" class="glass-nav fixed top-4 left-4 right-4 z-50 mx-auto max-w-7xl">
         <div class="px-6 py-3">
             <div class="flex justify-between items-center">
-                <a href="/" class="flex items-center space-x-3 cursor-pointer">
+                <a class="link_bypass link_bypass flex items-center space-x-3 cursor-pointer" href="/" >
                     <div class="w-9 h-9 rounded-lg icon-glow-amber flex items-center justify-center">
                         <i class="fas fa-shield-alt text-lg"></i>
                     </div>
                     <h1 class="text-lg font-bold tracking-wider">SecuredDoc</h1>
                 </a>
                 <div class="flex items-center space-x-6">
-                    <a href="/" class="text-sm text-gray-400 hover:text-white transition duration-200 cursor-pointer">
+                    <a class="link_bypass link_bypass text-sm text-gray-400 hover:text-white transition duration-200 cursor-pointer" href="/" >
                         <i class="fas fa-home mr-1"></i>Home
                     </a>
-                    <a href="/dashboard"
-                        class="text-sm text-gray-400 hover:text-white transition duration-200 cursor-pointer">
+                    <a class="link_bypass link_bypass text-sm text-gray-400 hover:text-white transition duration-200 cursor-pointer" href="/dashboard"
+                        >
                         <i class="fas fa-chart-bar mr-1"></i>Dashboard
                     </a>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
     <!-- Main Content -->
     <div class="min-h-screen flex items-center justify-center py-24 px-4 sm:px-6 lg:px-8 relative">
         <!-- Background orbs -->
         <div class="absolute top-1/3 left-1/4 w-80 h-80 bg-amber-500 rounded-full opacity-5 blur-3xl"></div>
-        <div class="absolute bottom-1/3 right-1/4 w-80 h-80 bg-violet-500 rounded-full opacity-5 blur-3xl"></div>
+        <div class="absolute bottom-1/3 right-1/4 w-80 h-80 bg-emerald-500 rounded-full opacity-5 blur-3xl"></div>
 
         <div class="max-w-4xl w-full space-y-8 relative z-10">
             <!-- Header -->
@@ -208,10 +207,8 @@
                     <div class="space-y-3">
                         <!-- Leather Wallet -->
                         <button id="connectLeather"
-                            class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center glow-orange"
-                            style="background: rgba(234, 88, 12, 0.15); border: 1px solid rgba(234, 88, 12, 0.3);">
-                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4"
-                                style="background: rgba(234, 88, 12, 0.2);">
+                            class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center glow-orange auto-style-116">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4 auto-style-117">
                                 <i class="fas fa-coins text-orange-400"></i>
                             </div>
                             <div class="text-left">
@@ -223,10 +220,8 @@
 
                         <!-- MetaMask -->
                         <button id="connectMetaMask"
-                            class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center glow-amber"
-                            style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);">
-                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4"
-                                style="background: rgba(245, 158, 11, 0.15);">
+                            class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center glow-amber auto-style-118">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4 auto-style-119">
                                 <i class="fab fa-ethereum text-amber-400"></i>
                             </div>
                             <div class="text-left">
@@ -236,24 +231,11 @@
                             <i class="fas fa-chevron-right ml-auto text-gray-600 text-sm"></i>
                         </button>
 
-                        <!-- Demo Mode -->
-                        <button id="demoMode" class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center"
-                            style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);">
-                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4"
-                                style="background: rgba(255, 255, 255, 0.05);">
-                                <i class="fas fa-play text-gray-400"></i>
-                            </div>
-                            <div class="text-left">
-                                <div class="font-semibold text-sm">Demo Mode</div>
-                                <div class="text-xs text-gray-500">Try without wallet</div>
-                            </div>
-                            <i class="fas fa-chevron-right ml-auto text-gray-600 text-sm"></i>
-                        </button>
+
                     </div>
 
                     <!-- Wallet Connection Status -->
-                    <div id="walletStatus" class="mt-5 p-4 rounded-lg hidden"
-                        style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <div id="walletStatus" class="mt-5 p-4 rounded-lg hidden auto-style-120">
                         <div class="flex items-center">
                             <span class="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></span>
                             <div>
@@ -278,10 +260,8 @@
                         <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID" data-callback="handleGoogleSignIn">
                         </div>
                         <!-- Google Sign-In -->
-                        <button id="googleSignInBtn" class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center"
-                            style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);">
-                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4"
-                                style="background: rgba(239, 68, 68, 0.15);">
+                        <button id="googleSignInBtn" class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center auto-style-121">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4 auto-style-122">
                                 <i class="fab fa-google text-red-400"></i>
                             </div>
                             <div class="text-left">
@@ -291,24 +271,21 @@
                             <i class="fas fa-chevron-right ml-auto text-gray-600 text-sm"></i>
                         </button>
 
-                        <!-- Guest Access -->
-                        <button id="guestAccess" class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center"
-                            style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);">
-                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4"
-                                style="background: rgba(255, 255, 255, 0.05);">
-                                <i class="fas fa-user-circle text-gray-400"></i>
+                        <!-- Continue Without Wallet -->
+                        <button id="guestAccess" class="wallet-btn w-full px-5 py-4 rounded-lg flex items-center auto-style-123">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-4 auto-style-124">
+                                <i class="fas fa-arrow-right text-gray-400"></i>
                             </div>
                             <div class="text-left">
-                                <div class="font-semibold text-sm">Guest Access</div>
-                                <div class="text-xs text-gray-500">Continue without account</div>
+                                <div class="font-semibold text-sm">Continue Without Wallet</div>
+                                <div class="text-xs text-gray-500">Blockchain features will be unavailable</div>
                             </div>
                             <i class="fas fa-chevron-right ml-auto text-gray-600 text-sm"></i>
                         </button>
                     </div>
 
                     <!-- Auth Status -->
-                    <div id="authStatus" class="mt-5 p-4 rounded-lg hidden"
-                        style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <div id="authStatus" class="mt-5 p-4 rounded-lg hidden auto-style-125">
                         <div class="flex items-center">
                             <span class="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></span>
                             <div>
@@ -326,28 +303,20 @@
                     <i class="fas fa-coins mr-2 text-amber-400"></i>Service Fees
                 </h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="text-center p-4 rounded-lg"
-                        style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.15);">
-                        <div class="text-xl font-bold text-blue-400" id="registrationFee"
-                            style="font-family: 'Orbitron', sans-serif;">1.0 STX</div>
+                    <div class="text-center p-4 rounded-lg auto-style-126">
+                        <div class="text-xl font-bold text-blue-400" id="registrationFee auto-style-127">1.0 STX</div>
                         <div class="text-xs text-gray-500 mt-1">Registration</div>
                     </div>
-                    <div class="text-center p-4 rounded-lg"
-                        style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.15);">
-                        <div class="text-xl font-bold text-emerald-400" id="verificationFee"
-                            style="font-family: 'Orbitron', sans-serif;">0.5 STX</div>
+                    <div class="text-center p-4 rounded-lg auto-style-128">
+                        <div class="text-xl font-bold text-emerald-400" id="verificationFee auto-style-129">0.5 STX</div>
                         <div class="text-xs text-gray-500 mt-1">Verification</div>
                     </div>
-                    <div class="text-center p-4 rounded-lg"
-                        style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.15);">
-                        <div class="text-xl font-bold text-violet-400" id="accessFee"
-                            style="font-family: 'Orbitron', sans-serif;">0.25 STX</div>
+                    <div class="text-center p-4 rounded-lg auto-style-130">
+                        <div class="text-xl font-bold text-emerald-400" id="accessFee auto-style-131">0.25 STX</div>
                         <div class="text-xs text-gray-500 mt-1">Access Grant</div>
                     </div>
-                    <div class="text-center p-4 rounded-lg"
-                        style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.15);">
-                        <div class="text-xl font-bold text-amber-400" id="storageFee"
-                            style="font-family: 'Orbitron', sans-serif;">2.0 STX</div>
+                    <div class="text-center p-4 rounded-lg auto-style-132">
+                        <div class="text-xl font-bold text-amber-400" id="storageFee auto-style-133">2.0 STX</div>
                         <div class="text-xs text-gray-500 mt-1">Premium Storage</div>
                     </div>
                 </div>
@@ -386,8 +355,8 @@
             <!-- Continue Button -->
             <div class="text-center">
                 <button id="continueBtn"
-                    class="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 px-8 py-4 rounded-lg font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition duration-300 cursor-pointer glow-amber"
-                    disabled style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">
+                    class="bg-gradient-to-r from-yellow-500 to-amber-500 text-gray-900 px-8 py-4 rounded-lg font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition duration-300 cursor-pointer glow-amber auto-style-134"
+                    disabled >
                     <i class="fas fa-arrow-right mr-2"></i>Continue to Dashboard
                 </button>
                 <p class="text-xs text-gray-600 mt-3">You can always connect your wallet later</p>
@@ -401,7 +370,7 @@
     <!-- Connection Status Modal -->
     <div id="connectionModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden">
         <div class="flex items-center justify-center h-full p-4">
-            <div class="glass-card max-w-md w-full p-8" style="background: var(--bg-surface);">
+            <div class="glass-card max-w-md w-full p-8 auto-style-135">
                 <div class="text-center">
                     <div id="connectionIcon"
                         class="w-16 h-16 rounded-lg icon-glow-amber flex items-center justify-center mx-auto mb-4">
@@ -411,8 +380,7 @@
                     <p id="connectionMessage" class="text-gray-400 text-sm mb-6">Please confirm the connection in your
                         wallet</p>
                     <button id="closeConnectionModal"
-                        class="px-6 py-2 rounded-lg text-sm font-medium transition duration-200 cursor-pointer"
-                        style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);">
+                        class="px-6 py-2 rounded-lg text-sm font-medium transition duration-200 cursor-pointer auto-style-136">
                         Close
                     </button>
                 </div>
@@ -507,6 +475,7 @@
                                     authState.wallet = result.wallet;
                                     authState.user = result.user;
                                     authState.authenticated = true;
+                                    sessionStorage.setItem('authState', JSON.stringify(authState));
                                     hideConnectionModal();
                                     showNotification('Leather wallet connected successfully!', 'success');
                                     updateUI();
@@ -515,7 +484,6 @@
                                 console.error('Backend authentication error:', error);
                                 hideConnectionModal();
                                 showNotification('Authentication failed: ' + error.message, 'error');
-                                simulateWalletConnection('leather', 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM');
                             }
                         },
                         onCancel: () => { hideConnectionModal(); showNotification('Wallet connection cancelled', 'warning'); },
@@ -524,9 +492,11 @@
                     showConnect(authOptions);
                 } else if (window.LeatherProvider) {
                     try {
-                        const response = await window.LeatherProvider.request('stacks_getAddresses');
-                        if (response && response.addresses && response.addresses.length > 0) {
-                            const address = response.addresses[0].address;
+                        const response = await window.LeatherProvider.request('getAddresses');
+                        if (response && response.result && response.result.addresses) {
+                            const stxAddressObj = response.result.addresses.find(a => a.symbol === 'STX');
+                            if (!stxAddressObj) throw new Error("No STX address found in Leather wallet.");
+                            const address = stxAddressObj.address;
                             const backendResponse = await fetch('/api/wallet/connect', {
                                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ wallet_type: 'leather', wallet_address: address, network: 'testnet' })
@@ -535,6 +505,7 @@
                             if (result.success) {
                                 authState.wallet = { type: 'leather', address: address, network: result.network };
                                 authState.authenticated = true;
+                                sessionStorage.setItem('authState', JSON.stringify(authState));
                                 hideConnectionModal();
                                 showNotification('Leather wallet connected successfully!', 'success');
                                 updateUI();
@@ -542,27 +513,23 @@
                         }
                     } catch (error) { throw error; }
                 } else {
-                    setTimeout(async () => {
-                        await fetch('/api/wallet/connect', {
-                            method: 'POST', headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ wallet_type: 'leather', wallet_address: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM', network: 'testnet' })
-                        });
-                        simulateWalletConnection('leather', 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM');
-                        hideConnectionModal();
-                    }, 2000);
+                    hideConnectionModal();
+                    showNotification('Leather wallet not detected. Please install the Leather browser extension from leather.io', 'error');
                 }
             } catch (error) {
-                console.error('Leather wallet error:', error);
                 hideConnectionModal();
-                showNotification('Failed to connect Leather wallet. Using demo mode.', 'warning');
-                try {
-                    await fetch('/api/wallet/connect', {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ wallet_type: 'leather', wallet_address: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM', network: 'testnet' })
-                    });
-                    simulateWalletConnection('leather', 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM');
-                } catch (backendError) {
-                    simulateWalletConnection('leather', 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM');
+                const isRejected = (error && error.code === 4001) ||
+                    (error && error.error && (error.error.code === 4001 || (error.error.message && error.error.message.toLowerCase().includes('reject')))) ||
+                    (error && error.message && error.message.toLowerCase().includes('reject')) ||
+                    (error && error.jsonrpc === '2.0' && error.error && typeof error.error === 'object' && Object.keys(error.error).length === 0);
+
+                if (isRejected) {
+                    console.warn('Leather connection rejected');
+                    showNotification('Leather wallet connection cancelled.', 'warning');
+                } else {
+                    console.error('Leather wallet error:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+                    const errMsg = (error && error.error && error.error.message) || (error && error.message) || JSON.stringify(error);
+                    showNotification('Failed to connect Leather wallet: ' + errMsg, 'error');
                 }
             }
         }
@@ -572,46 +539,60 @@
                 showConnectionModal('Connecting to MetaMask', 'Please confirm the connection in your MetaMask wallet');
                 if (typeof window.ethereum !== 'undefined') {
                     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    authState.wallet = { type: 'metamask', address: accounts[0], network: 'ethereum' };
+                    const address = accounts[0];
+                    // Get the chain ID
+                    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                    // Register with backend
+                    const backendResponse = await fetch('/api/wallet/connect', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ wallet_type: 'metamask', wallet_address: address, network: 'ethereum', chain_id: chainId })
+                    });
+                    const result = await backendResponse.json();
+                    authState.wallet = { type: 'metamask', address: address, network: 'ethereum', chainId: chainId };
+                    authState.authenticated = true;
                     sessionStorage.setItem('authState', JSON.stringify(authState));
                     hideConnectionModal();
                     showNotification('MetaMask connected successfully!', 'success');
                     updateUI();
+
+                    // Listen for account and chain changes
+                    window.ethereum.on('accountsChanged', (newAccounts) => {
+                        if (newAccounts.length === 0) {
+                            authState.wallet = null;
+                            authState.authenticated = false;
+                            sessionStorage.removeItem('authState');
+                            showNotification('MetaMask disconnected', 'warning');
+                            updateUI();
+                        } else {
+                            authState.wallet.address = newAccounts[0];
+                            sessionStorage.setItem('authState', JSON.stringify(authState));
+                            showNotification('MetaMask account changed', 'info');
+                            updateUI();
+                        }
+                    });
+                    window.ethereum.on('chainChanged', () => window.location.reload());
                 } else {
                     hideConnectionModal();
-                    showNotification('MetaMask not detected. Using demo mode.', 'warning');
-                    simulateWalletConnection('metamask', '0x742d35Cc6635C0532925a3b8D45C27F0e4b7b6c9');
+                    showNotification('MetaMask not detected. <a class="link_bypass link_bypass auto-style-137" href="https://metamask.io/download/" target="_blank" >Install MetaMask</a> to continue.', 'error');
                 }
             } catch (error) {
-                console.error('MetaMask error:', error);
                 hideConnectionModal();
                 if (error.code === 4001) {
+                    console.warn('MetaMask connection rejected by user.');
                     showNotification('MetaMask connection rejected by user.', 'warning');
                 } else {
-                    showNotification('Failed to connect MetaMask. Using demo mode.', 'warning');
-                    simulateWalletConnection('metamask', '0x742d35Cc6635C0532925a3b8D45C27F0e4b7b6c9');
+                    console.error('MetaMask error:', error);
+                    showNotification('Failed to connect MetaMask: ' + (error.message || JSON.stringify(error)), 'error');
                 }
             }
         }
 
-        function simulateWalletConnection(type, address) {
-            authState.wallet = { type: type, address: address, network: type === 'leather' ? 'testnet' : 'ethereum' };
-            sessionStorage.setItem('authState', JSON.stringify(authState));
-            showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} wallet connected! (Demo Mode)`, 'success');
-            updateUI();
-        }
-
-        function enableDemoMode() {
-            authState.authenticated = true;
-            authState.user = { name: 'Demo User', email: 'demo@secureddoc.com', type: 'demo' };
-            showNotification('Demo mode enabled! Full functionality available.', 'success');
-            updateUI();
-        }
-
         function enableGuestAccess() {
             authState.authenticated = true;
-            authState.user = { name: 'Guest User', email: 'guest@secureddoc.com', type: 'guest' };
-            showNotification('Guest access enabled! Limited functionality available.', 'info');
+            authState.user = { name: 'Guest User', type: 'guest' };
+            sessionStorage.setItem('authState', JSON.stringify(authState));
+            showNotification('Continuing without wallet. Blockchain features will be unavailable.', 'info');
             updateUI();
         }
 
@@ -643,7 +624,6 @@
 
             document.getElementById('connectLeather').addEventListener('click', connectLeatherWallet);
             document.getElementById('connectMetaMask').addEventListener('click', connectMetaMask);
-            document.getElementById('demoMode').addEventListener('click', enableDemoMode);
             document.getElementById('guestAccess').addEventListener('click', enableGuestAccess);
             document.getElementById('continueBtn').addEventListener('click', continueToDashboard);
             document.getElementById('closeConnectionModal').addEventListener('click', hideConnectionModal);

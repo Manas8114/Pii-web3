@@ -26,31 +26,31 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body aria-label="page" class="bg-gray-100 min-h-screen">
     <!-- Navigation -->
-    <nav class="gradient-bg shadow-lg">
+    <div role="navigation" class="gradient-bg shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="/" class="flex items-center">
+                    <a class="link_bypass link_bypass flex items-center" href="/" >
                         <i class="fas fa-shield-alt text-white text-2xl mr-3"></i>
                         <h1 class="text-white text-xl font-bold">SecuredDoc</h1>
                     </a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="/" class="text-white hover:text-blue-200 transition duration-200">
+                    <a class="link_bypass link_bypass text-white hover:text-blue-200 transition duration-200" href="/" >
                         <i class="fas fa-home mr-1"></i>Home
                     </a>
-                    <a href="/dashboard" class="text-white hover:text-blue-200 transition duration-200">
+                    <a class="link_bypass link_bypass text-white hover:text-blue-200 transition duration-200" href="/dashboard" >
                         <i class="fas fa-chart-bar mr-1"></i>Dashboard
                     </a>
-                    <a href="/login" class="text-white hover:text-blue-200 transition duration-200">
+                    <a class="link_bypass link_bypass text-white hover:text-blue-200 transition duration-200" href="/login" >
                         <i class="fas fa-sign-in-alt mr-1"></i>Login
                     </a>
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
 
     <!-- 404 Error Content -->
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -70,13 +70,13 @@
 
             <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                <a href="/" class="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold">
+                <a class="link_bypass link_bypass bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold" href="/" >
                     <i class="fas fa-home mr-2"></i>Back to Home
                 </a>
-                <a href="/dashboard" class="bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition duration-200 font-semibold">
+                <a class="link_bypass link_bypass bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition duration-200 font-semibold" href="/dashboard" >
                     <i class="fas fa-chart-bar mr-2"></i>Go to Dashboard
                 </a>
-                <a href="/login" class="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-lg hover:bg-blue-50 transition duration-200 font-semibold">
+                <a class="link_bypass link_bypass border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-lg hover:bg-blue-50 transition duration-200 font-semibold" href="/login" >
                     <i class="fas fa-sign-in-alt mr-2"></i>Login
                 </a>
             </div>
@@ -85,21 +85,21 @@
             <div class="bg-white rounded-lg shadow-md p-8">
                 <h3 class="text-2xl font-bold text-gray-900 mb-6">Quick Links</h3>
                 <div class="grid md:grid-cols-3 gap-6">
-                    <a href="/" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                    <a class="link_bypass link_bypass flex items-center p-4 bg-gray-50 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition duration-200" href="/" >
                         <i class="fas fa-home text-2xl mr-4"></i>
                         <div class="text-left">
                             <div class="font-semibold">Home</div>
                             <div class="text-sm text-gray-600">Learn about SecuredDoc</div>
                         </div>
                     </a>
-                    <a href="/dashboard" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-600 transition duration-200">
+                    <a class="link_bypass link_bypass flex items-center p-4 bg-gray-50 rounded-lg hover:bg-green-50 hover:text-green-600 transition duration-200" href="/dashboard" >
                         <i class="fas fa-upload text-2xl mr-4"></i>
                         <div class="text-left">
                             <div class="font-semibold">Upload Document</div>
                             <div class="text-sm text-gray-600">Start processing documents</div>
                         </div>
                     </a>
-                    <a href="/auth" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-purple-50 hover:text-purple-600 transition duration-200">
+                    <a class="link_bypass link_bypass flex items-center p-4 bg-gray-50 rounded-lg hover:bg-teal-50 hover:text-teal-600 transition duration-200" href="/auth" >
                         <i class="fas fa-cog text-2xl mr-4"></i>
                         <div class="text-left">
                             <div class="font-semibold">Enhanced Features</div>

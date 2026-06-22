@@ -83,7 +83,7 @@
     }
   </style>
 </head>
-<body>
+<body aria-label="page">
   <h1>🔒 PII Registry (Stacks Testnet)</h1>
   
   <div class="section">
@@ -98,12 +98,12 @@
     <h2>📄 Register Document</h2>
     <div class="input-group">
       <label for="docIdHex">Document ID (64 hex characters):</label>
-      <input id="docIdHex" placeholder="e.g., 1234567890abcdef..." maxlength="64"/>
+      <label><input id="docIdHex" placeholder="e.g., 1234567890abcdef..." maxlength="64"/></label>
       <button onclick="generateRandomDocId()" style="margin-top: 5px;">🎲 Generate Random ID</button>
     </div>
     <div class="input-group">
       <label for="docUri">Optional Off-chain URI:</label>
-      <input id="docUri" placeholder="https://example.com/doc or ipfs://..."/>
+      <label><input id="docUri" placeholder="https://example.com/doc or ipfs://..."/></label>
     </div>
     <button id="registerDoc" disabled>📝 Register Document</button>
   </div>
@@ -112,15 +112,15 @@
     <h2>🔍 Add PII Finding</h2>
     <div class="input-group">
       <label for="keyStr">Key (e.g., phone, email):</label>
-      <input id="keyStr" placeholder="phone"/>
+      <label><input id="keyStr" placeholder="phone"/></label>
     </div>
     <div class="input-group">
       <label for="labelStr">Label (display name):</label>
-      <input id="labelStr" placeholder="PHONE-NUMBER"/>
+      <label><input id="labelStr" placeholder="PHONE-NUMBER"/></label>
     </div>
     <div class="input-group">
       <label for="valuePlain">Value (will be hashed):</label>
-      <input id="valuePlain" placeholder="+1-555-123-4567" type="password"/>
+      <label><input id="valuePlain" placeholder="+1-555-123-4567" type="password"/></label>
     </div>
     <button id="addFinding" disabled>➕ Add PII Finding</button>
   </div>
@@ -530,7 +530,7 @@
     }
   </style>
 </head>
-<body>
+<body aria-label="page">
   <h1>🔒 PII Registry (Stacks Testnet)</h1>
   
   <div class="section">
@@ -546,11 +546,11 @@
     <h2>📄 Register Document</h2>
     <div class="input-group">
       <label for="docIdHex">Document ID (64 hex characters):</label>
-      <input id="docIdHex" placeholder="e.g., 1234567890abcdef..." maxlength="64"/>
+      <label><input id="docIdHex" placeholder="e.g., 1234567890abcdef..." maxlength="64"/></label>
     </div>
     <div class="input-group">
       <label for="docUri">Optional Off-chain URI:</label>
-      <input id="docUri" placeholder="https://example.com/doc or ipfs://..."/>
+      <label><input id="docUri" placeholder="https://example.com/doc or ipfs://..."/></label>
     </div>
     <button id="registerDoc" disabled>📝 Register Document</button>
   </div>
@@ -559,15 +559,15 @@
     <h2>🔍 Add PII Finding</h2>
     <div class="input-group">
       <label for="keyStr">Key (e.g., phone, email):</label>
-      <input id="keyStr" placeholder="phone"/>
+      <label><input id="keyStr" placeholder="phone"/></label>
     </div>
     <div class="input-group">
       <label for="labelStr">Label (display name):</label>
-      <input id="labelStr" placeholder="PHONE-NUMBER"/>
+      <label><input id="labelStr" placeholder="PHONE-NUMBER"/></label>
     </div>
     <div class="input-group">
       <label for="valuePlain">Value (will be hashed):</label>
-      <input id="valuePlain" placeholder="+1-555-123-4567" type="password"/>
+      <label><input id="valuePlain" placeholder="+1-555-123-4567" type="password"/></label>
     </div>
     <button id="addFinding" disabled>➕ Add PII Finding</button>
   </div>

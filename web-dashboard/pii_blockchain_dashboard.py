@@ -1,25 +1,27 @@
-import json
 import os
 import sys
-import hashlib
 from datetime import datetime
 from flask import Flask, render_template, jsonify, request, redirect, url_for
 from flask_socketio import SocketIO, emit
-import sqlite3
 import requests
 
 # Add parent directory to path to import our modules
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'blockchain-interface'))
-from pii_blockchain_bridge import PIIBlockchainBridge
 from stacks_client import TxMonitor, set_contract
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'pii_blockchain_dashboard_2025'
-socketio = SocketIO(app, cors_allowed_origins="*")
+_dashboard_secret = os.environ.get('DASHBOARD_SECRET_KEY')
+if not _dashboard_secret:
+    raise RuntimeError("DASHBOARD_SECRET_KEY must be set in .env")
+app.config['SECRET_KEY'] = _dashboard_secret
+_cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:5003').split(',')
+socketio = SocketIO(app, cors_allowed_origins=_cors_origins)
 
 # Global instances
 bridge = None
 blockchain_monitor = None
+
+PII_BRIDGE_URL = os.getenv('PII_BRIDGE_URL', 'http://localhost:5002')
 
 class PIIDashboardNotifier:
     """WebSocket notifier for PII blockchain events"""
@@ -64,7 +66,7 @@ def leather_integration():
 def get_recent_pii():
     """Get recent PII processing activity"""
     try:
-        response = requests.get('http://localhost:5002/recent-pii', timeout=5)
+        response = requests.get(f'{PII_BRIDGE_URL}/recent-pii', timeout=5)
         if response.status_code == 200:
             return jsonify(response.json())
         else:
@@ -76,7 +78,7 @@ def get_recent_pii():
 def get_document_pii(document_hash):
     """Get PII data for a specific document"""
     try:
-        response = requests.get(f'http://localhost:5002/blockchain-status/{document_hash}', timeout=5)
+        response = requests.get(f'{PII_BRIDGE_URL}/blockchain-status/{document_hash}', timeout=5)
         if response.status_code == 200:
             return jsonify(response.json())
         else:
@@ -89,7 +91,7 @@ def get_pii_stats():
     """Get PII processing statistics"""
     try:
         # Get stats from bridge service
-        response = requests.get('http://localhost:5002/recent-pii', timeout=5)
+        response = requests.get(f'{PII_BRIDGE_URL}/recent-pii', timeout=5)
         if response.status_code == 200:
             pii_data = response.json()
             
@@ -102,9 +104,12 @@ def get_pii_stats():
             }
             
             # Count entity types
+            entity_counts = {}
             for item in pii_data:
                 entity_type = item.get('entity_type', 'unknown')
-                stats['entity_types'][entity_type] = stats['entity_types'].get(entity_type, 0) + 1
+                entity_counts[entity_type] = entity_counts.get(entity_type, 0) + 1
+            
+            stats['entity_types'] = entity_counts
             
             return jsonify(stats)
         else:
@@ -170,17 +175,17 @@ def simulate_pii_processing():
         sample_pii = {
             "John Doe": {
                 "entity": "PERSON",
-                "safe_token": f"token_{hashlib.md5('John Doe'.encode()).hexdigest()[:8]}",
+                "safe_token": "token_PERSON1234",
                 "confidence_score": 0.95
             },
             "ABCDE1234F": {
                 "entity": "IN_PAN", 
-                "safe_token": f"token_{hashlib.md5('ABCDE1234F'.encode()).hexdigest()[:8]}",
+                "safe_token": "token_PAN12345",
                 "confidence_score": 0.87
             },
             "9876543210": {
                 "entity": "IN_PHONE",
-                "safe_token": f"token_{hashlib.md5('9876543210'.encode()).hexdigest()[:8]}",
+                "safe_token": "token_PHONE123",
                 "confidence_score": 0.92
             }
         }
@@ -235,9 +240,9 @@ def init_services():
     
     # Start PII bridge if not already running
     try:
-        response = requests.get('http://localhost:5002/recent-pii', timeout=2)
+        requests.get('http://localhost:5002/recent-pii', timeout=2)
         print("✅ PII Bridge service is already running")
-    except:
+    except Exception:
         print("🚀 Starting PII Bridge service...")
         # In production, you'd start this as a separate process
         # For now, just indicate it should be started separately

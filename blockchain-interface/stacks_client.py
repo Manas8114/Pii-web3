@@ -30,6 +30,17 @@ def set_contract(address: str, name: str):
 def _url(path: str) -> str:
     return f"{STACKS_API_BASE}{path}"
 
+def _get_with_retry(url: str, max_retries: int = 3, **kwargs) -> requests.Response:
+    """GET with automatic Retry-After-aware backoff on HTTP 429."""
+    for attempt in range(max_retries):
+        r = SESSION.get(url, **kwargs)
+        if r.status_code == 429 and attempt < max_retries - 1:
+            retry_after = int(r.headers.get("Retry-After", 2))
+            time.sleep(retry_after)
+            continue
+        return r
+    return r  # type: ignore[return-value]  # loop always executes at least once
+
 
 def get_contract_transactions(limit: int = 50) -> List[Dict[str, Any]]:
     if not CONTRACT_ADDRESS or not CONTRACT_NAME:
@@ -38,7 +49,7 @@ def get_contract_transactions(limit: int = 50) -> List[Dict[str, Any]]:
     # Docs: GET /extended/v1/contract/{contract_id}/transactions
     contract_id = f"{CONTRACT_ADDRESS}.{CONTRACT_NAME}"
     url = _url(f"/extended/v1/contract/{contract_id}/transactions?limit={limit}")
-    r = SESSION.get(url, timeout=10)
+    r = _get_with_retry(url, timeout=10)
     r.raise_for_status()
     data = r.json()
     return data.get("results", [])
@@ -46,7 +57,7 @@ def get_contract_transactions(limit: int = 50) -> List[Dict[str, Any]]:
 
 def get_tx_details(txid: str) -> Optional[Dict[str, Any]]:
     url = _url(f"/extended/v1/tx/{txid}")
-    r = SESSION.get(url, timeout=10)
+    r = _get_with_retry(url, timeout=10)
     if r.status_code == 404:
         return None
     r.raise_for_status()
@@ -56,7 +67,7 @@ def get_tx_details(txid: str) -> Optional[Dict[str, Any]]:
 def extract_clarity_events(tx: Dict[str, Any]) -> List[Dict[str, Any]]:
     # From tx result, parse contract events and print events
     events = []
-    receipt = tx.get("receipt") or {}
+    receipt: dict = tx.get("receipt") or {}
     for ev in receipt.get("events", []):
         # Each event may have type and value; we attempt to capture prints and contract_event
         ev_type = ev.get("type")
@@ -67,7 +78,7 @@ def extract_clarity_events(tx: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 
 class TxMonitor:
-    def __init__(self, poll_interval: float = None, history_size: int = 200):
+    def __init__(self, poll_interval: Optional[float] = None, history_size: int = 200):
         self.base_interval = poll_interval or float(os.getenv('TX_POLL_INTERVAL', '10'))
         self.max_interval = float(os.getenv('TX_POLL_MAX_INTERVAL', '60'))
         self.backoff_factor = float(os.getenv('TX_POLL_BACKOFF_FACTOR', '1.5'))
@@ -86,11 +97,11 @@ class TxMonitor:
             return
         self._running = True
         self._thread = threading.Thread(target=self._run, daemon=True)
-        self._thread.start()
+        self._thread.start()  # type: ignore[union-attr]
 
     def stop(self):
         self._running = False
-        if self._thread:
+        if self._thread is not None:
             self._thread.join(timeout=2)
 
     def _run(self):
@@ -120,12 +131,12 @@ class TxMonitor:
                                 pass
                     self._seen.add(txid)
                     if len(self._seen) > self.history_size:
-                        self._seen = set(list(self._seen)[-self.history_size:])
+                        self._seen = set(list(self._seen)[-self.history_size:])  # type: ignore[index]
                 # Success — reset to base interval
                 current_interval = self.base_interval
             except Exception:
                 # Exponential backoff on error
-                current_interval = min(current_interval * self.backoff_factor, self.max_interval)
+                current_interval = min(current_interval * self.backoff_factor, self.max_interval)  # type: ignore[arg-type]
             time.sleep(current_interval)
 
 

@@ -1,15 +1,27 @@
 .qodo
 Models/serviceAccountKey.json
 node_modules/
+**/node_modules/
 dist/
 uploads/
 temp_processed/
 __pycache__/
+**/__pycache__/
 .env
 *.pyc
 .DS_Store
-<<<<<<< HEAD
-.agent 
-=======
 .agent
->>>>>>> b05c081 (feat: AI Document Summary, IPFS Storage integration, and Custom PII Control enhancement)
+venv/
+archive/
+outputs/
+enhanced_results/
+*.db
+*.log
+*.safetensors
+*.pem
+dashboard_counters.json
+fraud_analysis_text.json
+fix_report/
+test_stacks.js
+Models/static/processed/
+nul

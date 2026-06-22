@@ -12,15 +12,15 @@ Launches all services needed for PII blockchain monitoring:
 import subprocess
 import sys
 import time
-import threading
 import os
-import signal
-from pathlib import Path
+import importlib
 import webbrowser
+
+from typing import List, Dict, Any
 
 class PIIBlockchainSystemLauncher:
     def __init__(self):
-        self.processes = []
+        self.processes: List[Dict[str, Any]] = []
         self.services = {
             'pii_bridge': {
                 'script': 'pii_blockchain_integration.py',
@@ -66,18 +66,7 @@ class PIIBlockchainSystemLauncher:
         
         for package in required_packages:
             try:
-                if package == 'sqlite3':
-                    import sqlite3
-                elif package == 'threading':
-                    import threading
-                elif package == 'json':
-                    import json
-                elif package == 'hashlib':
-                    import hashlib
-                elif package == 'datetime':
-                    import datetime
-                else:
-                    __import__(package)
+                importlib.import_module(package)
                 print(f"   ✅ {package}")
             except ImportError:
                 missing_packages.append(package)
@@ -122,149 +111,18 @@ class PIIBlockchainSystemLauncher:
         return True
     
     def create_blockchain_service_if_missing(self):
-        """Create a simple blockchain service if it doesn't exist"""
+        """Verify blockchain service exists"""
         service_path = 'blockchain-interface/blockchain_service.py'
         
         if not os.path.exists(service_path):
-            print("📝 Creating blockchain service...")
-            os.makedirs('blockchain-interface', exist_ok=True)
+            raise FileNotFoundError(f"Missing required service: {service_path}")
             
-            service_code = '''#!/usr/bin/env python3
-"""
-Simple Blockchain Service for PII Storage
-"""
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import json
-import hashlib
-import time
-
-app = Flask(__name__)
-CORS(app)
-
-# Mock blockchain storage
-blockchain_storage = []
-
-@app.route('/store-pii', methods=['POST'])
-def store_pii():
-    """Store PII hash on mock blockchain"""
-    try:
-        data = request.json
-        
-        # Create mock transaction
-        transaction = {
-            'transaction_id': f"tx_{int(time.time())}_{hash(str(data))%10000}",
-            'document_id': data.get('document_id'),
-            'pii_hash': data.get('pii_hash'),
-            'timestamp': time.time(),
-            'status': 'confirmed'
-        }
-        
-        blockchain_storage.append(transaction)
-        
-        print(f"[SUCCESS] Stored PII: {data.get('document_id')} -> {transaction['transaction_id']}")
-        
-        return jsonify({
-            'success': True,
-            'transaction_id': transaction['transaction_id'],
-            'status': 'confirmed'
-        })
-        
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/transactions', methods=['GET'])
-def get_transactions():
-    """Get all transactions"""
-    return jsonify(blockchain_storage)
-
-if __name__ == '__main__':
-    print("[BLOCKCHAIN] Service starting on port 5001...")
-    app.run(host='localhost', port=5001, debug=True)
-'''
-            
-            with open(service_path, 'w', encoding='utf-8') as f:
-                f.write(service_code)
-            
-            print(f"   ✅ Created {service_path}")
-    
     def create_dashboard_service_if_missing(self):
-        """Create dashboard service if missing"""
+        """Verify dashboard service exists"""
         dashboard_path = 'web-dashboard/pii_blockchain_dashboard.py'
         
         if not os.path.exists(dashboard_path):
-            print("📝 Creating dashboard service...")
-            
-            dashboard_code = '''#!/usr/bin/env python3
-"""
-PII Blockchain Dashboard Service
-"""
-from flask import Flask, render_template, request, jsonify
-from flask_socketio import SocketIO, emit
-from flask_cors import CORS
-import json
-import time
-import requests
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'pii-blockchain-secret'
-CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
-
-@app.route('/')
-def dashboard():
-    """Main PII dashboard"""
-    return render_template('pii_dashboard.html')
-
-@app.route('/api/pii-transactions')
-def get_pii_transactions():
-    """Get PII transactions from blockchain"""
-    try:
-        response = requests.get('http://localhost:5001/transactions', timeout=5)
-        if response.status_code == 200:
-            return jsonify(response.json())
-        else:
-            return jsonify([])
-    except:
-        return jsonify([])
-
-@socketio.on('connect')
-def handle_connect():
-    """Client connected"""
-    print(f"[DASHBOARD] Client connected to PII dashboard")
-    emit('status', {'message': 'Connected to PII monitoring system'})
-
-@socketio.on('disconnect')
-def handle_disconnect():
-    """Client disconnected"""
-    print(f"[DASHBOARD] Client disconnected from PII dashboard")
-
-# Simulate PII data reception
-@app.route('/simulate-pii', methods=['POST'])
-def simulate_pii():
-    """Simulate receiving PII data"""
-    data = request.json
-    
-    # Emit to connected clients
-    socketio.emit('new_pii_data', {
-        'document_id': data.get('document_id', f'doc_{int(time.time())}'),
-        'pii_fields': data.get('pii_fields', ['name', 'email']),
-        'pii_data': data.get('pii_data', {}),
-        'timestamp': time.time()
-    })
-    
-    return jsonify({'status': 'success'})
-
-if __name__ == '__main__':
-    print("[DASHBOARD] PII Dashboard starting on port 5003...")
-    print("[DASHBOARD] Access at: http://localhost:5003")
-    socketio.run(app, host='localhost', port=5003, debug=True)
-'''
-            
-            with open(dashboard_path, 'w', encoding='utf-8') as f:
-                f.write(dashboard_code)
-            
-            print(f"   ✅ Created {dashboard_path}")
+            raise FileNotFoundError(f"Missing required service: {dashboard_path}")
     
     def start_service(self, service_name, service_info):
         """Start a service in background"""
@@ -273,7 +131,7 @@ if __name__ == '__main__':
             
             process = subprocess.Popen([
                 sys.executable, service_info['script']
-            ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             
             self.processes.append({
                 'name': service_name,
@@ -296,13 +154,14 @@ if __name__ == '__main__':
         self.create_blockchain_service_if_missing()
         self.create_dashboard_service_if_missing()
         
-        success_count = 0
+        success_results = []
         
         for service_name, service_info in self.services.items():
             if self.start_service(service_name, service_info):
-                success_count += 1
+                success_results.append(1)
             time.sleep(2)  # Wait between services
         
+        success_count = len(success_results)
         print(f"\n✅ Started {success_count}/{len(self.services)} services")
         
         if success_count == len(self.services):
@@ -346,7 +205,7 @@ if __name__ == '__main__':
             time.sleep(3)
             print("🌐 Opening PII dashboard in browser...")
             webbrowser.open('http://localhost:5003')
-        except:
+        except Exception:
             pass
     
     def cleanup(self):
@@ -357,7 +216,7 @@ if __name__ == '__main__':
             try:
                 service['process'].terminate()
                 print(f"   ✅ Stopped {service['info']['name']}")
-            except:
+            except Exception:
                 pass
         
         print("👋 PII Blockchain System stopped.")

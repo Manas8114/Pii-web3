@@ -7,8 +7,6 @@ It monitors the process endpoint and automatically sends extracted PII to Clarit
 """
 
 import sqlite3
-import threading
-import time
 import json
 import requests
 from datetime import datetime
@@ -29,8 +27,8 @@ class PIIBlockchainBridge:
         
     def init_database(self):
         """Initialize SQLite database for PII tracking"""
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
         
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS pii_transactions (
@@ -68,38 +66,35 @@ class PIIBlockchainBridge:
 
     def store_pii_transaction(self, document_id, pii_data):
         """Store PII transaction in database"""
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
-        
         pii_hash = self.hash_pii_data(pii_data)
         pii_json = json.dumps(pii_data)
         
         try:
-            cursor.execute('''
-            INSERT OR REPLACE INTO pii_transactions 
-            (document_id, pii_hash, pii_data, status) 
-            VALUES (?, ?, ?, 'captured')
-            ''', (document_id, pii_hash, pii_json))
-            
-            # Store individual PII fields
-            for field_name, field_info in pii_data.items():
-                if isinstance(field_info, dict) and 'value' in field_info:
-                    cursor.execute('''
-                    INSERT INTO pii_extracts 
-                    (document_id, field_name, field_value, confidence) 
-                    VALUES (?, ?, ?, ?)
-                    ''', (document_id, field_name, field_info['value'], 
-                          field_info.get('confidence', 0.0)))
-            
-            conn.commit()
-            print(f"✅ Stored PII data for document: {document_id}")
-            return True
-            
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                INSERT OR REPLACE INTO pii_transactions 
+                (document_id, pii_hash, pii_data, status) 
+                VALUES (?, ?, ?, 'captured')
+                ''', (document_id, pii_hash, pii_json))
+                
+                # Store individual PII fields
+                for field_name, field_info in pii_data.items():
+                    if isinstance(field_info, dict) and 'value' in field_info:
+                        cursor.execute('''
+                        INSERT INTO pii_extracts 
+                        (document_id, field_name, field_value, confidence) 
+                        VALUES (?, ?, ?, ?)
+                        ''', (document_id, field_name, field_info['value'], 
+                              field_info.get('confidence', 0.0)))
+                
+                conn.commit()
+                print(f"✅ Stored PII data for document: {document_id}")
+                return True
+                
         except Exception as e:
             print(f"❌ Error storing PII: {e}")
             return False
-        finally:
-            conn.close()
 
     def send_to_blockchain(self, document_id, pii_data):
         """Send PII data to blockchain via blockchain service"""
@@ -123,16 +118,15 @@ class PIIBlockchainBridge:
                 blockchain_tx_id = result.get('transaction_id')
                 
                 # Update database with blockchain transaction ID
-                conn = sqlite3.connect(self.db_path)
-                cursor = conn.cursor()
-                cursor.execute('''
-                UPDATE pii_transactions 
-                SET blockchain_tx_id = ?, status = 'blockchain_stored', 
-                    blockchain_stored_at = CURRENT_TIMESTAMP 
-                WHERE document_id = ?
-                ''', (blockchain_tx_id, document_id))
-                conn.commit()
-                conn.close()
+                with sqlite3.connect(self.db_path) as conn:
+                    cursor = conn.cursor()
+                    cursor.execute('''
+                    UPDATE pii_transactions 
+                    SET blockchain_tx_id = ?, status = 'blockchain_stored', 
+                        blockchain_stored_at = CURRENT_TIMESTAMP 
+                    WHERE document_id = ?
+                    ''', (blockchain_tx_id, document_id))
+                    conn.commit()
                 
                 print(f"✅ Sent to blockchain - TX: {blockchain_tx_id}")
                 return blockchain_tx_id
@@ -195,16 +189,15 @@ def capture_pii():
 @app.route('/pii-status/<document_id>')
 def pii_status(document_id):
     """Check status of PII processing for a document"""
-    conn = sqlite3.connect(bridge.db_path)
-    cursor = conn.cursor()
-    
-    cursor.execute('''
-    SELECT document_id, blockchain_tx_id, status, created_at, blockchain_stored_at
-    FROM pii_transactions WHERE document_id = ?
-    ''', (document_id,))
-    
-    result = cursor.fetchone()
-    conn.close()
+    with sqlite3.connect(bridge.db_path) as conn:
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+        SELECT document_id, blockchain_tx_id, status, created_at, blockchain_stored_at
+        FROM pii_transactions WHERE document_id = ?
+        ''', (document_id,))
+        
+        result = cursor.fetchone()
     
     if result:
         return jsonify({
@@ -220,10 +213,10 @@ def pii_status(document_id):
 @app.route('/pii-dashboard')
 def pii_dashboard():
     """Simple dashboard to view PII transactions"""
-    conn = sqlite3.connect(bridge.db_path)
-    cursor = conn.cursor()
-    
-    cursor.execute('''
+    with sqlite3.connect(bridge.db_path) as conn:
+        cursor = conn.cursor()
+        
+        cursor.execute('''
     SELECT document_id, blockchain_tx_id, status, created_at, blockchain_stored_at
     FROM pii_transactions ORDER BY created_at DESC LIMIT 50
     ''')
